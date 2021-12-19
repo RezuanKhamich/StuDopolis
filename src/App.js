@@ -12,7 +12,6 @@ import {useState} from "react";
 
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, getDocs } from 'firebase/firestore/lite';
-import { getAnalytics } from "firebase/analytics";
 import { getDatabase, ref, set } from "firebase/database";
 
 const AppStyle = styled('div')`
@@ -24,13 +23,6 @@ const AppStyle = styled('div')`
 `
 
 function App() {
-
-
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
   const firebaseConfig = {
     apiKey: "AIzaSyDOk2r7wsQoBqKxaNYpkU6x0r7uuB9-asg",
     authDomain: "studopolis-524ce.firebaseapp.com",
@@ -53,48 +45,52 @@ function App() {
   const db = getFirestore(app);
   const [value, setValue] = useState('')
 
-  const handleChange = (event) => {
-    setValue(event.target.value)
-  }
+  //Firebase Hosting
+  {
+    // const handleChange = (event) => {
+    //   setValue(event.target.value)
+    // }
+    //
+    // async function getCities(db) {
+    //   const citiesCol = collection(db, 'cities');
+    //   const citySnapshot = await getDocs(citiesCol);
+    //   const cityList = citySnapshot.docs.map(doc => doc.data());
+    //   console.log(cityList);
+    // }
+    //
+    // function writeUserData(userId, name, email, imageUrl) {
+    //   const db = getDatabase();
+    //   set(ref(db, 'users/' + userId), {
+    //     username: name,
+    //     email: email,
+    //     profile_picture : imageUrl
+    //   });
+    //   console.log('hi')
+    // }
 
-  async function getCities(db) {
-    const citiesCol = collection(db, 'cities');
-    const citySnapshot = await getDocs(citiesCol);
-    const cityList = citySnapshot.docs.map(doc => doc.data());
-    console.log(cityList);
-  }
-
-  function writeUserData(userId, name, email, imageUrl) {
-    const db = getDatabase();
-    set(ref(db, 'users/' + userId), {
-      username: name,
-      email: email,
-      profile_picture : imageUrl
-    });
-    console.log('hi')
-  }
-
-  const handleClick = () => {
-    console.log(value)
-    // let messageRef = fire.database.ref('messages').orderByKey().limitToLast
-    // fire.database.ref('messages').push(value)
-
-
-    // Get a list of cities from your database
-    // const database = getDatabase();
-    // console.log(database)
-    // getCities(db)
-
-    writeUserData(2, 'Alina', 'kham@mail.ru', 'http')
+    // const handleClick = () => {
+    //   console.log(value)
+    //   // let messageRef = fire.database.ref('messages').orderByKey().limitToLast
+    //   // fire.database.ref('messages').push(value)
+    //
+    //
+    //   // Get a list of cities from your database
+    //   // const database = getDatabase();
+    //   // console.log(database)
+    //   // getCities(db)
+    //
+    //   writeUserData(2, 'Alina', 'kham@mail.ru', 'http')
+    // }
   }
 
   return (
     <React.Fragment>
       <Navbar />
-      <div>
-        <input type="text" value={value} onChange={handleChange}/>
-        <button onClick={handleClick} >Send</button>
-      </div>
+      {/*HOSTING*/}
+      {/*<div>*/}
+      {/*  <input type="text" value={value} onChange={handleChange}/>*/}
+      {/*  <button onClick={handleClick} >Send</button>*/}
+      {/*</div>*/}
       <AppStyle>
         <Routes>
           {/*<Route path='/' element={<App />} />*/}

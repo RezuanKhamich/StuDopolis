@@ -2,8 +2,8 @@
     "update": "25.07.2021",
     "sectionName": "ООП: Классы, ссылочные значения",
     
-    "pageCount": 6,
-    "pageType": ["", "T", "П", "", "T", "П"],
+    "pageCount": 5,
+    "pageType": ["", "T", "П", "", "T"],
     "pageFlow": {
         "page1": [
             {

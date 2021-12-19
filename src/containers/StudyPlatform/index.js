@@ -134,7 +134,6 @@ const StudyPlatform = () => {
   }, [])
 
 
-
   const pageBtnHandler = (pageId) => {
     setCurrentPageId(pageId)
   }
@@ -172,9 +171,9 @@ const StudyPlatform = () => {
 
   return(
       <>
-        <Layout>
-          <Quiz/>
-        </Layout>
+        {/*<Layout>*/}
+        {/*  <Quiz/>*/}
+        {/*</Layout>*/}
         <SectionsWrapper>
           <SectionTitle>Программирование на С#</SectionTitle>
           <Devider />

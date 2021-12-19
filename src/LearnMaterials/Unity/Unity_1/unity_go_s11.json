@@ -2,8 +2,8 @@
     "update": "25.07.2021",
     "sectionName": "Заключение",
     
-    "pageCount": 8,
-    "pageType": ["", "T", "П", "", "T", "П", "", "T", "T"],
+    "pageCount": 5,
+    "pageType": ["", "T", "П", "", "T"],
 
     "pageFlow": {
         "page1": [
