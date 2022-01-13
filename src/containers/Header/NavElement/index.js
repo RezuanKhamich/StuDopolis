@@ -33,7 +33,7 @@ const ListText = styled('p')`
 `
 
 const NavElement = ({
-  titleName, titleImg, titleMsg, isLogo
+  titleName, titleImg, titleMsg, isLogo,
 }) => {
   return(
     <ListElem>

@@ -18,6 +18,7 @@ import Unity10 from "../../LearnMaterials/Unity/Unity_1/unity_go_s10.json"
 import Unity11 from "../../LearnMaterials/Unity/Unity_1/unity_go_s11.json"
 import Quiz from "../Quiz";
 import Layout from "../../hoc/Layout";
+import MainPageTitle from "../../components/MainPageTitle";
 
 const SectionsWrapper = styled('div')`
   background: ${mainColor};
@@ -58,12 +59,6 @@ const SectionButton = styled('button')`
 `
 const ContentWrapper = styled('div')`
   padding-right: 320px;
-`
-const ContentMainTitle = styled('h1')`
-  text-align: center;
-  margin-bottom: 30px;
-  margin-top: 30px;
-  font-size: 32px;
 `
 const PageButtonContainer = styled('div')`
   display: flex;
@@ -191,7 +186,7 @@ const StudyPlatform = () => {
           }
         </SectionsWrapper>
         <ContentWrapper>
-          <ContentMainTitle>{sectionJsonData.sectionName}</ContentMainTitle>
+          <MainPageTitle>{sectionJsonData.sectionName}</MainPageTitle>
           <PageButtonContainer>
             {
 

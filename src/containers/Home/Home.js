@@ -1,31 +1,19 @@
-import React from "react";
-import styles from './Home.css'
-import {Button} from "@mui/material";
+import React, {useState} from "react";
 
-import homeImg from './Home_MainImg.png'
+import SignUp from "../SignUp/SignUp";
+import SignIn from "../SignIn/SignIn";
 
 const Home = () => {
+  const [createAccount, setCreateAccount] = useState(false)
 
+  const handleClick = () => {
+    setCreateAccount(!createAccount);
+  }
   return(
     <>
-      <section className={styles.asd}>
-        <div>
-          <h1>StuDopolis</h1>
-          <h3>Изучай мир, играя</h3>
-          <p>Выбери свое направление</p>
-          <div>
-            <Button variant="outlined">JavaScript</Button>
-            <Button variant="outlined">C#</Button>
-            <Button variant="outlined">GameDev</Button>
-            <Button variant="outlined">Unity</Button>
-            <Button variant="outlined">React JS</Button>
-          </div>
-          <Button variant="contained">Начать</Button>
-        </div>
-        <div>
-          <img src={homeImg} alt="" style={{width: 450, height: 450}} />
-        </div>
-      </section>
+      {
+        createAccount ? <SignUp handleClick={handleClick}></SignUp> : <SignIn handleClick={handleClick}></SignIn>
+      }
     </>
   )
 }

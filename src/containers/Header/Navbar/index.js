@@ -5,16 +5,16 @@ import NavElement from "../NavElement";
 import {Link} from "react-router-dom";
 
 import logo from './media/logo.png'
-import homeImg from './media/home_new.png'
 import learn_newImg from './media/learn_new.png'
 import freelanceImg from './media/freelance_new.png'
 import ratingImg from './media/rating_new.png'
 import companyImg from './media/company_new.png'
+import admin from './media/admin_logo_important.png'
 import newsImg from './media/news_new.png'
 import messageImg from './media/message_new.png'
 import helpImg from './media/help_new.png'
 import exitImg from './media/exit_new.png'
-
+import homeImg from './media/home_new.png'
 
 const NavContainer = styled('nav')`
   background: ${mainColor};
@@ -31,16 +31,17 @@ const ListWrapper = styled('ul')`
 `
 const titlesObj = [
   {img: logo, msg: false, logo: true, link: 'home'},
-  {name: 'Кабинет', img: homeImg, msg: false, link: 'profile'},
-  {name: 'Обучение', img: learn_newImg, msg: true, link: 'learn'},
+  {name: 'Обучение', img: learn_newImg, msg: true, link: 'courses'},
   {name: 'Фриланс', img: freelanceImg, msg: false, link: 'freelance'},
   {name: 'Рейтинг', img: ratingImg, msg: false, link: 'rating'},
   {name: 'Модель', img: ratingImg, msg: false, link: 'model'},
-  /*{name: 'Карьера', img: companyImg, msg: false},
-  {name: 'Новости', img: newsImg, msg: false},
-  {name: 'Почта', img: messageImg, msg: false},
-  {name: 'Помощь', img: helpImg, msg: false},
-  {name: 'Выйти', img: exitImg, msg: false},*/
+  {name: 'Карьера', img: companyImg, msg: false, link: 'career'},
+  {name: 'Учитель', img: admin, msg: false, link: 'administration'},
+  // {name: 'Кабинет', img: homeImg, msg: false, link: 'profile'},
+  // {name: 'Новости', img: newsImg, msg: false},
+  // {name: 'Почта', img: messageImg, msg: false},
+  // {name: 'Помощь', img: helpImg, msg: false},
+  // {name: 'Выйти', img: exitImg, msg: false},
 ]
 
 const Navbar = () => {
