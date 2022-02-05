@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import classes from './style.module.css';
-import MenuToogle from "../../components/QuizComponents/Navigation/MenuToogle";
+import MenuToogle from "../../containers/QuizComponents/Navigation/MenuToogle";
 import {Drawer} from "@mui/material";
 
 class Layout extends Component {

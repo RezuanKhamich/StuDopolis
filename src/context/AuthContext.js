@@ -1,11 +1,14 @@
 import React, {useContext, useEffect, useState} from "react";
-import { auth } from '../firebase'
+import { auth, db } from '../firebase'
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { collection, addDoc, setDoc, doc } from "firebase/firestore";
 import {useNavigate} from "react-router-dom";
 
 const AuthContext = React.createContext()
 
 export const useAuth = () => useContext(AuthContext)
+
+let user = '';
 
 export const AuthProvider = ({children}) => {
   const [currentUser, setCurrentUser] = useState()
@@ -13,10 +16,17 @@ export const AuthProvider = ({children}) => {
   const navigate = useNavigate();
 
 
-  const signup = (email, password, setError, handleClick) => (
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
+  const signup = (userData, setError, handleClick) => (
+    createUserWithEmailAndPassword(auth, userData.emailRef.current.value, userData.passwordRef.current.value)
+      .then(async (userCredential) => {
+        user = userCredential.user;
+        await setDoc(doc(db, "users", user.uid), {
+          firstName: userData.firstNameRef.current.value,
+          lastName: userData.lastNameRef.current.value,
+          email: user.email,
+          createdAt: user.metadata.createdAt,
+          lastLoginAt: user.metadata.lastLoginAt,
+        })
         handleClick()
       })
       .catch((error) => {
@@ -26,18 +36,21 @@ export const AuthProvider = ({children}) => {
       })
   )
 
-  const signin = (email, password, setError, setLoading) => {
-    signInWithEmailAndPassword(auth, email, password)
+  const signin = (userData, setError, setLoading) => {
+    // console.log(userData);
+    signInWithEmailAndPassword(auth, userData.emailRef.current.value, userData.passwordRef.current.value)
       .then((userCredential) => {
-        // Signed in
-        const user = userCredential.user;
-        navigate("/learn");
+        user = userCredential.user;
+        localStorage.setItem('st_user_authorized', 'true');
+        navigate("/courses");
       })
       .catch((error) => {
+        console.log(error)
+
         const errorCode = error.code;
         const errorMessage = error.message;
         setLoading(false)
-        setError(`Ошибка: введены неверные данные`)
+        setError(`Ошибка: проверьте правильность введенных данных`)
       });
   }
 
