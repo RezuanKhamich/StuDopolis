@@ -1,8 +1,8 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import styled from "styled-components";
 import {Alert, Button, FormControl, InputLabel, MenuItem, Select, TextField} from "@mui/material";
 import {useAuth} from "../../context/AuthContext";
-import { collection, getDocs } from "firebase/firestore";
+import {collection, doc, getDoc} from "firebase/firestore";
 import {db} from '../../firebase'
 
 const PageTitle = styled('h1')`
@@ -28,7 +28,7 @@ const Form = styled('form')`
     margin: auto;
   `;
 
-const SignIn = ({handleClick}) => {
+const SignIn = ({handleClick, setUserData, setCourseData}) => {
   const emailRef = useRef();
   const passwordRef = useRef();
   const [error, setError] = useState('');
@@ -47,7 +47,7 @@ const SignIn = ({handleClick}) => {
     try {
       setError('')
       setLoading(true)
-      await signin(userData, setError, setLoading)
+      await signin(userData, setError, setLoading, setUserData, setCourseData)
     } catch {
       setError('Ошибка: проверьте правильность введенных данных')
     }

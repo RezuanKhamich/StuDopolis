@@ -18,6 +18,7 @@ import Button from "@mui/material/Button";
 import {Link} from "react-router-dom";
 import PageWrapper from "../../containers/PageWrapper/PageWrapper";
 import {modulesData} from "../../externalData";
+import {useAllCoursesProgress, useModulesProgress} from "../../utils/services/сalculationService/courseProgress";
 
 const InteractiveCard = styled(Card)`
   display: flex;
@@ -45,13 +46,16 @@ function LinearProgressWithLabel(props) {
 }
 
 
-const Modules = () => {
+const Modules = ({courseData}) => {
   const theme = useTheme();
   const [progress, setProgress] = useState(100);
+  const [completedLessons, totalCountLessons] = useModulesProgress(courseData, 0)
+  console.log(completedLessons)
+  console.log(totalCountLessons)
 
-  const CardWrapper = ({ module, index }) => (
+  const CardWrapper = ({ module, index, disabled }) => (
     <InteractiveCard
-      disabled={module.disabled}
+      disabled={disabled}
     >
       <CardMedia
         component="img"
@@ -65,23 +69,24 @@ const Modules = () => {
             {index+1}. {module.name}
           </Typography>
           <Typography variant="subtitle1" color="text.secondary" component="div">
-            Описание
+            Прогресс {completedLessons[index]}/{totalCountLessons[index]}
           </Typography>
         </CardContent>
       </Box>
     </InteractiveCard>
   )
-
+  {console.log()}
   return(
     <>
       <MainPageTitle>Модули</MainPageTitle>
 
       <PageWrapper>
         {
+          courseData ?
           modulesData.map((module, index) => (
-            module.disabled ?
+            !courseData[`course_0`][`module_${index}`]?.moduleAvailable ?
               <>
-                <CardWrapper module={module} index={index} /> <br/>
+                <CardWrapper module={module} disabled={!courseData[`course_0`][`module_${index}`].moduleAvailable} index={index} /> <br/>
               </>
               :
               <>
@@ -91,6 +96,7 @@ const Modules = () => {
                 <br/>
               </>
           ))
+            : null
         }
 
         {

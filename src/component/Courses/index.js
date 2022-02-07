@@ -1,10 +1,15 @@
-import React from "react";
+import React, {useEffect} from "react";
 import {Link} from "react-router-dom";
 import MainPageTitle from "../../containers/MainPageTitle";
 import {Card, CardActions, CardContent, CardMedia, Grid, Typography} from "@mui/material";
 import Button from '@mui/material/Button';
 import styled from "styled-components";
 import {coursesData} from "../../externalData";
+import {
+  getCourseProgress, useAllCoursesProgress,
+  useCourseProgress,
+  useModuleProgress
+} from "../../utils/services/сalculationService/courseProgress";
 
 const InteractiveCard = styled(Card)`
   opacity: ${props => props.disabled ? '0.5' : '1'};
@@ -15,7 +20,12 @@ const InteractiveCard = styled(Card)`
   }
 `;
 
-const Courses = () => {
+const Courses = ({courseData}) => {
+
+  const [completedLessons, totalCountLessons] = useAllCoursesProgress(courseData)
+  // console.log(completedLessons)
+  // console.log(totalCountLessons)
+
   return (
     <>
       <MainPageTitle>Выбери направление и стань профи</MainPageTitle>
@@ -38,7 +48,8 @@ const Courses = () => {
                     {elem.name}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    {elem.description}
+                    {/*{elem.description}*/}
+                    Прогресс {completedLessons[index]}/{totalCountLessons[index]}
                   </Typography>
                 </CardContent>
                 <CardActions style={{textAlign: 'center', position: 'absolute', bottom: 0, right: 0}}>

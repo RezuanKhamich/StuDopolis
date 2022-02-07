@@ -1,8 +1,9 @@
 import React, {useContext, useEffect, useState} from "react";
 import { auth, db } from '../firebase'
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
-import { collection, addDoc, setDoc, doc } from "firebase/firestore";
+import {collection, addDoc, setDoc, doc, getDoc} from "firebase/firestore";
 import {useNavigate} from "react-router-dom";
+import moment from "moment";
 
 const AuthContext = React.createContext()
 
@@ -26,7 +27,32 @@ export const AuthProvider = ({children}) => {
           email: user.email,
           createdAt: user.metadata.createdAt,
           lastLoginAt: user.metadata.lastLoginAt,
+          experienceAmount: 0,
+          goldCoinAmount: 10,
+          greenCoinAmount: 2000,
+          careerPosition: 0,
+          careerAwardDate: 0,
+          careerAccumulatedAmount: 0,
         })
+
+        let courses = {}
+        for(let i = 0; i < 1; i++) {
+          courses[`course_${i}`] = {}
+          for(let j = 0; j < 5; j++){
+            courses[`course_${i}`][`module_${j}`] = {
+              moduleAvailable: j === 0,
+            }
+            for(let k = 0; k < 2; k++) {
+              courses[`course_${i}`][`module_${j}`][`lecture_${k}`] = {
+                pageAmount: 2,
+                pageProgress: '00',
+                isAwardReceived: true,
+              }
+            }
+          }
+        }
+
+        await setDoc(doc(db, "courses", user.uid), courses)
         handleClick()
       })
       .catch((error) => {
@@ -36,12 +62,28 @@ export const AuthProvider = ({children}) => {
       })
   )
 
-  const signin = (userData, setError, setLoading) => {
+   const signin =  (userData, setError, setLoading, setUserData, setCourseData) => {
     // console.log(userData);
     signInWithEmailAndPassword(auth, userData.emailRef.current.value, userData.passwordRef.current.value)
-      .then((userCredential) => {
+      .then(async (userCredential) => {
         user = userCredential.user;
-        localStorage.setItem('st_user_authorized', 'true');
+        localStorage.setItem('st_user_authorized', JSON.stringify(user));
+
+        const userDataSnap = await getDoc(doc(db, "users", user.uid));
+        const courseSnap = await getDoc(doc(db, "courses", user.uid));
+        console.log('authorized')
+
+        if (userDataSnap.exists()) {
+          setUserData(userDataSnap.data());
+        } else {
+          console.log("No such userDataSnap!");
+        }
+
+        if (courseSnap.exists()) {
+          setCourseData(courseSnap.data());
+        } else {
+          console.log("No such courseSnap!");
+        }
         navigate("/courses");
       })
       .catch((error) => {
@@ -51,7 +93,7 @@ export const AuthProvider = ({children}) => {
         const errorMessage = error.message;
         setLoading(false)
         setError(`Ошибка: проверьте правильность введенных данных`)
-      });
+      })
   }
 
   useEffect(() => {

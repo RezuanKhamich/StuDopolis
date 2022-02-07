@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import styled from "styled-components";
 import Button from "@mui/material/Button";
 import MainPageTitle from "../../../containers/MainPageTitle";
@@ -6,7 +6,9 @@ import PageWrapper from "../../../containers/PageWrapper/PageWrapper";
 import {Box, Card, CardContent, CardMedia, Chip, Grid, LinearProgress, Typography} from "@mui/material";
 import playerHead from "../../../media/player-head.png";
 import GameIcon from "../../../containers/GameIcon/GameIcon";
-import {coursesData} from "../../../externalData";
+import {careersRang, coursesData} from "../../../externalData";
+import {Link} from "react-router-dom";
+import {useAllCoursesProgress} from "../../../utils/services/сalculationService/courseProgress";
 
 const InteractiveCard = styled(Card)`
   opacity: ${props => props.disabled ? '0.5' : '1'};
@@ -17,9 +19,10 @@ const InteractiveCard = styled(Card)`
   }
 `;
 
-const Profile = () => {
+const Profile = ({userData, setIsUserAuthorized, courseData}) => {
 
-  const [progress, setProgress] = useState(100);
+  const [completedLessons, totalCountLessons] = useAllCoursesProgress(courseData);
+  const [progress, setProgress] = useState(10);
 
   function LinearProgressWithLabel(props) {
     return (
@@ -28,25 +31,53 @@ const Profile = () => {
           <LinearProgress color="secondary" variant="determinate" {...props} />
         </Box>
         <Box sx={{ minWidth: 35 }}>
-          <Typography variant="body2" color="text.secondary">{`${Math.round(
-            props.value,
-          )}/100`}</Typography>
+          <Typography variant="body2" color="text.secondary">
+            {`${props.completedLessons[props.index]}/${props.totalCountLessons[props.index]}`}
+          </Typography>
         </Box>
       </Box>
     );
   }
+  const exitProfileHandler = () => {
+    localStorage.removeItem('st_user_authorized');
+    setIsUserAuthorized(localStorage.getItem('st_user_authorized'))
+  }
 
+  const interactiveCard = (el, index) =>
+    <InteractiveCard disabled={el.disabled}>
+      <CardContent sx={{width: '100%'}}>
+        <Typography sx={{display: 'flex'}} variant="subtitle1" color="text.secondary" component="div">
+          <CardMedia
+            component="img"
+            sx={{width: 50, marginRight: 1}}
+            image={el.iconURL}
+            alt="Live from space album cover"
+          />{el.name}
+        </Typography>
+        <Box sx={{width: '100%'}}>
+          <LinearProgressWithLabel
+            value={Math.round(completedLessons[index]/totalCountLessons[index]*100)}
+            totalCountLessons={totalCountLessons}
+            completedLessons={completedLessons}
+            index={index}
+          />
+        </Box>
+      </CardContent>
+    </InteractiveCard>
 
   return(
     <>
       <PageWrapper>
         <div style={{display: 'flex', alignItems: 'center', marginBottom: 20 }}>
           <img style={{width: 200, border: '1px solid transparent', borderRadius: '50%', marginRight: 20}} src={playerHead} alt=""/>
-          <Box>
-            <Typography variant="h3">Резуан Хамуков</Typography>
-            <Typography sx={{display: 'flex', marginBottom: 3}} color="text.secondary" variant="h5">
-              Должность: <Typography sx={{marginLeft: 1}} color="black" variant="h5">Стажер</Typography>
-            </Typography>
+          <Box style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', width: '100%'}}>
+            <Box>
+              <Typography variant="h3">{userData?.firstName} {userData?.lastName}</Typography>
+              <Typography sx={{display: 'flex', marginBottom: 3}} color="text.secondary" variant="h5">
+                Должность: <Typography sx={{marginLeft: 1}} color="black" variant="h5">{careersRang[userData?.careerPosition]?.vacancy}</Typography>
+              </Typography>
+            </Box>
+            <Button variant="outlined" onClick={exitProfileHandler}>Выйти</Button>
           </Box>
         </div>
         <Card sx={{marginBottom: 5}}>
@@ -55,19 +86,19 @@ const Profile = () => {
               <Box>
                 <Typography variant="p" color="text.secondary">Опыт:</Typography>
                 <Typography variant="h5">
-                  <GameIcon width={80} icon="0" /> 1234
+                  <GameIcon width={80} icon="0" /> {userData?.experienceAmount}
                 </Typography>
               </Box>
               <Box>
                 <Typography variant="p" color="text.secondary">GoldCoin:</Typography>
                 <Typography variant="h5">
-                  <GameIcon width={80} icon="1" /> 1234
+                  <GameIcon width={80} icon="1" /> {userData?.goldCoinAmount}
                 </Typography>
               </Box>
               <Box>
                 <Typography variant="p" color="text.secondary">GreenCoin:</Typography>
                 <Typography variant="h5">
-                  <GameIcon width={80} icon="2" /> 1234
+                  <GameIcon width={80} icon="2" /> {userData?.greenCoinAmount}
                 </Typography>
               </Box>
             </Box>
@@ -78,21 +109,9 @@ const Profile = () => {
           {
             coursesData.map((el, index) => (
               <Grid item md={6} sx={{width: '100%'}} key={index}>
-                <InteractiveCard disabled={el.disabled}>
-                  <CardContent sx={{ width: '100%' }}>
-                    <Typography sx={{display: 'flex'}} variant="subtitle1" color="text.secondary" component="div">
-                      <CardMedia
-                        component="img"
-                        sx={{ width: 50, marginRight: 1 }}
-                        image={el.iconURL}
-                        alt="Live from space album cover"
-                      />{el.name}
-                    </Typography>
-                    <Box sx={{ width: '100%' }}>
-                      <LinearProgressWithLabel value={progress} />
-                    </Box>
-                  </CardContent>
-                </InteractiveCard>
+                <Link to={!el.disabled ? "courses/modules" : "" }>
+                  {interactiveCard(el, index)}
+                </Link>
               </Grid>
             ))
           }
