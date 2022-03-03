@@ -20,6 +20,7 @@ import Courses from "./component/Courses";
 import Modules from "./component/Modules";
 import Freelance from "./component/Freelance";
 import {doc, getDoc} from "firebase/firestore";
+import {useCourseData, useUserData} from "./hooks";
 
 const AppStyle = styled('div')`
   padding-left: 100px;
@@ -30,28 +31,10 @@ const AppStyle = styled('div')`
 `
 
 const App = () => {
-  const [userData, setUserData] = useState();
-  const [courseData, setCourseData] = useState();
+  const userAuthData = JSON.parse(localStorage.getItem('st_user_authorized'))
 
-  useEffect(async () => {
-    const userAuthData = JSON.parse(localStorage.getItem('st_user_authorized'))
-
-    if(userAuthData){
-      const userDataSnap = await getDoc(doc(db, "users", userAuthData.uid))
-        if (userDataSnap.exists()) {
-          setUserData(userDataSnap.data());
-        } else {
-          console.log("Не найдено userDataSnap!");
-        }
-
-      const courseSnap = await getDoc(doc(db, "courses", userAuthData.uid))
-        if (courseSnap.exists()) {
-          setCourseData(courseSnap.data());
-        } else {
-          console.log("Не найдено courseSnap!");
-        }
-    }
-  }, [])
+  const [userData, setUserData] = useUserData(userAuthData);
+  const [courseData, setCourseData] = useCourseData(userAuthData);
 
   return (
     <AuthProvider>
@@ -68,7 +51,7 @@ const App = () => {
           <Route path='administration' element={<Admin />}/>
 
           <Route path='courses/modules' element={<Modules courseData={courseData} />} />
-          <Route path='courses/modules/learn' element={<StudyPlatform courseData={courseData} />} />
+          <Route path='courses/modules/learn' element={<StudyPlatform courseData={courseData} setCourseData={setCourseData} userData={userData} />} />
 
           {/*{*/}
           {/*  onAuthStateChanged(auth, (user) => {*/}

@@ -25,6 +25,9 @@ const Profile = ({userData, setIsUserAuthorized, courseData}) => {
   const [progress, setProgress] = useState(10);
 
   function LinearProgressWithLabel(props) {
+    const completedLessons = props.completedLessons[props.index];
+    const totalCountLessons = props.totalCountLessons[props.index];
+
     return (
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
         <Box sx={{ width: '100%', mr: 1 }}>
@@ -32,7 +35,7 @@ const Profile = ({userData, setIsUserAuthorized, courseData}) => {
         </Box>
         <Box sx={{ minWidth: 35 }}>
           <Typography variant="body2" color="text.secondary">
-            {`${props.completedLessons[props.index]}/${props.totalCountLessons[props.index]}`}
+            {`${completedLessons || '0'}/${totalCountLessons || '0'}`}
           </Typography>
         </Box>
       </Box>

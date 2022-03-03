@@ -1,9 +1,11 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import styled from "styled-components";
 import PageContent from "../../containers/PageContent";
 import {backColor, hoverColor, mainColor, textColor2} from "../../constants/colors";
 import {secondColor} from "../../constants/colors";
-import {Button} from "@mui/material";
+import {Button, CircularProgress} from "@mui/material";
+import {doc, getDoc, updateDoc} from "firebase/firestore";
+import { db } from '../../firebase'
 
 import courseInfo from "../../externalData/FrontEnd/courseInfo.json"
 import FrontEnd1 from "../../externalData/FrontEnd/FrontEnd_1/FrontEnd_s1.json"
@@ -14,6 +16,14 @@ import FrontEnd5 from "../../externalData/FrontEnd/FrontEnd_1/FrontEnd_s5.json"
 import Quiz from "../Quiz";
 import Layout from "../../hoc/Layout";
 import MainPageTitle from "../../containers/MainPageTitle";
+import {
+  setDoneSectionCells,
+  setEmptyPageCells,
+  updateLectureProgress,
+} from "../../utils/services/learnPageService";
+import Loader from "../Loader";
+import {createDBArchitecture} from "../../utils/services/ createCourseDBArchitecture";
+import {useLecturesProgress} from "../../utils/services/сalculationService/courseProgress";
 
 const SectionsWrapper = styled('div')`
   background: ${mainColor};
@@ -47,10 +57,12 @@ const SectionButton = styled('button')`
   font-size: 16px;
   border-bottom: 1px solid ${props => props.sectionDone || textColor2()};
   padding-top: 10px;
+  opacity: ${props => props.disabled ? 0.3 : 1};
   &:hover{
     cursor: pointer;
     background-color: ${hoverColor()};
   }
+}
 `
 const ContentWrapper = styled('div')`
   padding-right: 320px;
@@ -84,45 +96,26 @@ const PageButton = styled('button')`
     color: white;
   }
 `
-const setEmptyPageCells = (data) => {
-  let resultPageArray = [];
-  for(let section in data){
-    resultPageArray[section] = []
-    for(let page = 0; page < data[section].pageCount; page++){
-      resultPageArray[section][page] = ''
-    }
-  }
-  return resultPageArray
-}
 
-const setEmptySectionCells = (data) => {
-  let resultSectionArray = []
-  for(let i = 0; i < data.length; i++){
-    resultSectionArray[i] = 0
-  }
-  return resultSectionArray
-}
-
-const StudyPlatform = () => {
+const StudyPlatform = ({courseData, setCourseData}) => {
   const data = [
     FrontEnd1, FrontEnd2, FrontEnd3, FrontEnd4, FrontEnd5,
   ]
+  const lessonData = useLecturesProgress(courseData, 0, 0)
+  const [isUserAuthorized, setIsUserAuthorized] = useState(JSON.parse(localStorage.getItem('st_user_authorized')))
   const [currentSectionId, setCurrentSectionId] = useState(0)
   const [currentPageId, setCurrentPageId] = useState(0)
   const [donePage, setDonePage] = useState(setEmptyPageCells(data))
-  const [doneSections, setDoneSections] = useState(setEmptySectionCells(data))
+  console.log(currentSectionId)
+  console.log()
+  const isDisabledEndButton = useMemo(() => lessonData.length && Number(lessonData[currentSectionId][currentPageId]), [currentPageId, currentSectionId, lessonData])
+  const doneSections = useMemo(() => setDoneSectionCells(lessonData), [lessonData])
 
   const sectionJsonData = data[currentSectionId];
   const pageData = data[currentSectionId].pageFlow;
   const sectionsTitle = data.map((el)=>{
     return el.sectionName
   })
-
-  useEffect(()=>{
-    let donePageTemp = donePage.slice()
-    setDonePage(donePageTemp)
-  }, [])
-
 
   const pageBtnHandler = (pageId) => {
     setCurrentPageId(pageId)
@@ -133,37 +126,38 @@ const StudyPlatform = () => {
     setCurrentPageId(0)
   }
 
-  const setDoneCurrentPage = () => {
+  const completedPageHandler = async () => {
     let newDonePage = donePage.slice();
     newDonePage[currentSectionId][currentPageId] = 1;
     setDonePage(newDonePage)
-    setDoneSection(currentSectionId, donePage)
+
     if(currentPageId !== (data[currentSectionId].pageCount-1)){
-      setCurrentPageId(prevState => ++prevState)
+      setCurrentPageId(prevState => lessonData.length-1 !== prevState ? ++prevState : prevState)
     }else{
-      setCurrentSectionId(prevState => ++prevState)
-      setCurrentPageId(0)
+      if(courseData[`course_${0}`][`modules`][`module_${0}`][`lectures`][`lecture_${currentPageId + 1}`].lectureAvailable){
+        setCurrentSectionId(prevState => lessonData.length-1 !== prevState ? ++prevState : prevState)
+        setCurrentPageId(0)
+      }
     }
 
+    await updateLectureProgress(isUserAuthorized, 0, 0, currentSectionId, currentPageId, courseData, setCourseData)
   }
 
-  const setDoneSection = (index, donePage) => {
-      console.log(donePage[currentSectionId].reduce((sum, el) => sum + el))
-      let sumOfDonePages = donePage[currentSectionId].reduce((sum, el) => sum + el)
-
-      if(sumOfDonePages == donePage[currentSectionId].length - 1) {
-        let temp = doneSections.slice()
-        console.log(temp)
-        temp[index] = 1
-        setDoneSections(temp)
-      }
+  const setCompletedStateForPageButton = (index) => {
+    let state = 'null'
+    if(lessonData[currentSectionId][index] === '1'){
+      state = 'done'
+    }
+    return state
   }
+
+  useEffect(() => {
+    console.log(courseData)
+  },[courseData])
+
 
   return(
       <>
-        {/*<Layout>*/}
-        {/*  <Quiz/>*/}
-        {/*</Layout>*/}
         <SectionsWrapper>
           <SectionTitle>{courseInfo.courseName}</SectionTitle>
           <Devider />
@@ -174,6 +168,7 @@ const StudyPlatform = () => {
                 sectionDone={doneSections[index] ? secondColor() : null}
                 active={index === currentSectionId ? hoverColor() : null}
                 onClick={changeCurrentSection.bind(this, index)}
+                disabled={courseData ? !courseData[`course_${0}`][`modules`][`module_${0}`][`lectures`][`lecture_${index}`].lectureAvailable : true}
               >
                 {index + 1}. {secTitle}
               </SectionButton>
@@ -181,30 +176,42 @@ const StudyPlatform = () => {
           }
         </SectionsWrapper>
         <ContentWrapper>
-          <MainPageTitle>{sectionJsonData.sectionName}</MainPageTitle>
-          <PageButtonContainer>
-            {
-
-              sectionJsonData.pageType.map((btnType, index) => {
-                return <PageButton
-                  className={donePage[currentSectionId][index] === 1 ? "done" : "null"}
-                  key={index}
-                  onClick={pageBtnHandler.bind(this, index)}
-                >
-                  {btnType}
-                </PageButton>
-              })
-            }
-          </PageButtonContainer>
-          <Devider />
-          <ContentTextWrapper>
-            <PageContent pageData={pageData} currentPageId={currentPageId} currentSectionId={currentSectionId} />
-          </ContentTextWrapper>
-          <ButtonWrapper>
-            <Button variant="contained" color='warning' onClick={setDoneCurrentPage}>Понятно</Button>
-          </ButtonWrapper>
+          {
+            lessonData.length ?
+              <>
+                <MainPageTitle>{sectionJsonData.sectionName}</MainPageTitle>
+                <PageButtonContainer>
+                  {
+                    sectionJsonData.pageType.map((btnType, index) => {
+                      return <PageButton
+                        className={setCompletedStateForPageButton(index)}
+                        key={index}
+                        onClick={pageBtnHandler.bind(this, index)}
+                      >
+                        {btnType}
+                      </PageButton>
+                    })
+                  }
+                </PageButtonContainer>
+                <Devider />
+                <ContentTextWrapper>
+                  <PageContent pageData={pageData} currentPageId={currentPageId} currentSectionId={currentSectionId} />
+                </ContentTextWrapper>
+                <ButtonWrapper>
+                  <Button
+                    variant="contained"
+                    color='success'
+                    disabled={isDisabledEndButton}
+                    onClick={completedPageHandler}
+                  >
+                    Завершить
+                  </Button>
+                </ButtonWrapper>
+              </>
+            :
+              <Loader />
+          }
         </ContentWrapper>
-
       </>
   )
 }

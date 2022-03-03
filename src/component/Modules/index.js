@@ -23,12 +23,25 @@ import {useAllCoursesProgress, useModulesProgress} from "../../utils/services/с
 const InteractiveCard = styled(Card)`
   display: flex;
   opacity: ${props => props.disabled ? '0.5' : '1'};
+  position: relative;
   &:hover{
     transition: 0.5s;
     box-shadow: 0px 5px 5px -3px rgb(0 0 0 / 20%), 0px 8px 10px 1px rgb(0 0 0 / 14%), 0px 3px 14px 2px rgb(0 0 0 / 12%);
     cursor: pointer;
   }
+  &.completed{
+    &:after{
+      position: absolute;
+      content: '';
+      display: inline-block;
+      width: 100%;
+      height: 151px;
+      background: rgba(255, 215, 0, 0.7)
+    }
+  }
 `;
+
+
 
 function LinearProgressWithLabel(props) {
   return (
@@ -50,12 +63,11 @@ const Modules = ({courseData}) => {
   const theme = useTheme();
   const [progress, setProgress] = useState(100);
   const [completedLessons, totalCountLessons] = useModulesProgress(courseData, 0)
-  console.log(completedLessons)
-  console.log(totalCountLessons)
 
   const CardWrapper = ({ module, index, disabled }) => (
     <InteractiveCard
       disabled={disabled}
+      className={completedLessons[index] === totalCountLessons[index] ? 'completed': null}
     >
       <CardMedia
         component="img"
@@ -84,9 +96,13 @@ const Modules = ({courseData}) => {
         {
           courseData ?
           modulesData.map((module, index) => (
-            !courseData[`course_0`][`module_${index}`]?.moduleAvailable ?
+            !courseData[`course_0`][`modules`][`module_${index}`][`info`]?.moduleAvailable ?
               <>
-                <CardWrapper module={module} disabled={!courseData[`course_0`][`module_${index}`].moduleAvailable} index={index} /> <br/>
+                <CardWrapper
+                  module={module}
+                  // disabled={!courseData[`course_0`][`modules`][`module_${index}`][`info`].moduleAvailable}
+                  index={index}
+                /> <br/>
               </>
               :
               <>
@@ -97,52 +113,6 @@ const Modules = ({courseData}) => {
               </>
           ))
             : null
-        }
-
-        {
-          // modulesData.map((elem, index) => (
-          //   <Accordion>
-          //     <AccordionSummary
-          //       expandIcon={<ExpandMoreIcon />}
-          //       aria-controls="panel1a-content"
-          //       id="panel1a-header"
-          //       disabled={elem.disabled}
-          //     >
-          //       <SchoolIcon color="secondary" style={{marginRight: 20}} />
-          //       <Typography>{index+1}. {elem.name}</Typography>
-          //       <Box sx={{ width: '50%' }} style={{marginLeft: 'auto', marginRight: 20}}>
-          //         <LinearProgressWithLabel value={progress} />
-          //       </Box>
-          //     </AccordionSummary>
-          //     <AccordionDetails style={{position: 'relative'}}>
-          //
-          //       <Typography>
-          //         Описание
-          //       </Typography>
-          //       <br/>
-          //       <Link to="learn" style={{position: 'absolute', right: 10}}>
-          //         <Button size="small" variant="contained" style={{width: 220}}>Изучать модуль</Button>
-          //       </Link>
-          //       <br/>
-          //       <h3>Выполнено: домашних заданий</h3>
-          //       <Box sx={{ width: '100%' }}>
-          //         <LinearProgressWithLabel value={progress} />
-          //       </Box>
-          //       <h3>Выполнено: тестов</h3>
-          //       <Box sx={{ width: '100%' }}>
-          //         <LinearProgressWithLabel value={progress} />
-          //       </Box>
-          //       <h3>Выполнено: лекций</h3>
-          //       <Box sx={{ width: '100%' }}>
-          //         <LinearProgressWithLabel value={progress} />
-          //       </Box>
-          //       <h3>Выполнено: домашних заданий</h3>
-          //       <Box sx={{ width: '100%' }}>
-          //         <LinearProgressWithLabel value={progress} />
-          //       </Box>
-          //     </AccordionDetails>
-          //   </Accordion>
-          // ))
         }
       </PageWrapper>
     </>

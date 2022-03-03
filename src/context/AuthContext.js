@@ -4,6 +4,7 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "fire
 import {collection, addDoc, setDoc, doc, getDoc} from "firebase/firestore";
 import {useNavigate} from "react-router-dom";
 import moment from "moment";
+import {createDBArchitecture} from "../utils/services/ createCourseDBArchitecture";
 
 const AuthContext = React.createContext()
 
@@ -35,24 +36,7 @@ export const AuthProvider = ({children}) => {
           careerAccumulatedAmount: 0,
         })
 
-        let courses = {}
-        for(let i = 0; i < 1; i++) {
-          courses[`course_${i}`] = {}
-          for(let j = 0; j < 5; j++){
-            courses[`course_${i}`][`module_${j}`] = {
-              moduleAvailable: j === 0,
-            }
-            for(let k = 0; k < 2; k++) {
-              courses[`course_${i}`][`module_${j}`][`lecture_${k}`] = {
-                pageAmount: 2,
-                pageProgress: '00',
-                isAwardReceived: true,
-              }
-            }
-          }
-        }
-
-        await setDoc(doc(db, "courses", user.uid), courses)
+        await setDoc(doc(db, "courses", user.uid), createDBArchitecture())
         handleClick()
       })
       .catch((error) => {
