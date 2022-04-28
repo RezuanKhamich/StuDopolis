@@ -1,19 +1,27 @@
-import React, {useContext} from "react";
-import styled from "styled-components";
-import StudyPlatform from "./containers/StudyPlatform";
-import Navbar from "./containers/Header/Navbar";
-import Model from "./containers/Model";
-import Footer from "./containers/Footer";
-import Rating from "./containers/Rating";
+import React, {useEffect, useState} from "react";
 import { Route, Routes } from "react-router-dom";
-import {mainColor} from "./constants/colors";
-import Home from "./containers/Home/Home";
-import {useState} from "react";
+import styled from "styled-components";
 
-import { initializeApp } from "firebase/app";
-import { getFirestore, collection, getDocs } from 'firebase/firestore/lite';
-import { getAnalytics } from "firebase/analytics";
-import { getDatabase, ref, set } from "firebase/database";
+import Home from "./component/Home/Home";
+import StudyPlatform from "./component/Learning";
+import Navbar from "./component/Header/Navbar";
+import Model from "./component/Model";
+import Career from "./component/Career";
+import Admin from "./component/Admin";
+import Rating from "./component/Rating";
+import Footer from "./component/Footer";
+
+import {AuthProvider} from "./context/AuthContext";
+import {mainColor} from "./constants/colors";
+import {app, db} from './firebase'
+import { auth } from './firebase'
+import { onAuthStateChanged } from "firebase/auth";
+import Courses from "./component/Courses";
+import Modules from "./component/Modules";
+import Freelance from "./component/Freelance";
+import {doc, getDoc} from "firebase/firestore";
+import {useCourseData, useUserData} from "./hooks";
+import Messages from "./component/Messages";
 
 const AppStyle = styled('div')`
   padding-left: 100px;
@@ -21,92 +29,48 @@ const AppStyle = styled('div')`
   position: relative;
   min-height: 100%;
   padding-bottom: 120px;
+
+  @media (max-width: 430px) {
+    padding: 0 10px 80px 10px;
+  }
 `
 
-function App() {
+const App = () => {
+  const userAuthData = JSON.parse(localStorage.getItem('st_user_authorized'))
 
-
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "AIzaSyDOk2r7wsQoBqKxaNYpkU6x0r7uuB9-asg",
-    authDomain: "studopolis-524ce.firebaseapp.com",
-    projectId: "studopolis-524ce",
-    storageBucket: "studopolis-524ce.appspot.com",
-    messagingSenderId: "633581099980",
-    appId: "1:633581099980:web:5b893cc54dd7b512ff1b69",
-    measurementId: "G-TE91R645NM"
-  };
-
-
-  // const {auth} = useContext(Context)
-  // const [user, loading, error] = useAuthState(auth)
-  //
-  // if(loading){
-  //   return <Loader/>
-  // }
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-  const [value, setValue] = useState('')
-
-  const handleChange = (event) => {
-    setValue(event.target.value)
-  }
-
-  async function getCities(db) {
-    const citiesCol = collection(db, 'cities');
-    const citySnapshot = await getDocs(citiesCol);
-    const cityList = citySnapshot.docs.map(doc => doc.data());
-    console.log(cityList);
-  }
-
-  function writeUserData(userId, name, email, imageUrl) {
-    const db = getDatabase();
-    set(ref(db, 'users/' + userId), {
-      username: name,
-      email: email,
-      profile_picture : imageUrl
-    });
-    console.log('hi')
-  }
-
-  const handleClick = () => {
-    console.log(value)
-    // let messageRef = fire.database.ref('messages').orderByKey().limitToLast
-    // fire.database.ref('messages').push(value)
-
-
-    // Get a list of cities from your database
-    // const database = getDatabase();
-    // console.log(database)
-    // getCities(db)
-
-    writeUserData(2, 'Alina', 'kham@mail.ru', 'http')
-  }
+  const [userData, setUserData] = useUserData(userAuthData);
+  const [courseData, setCourseData] = useCourseData(userAuthData);
+  const [currentModuleId, setCurrentModuleId] = useState(0)
 
   return (
-    <React.Fragment>
+    <AuthProvider>
       <Navbar />
-      <div>
-        <input type="text" value={value} onChange={handleChange}/>
-        <button onClick={handleClick} >Send</button>
-      </div>
       <AppStyle>
         <Routes>
-          {/*<Route path='/' element={<App />} />*/}
-          <Route path='home' element={<Home />} />
-          <Route path='learn' element={<StudyPlatform />} />
+          {/*<Route path="/" element={<App />} />*/}
+          <Route path='/' element={<Home userData={userData} setUserData={setUserData} setCourseData={setCourseData} courseData={courseData} />} />
+          <Route path='courses' element={<Courses courseData={courseData}/>} />
           <Route path='rating' element={<Rating />} />
           <Route path='model' element={<Model />}/>
+          <Route path='career' element={<Career />}/>
+          <Route path='freelance' element={<Freelance />}/>
+          <Route path='administration' element={<Admin />}/>
+          <Route path='messages' element={<Messages />}/>
+
+          <Route path='courses/modules' element={<Modules courseData={courseData} setCurrentModuleId={setCurrentModuleId} />} />
+          <Route path='courses/modules/learn' element={<StudyPlatform courseData={courseData} setCourseData={setCourseData} userData={userData} currentModuleId={currentModuleId} />} />
+
+          {/*{*/}
+          {/*  onAuthStateChanged(auth, (user) => {*/}
+          {/*    return user ? 2 : console.log('hi')*/}
+          {/*  })*/}
+          {/*}*/}
+
         </Routes>
       </AppStyle>
       {/*Показывать только на главной странице*/}
       {/*<Footer />*/}
-    </React.Fragment>
+    </AuthProvider>
   );
 }
 
