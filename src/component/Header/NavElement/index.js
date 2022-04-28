@@ -16,6 +16,11 @@ const ListRef = styled('button')`
     cursor: pointer;
     background-color: rgba(256,256,256, 0.2);
   }
+  
+  @media (max-width: 430px) {
+    padding: 0 16px;
+    height: 58px;
+  }
 `
 const ListImg = styled('img')`
   width: 28px;
@@ -23,6 +28,12 @@ const ListImg = styled('img')`
   &.logo{
     border-radius: 50%;
     width: 80px;
+    margin: 0;
+  }
+  @media (max-width: 430px) {
+    &.logo{
+      width: 32px;
+    }
     margin: 0;
   }
 `
@@ -35,13 +46,15 @@ const ListText = styled('p')`
 const NavElement = ({
   titleName, titleImg, titleMsg, isLogo,
 }) => {
+  const { innerWidth: width, innerHeight: height } = window;
+
   return(
     <ListElem>
       <ListRef>
         <Badge color="primary" badgeContent={titleMsg ? 1 : null}>
           <ListImg className={isLogo ? "logo" : 'null'} src={titleImg} alt=""/>
         </Badge>
-        <ListText>{titleName}</ListText>
+        { width > 520 ? <ListText>{titleName}</ListText> : null }
       </ListRef>
     </ListElem>
   )

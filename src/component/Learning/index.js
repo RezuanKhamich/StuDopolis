@@ -8,22 +8,22 @@ import {doc, getDoc, updateDoc} from "firebase/firestore";
 import { db } from '../../firebase'
 
 import courseInfo from "../../externalData/FrontEnd/courseInfo.json"
-import FrontEnd1 from "../../externalData/FrontEnd/FrontEnd_1/FrontEnd_s1.json"
-import FrontEnd2 from "../../externalData/FrontEnd/FrontEnd_1/FrontEnd_s2.json"
-import FrontEnd3 from "../../externalData/FrontEnd/FrontEnd_1/FrontEnd_s3.json"
-import FrontEnd4 from "../../externalData/FrontEnd/FrontEnd_1/FrontEnd_s4.json"
-import FrontEnd5 from "../../externalData/FrontEnd/FrontEnd_1/FrontEnd_s5.json"
+
 import Quiz from "../Quiz";
 import Layout from "../../hoc/Layout";
 import MainPageTitle from "../../containers/MainPageTitle";
 import {
   setDoneSectionCells,
   setEmptyPageCells,
-  updateLectureProgress,
+  updateLectureProgress, updateQuizProgress,
 } from "../../utils/services/learnPageService";
 import Loader from "../Loader";
-import {createDBArchitecture} from "../../utils/services/ createCourseDBArchitecture";
+import {createDBArchitecture} from "../../utils/services/createCourseDBArchitecture";
 import {useLecturesProgress} from "../../utils/services/сalculationService/courseProgress";
+import {courseMaterials} from "../../data/courseData/FrontEnd";
+import {useSearchParams} from "react-router-dom";
+import MenuIcon from '@mui/icons-material/Menu';
+import QuizComponent from "../QuizComponent";
 
 const SectionsWrapper = styled('div')`
   background: ${mainColor};
@@ -34,15 +34,46 @@ const SectionsWrapper = styled('div')`
   width: 300px;
   z-index: 250;
   color: white;
+  overflow-y: auto;
+  padding-bottom: 40px;
+  
+  &::-webkit-scrollbar {
+    width: 0.4em;
+    background-color: #C4C4C4;
+  }
+  &::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.00);
+    webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.00);
+  };
+  &::-webkit-scrollbar-thumb {
+    border: 1px solid rgba(136, 136, 136, 0.5);
+    border-radius: 20px;
+  }
 `
+
 const SectionTitle = styled('h1')`
   text-align: center;
   font-size: 20px;
   padding: 5px;
   margin: 20px 0;
+  
+  @media (max-width: 430px) {
+    margin: 50px 0 20px 0;
+  }
 `
+
+const SectionBurgerButton = styled(`Button`)`
+  position: absolute;
+  right: 20px;
+  top: -15px;
+  z-index: 300;
+  border: none;
+  background: none;
+  color: ${props => props.showSectionTab ? 'white' : mainColor}}
+`;
+
 const Devider = styled('hr')`
-  background-color: #6c757d;
+  background-color: #d7d9da;
   height: 1px;
   border: none;
   margin: 0;
@@ -66,6 +97,10 @@ const SectionButton = styled('button')`
 `
 const ContentWrapper = styled('div')`
   padding-right: 320px;
+  
+  @media (max-width: 430px) {
+    padding: 0 10px;
+  }
 `
 const PageButtonContainer = styled('div')`
   display: flex;
@@ -98,16 +133,18 @@ const PageButton = styled('button')`
 `
 
 const StudyPlatform = ({courseData, setCourseData}) => {
-  const data = [
-    FrontEnd1, FrontEnd2, FrontEnd3, FrontEnd4, FrontEnd5,
-  ]
-  const lessonData = useLecturesProgress(courseData, 0, 0)
+  const { innerWidth: width, innerHeight: height } = window;
+
+  const [currentModuleId, setCurrentModuleId] = useSearchParams();
+  const data = courseMaterials()[currentModuleId.get('id')];
+
+  const lessonData = useLecturesProgress(courseData, 0, currentModuleId.get('id'))
   const [isUserAuthorized, setIsUserAuthorized] = useState(JSON.parse(localStorage.getItem('st_user_authorized')))
   const [currentSectionId, setCurrentSectionId] = useState(0)
   const [currentPageId, setCurrentPageId] = useState(0)
   const [donePage, setDonePage] = useState(setEmptyPageCells(data))
-  console.log(currentSectionId)
-  console.log()
+  const [showSectionTab, setShowSectionTab] = useState(false)
+
   const isDisabledEndButton = useMemo(() => lessonData.length && Number(lessonData[currentSectionId][currentPageId]), [currentPageId, currentSectionId, lessonData])
   const doneSections = useMemo(() => setDoneSectionCells(lessonData), [lessonData])
 
@@ -126,22 +163,28 @@ const StudyPlatform = ({courseData, setCourseData}) => {
     setCurrentPageId(0)
   }
 
-  const completedPageHandler = async () => {
+  const openSectionTab = () => setShowSectionTab(prevState => !prevState)
+
+  const completedPageHandler = async (isGoNextPage) => {
     let newDonePage = donePage.slice();
     newDonePage[currentSectionId][currentPageId] = 1;
     setDonePage(newDonePage)
 
-    if(currentPageId !== (data[currentSectionId].pageCount-1)){
-      setCurrentPageId(prevState => lessonData.length-1 !== prevState ? ++prevState : prevState)
-    }else{
-      if(courseData[`course_${0}`][`modules`][`module_${0}`][`lectures`][`lecture_${currentPageId + 1}`].lectureAvailable){
-        setCurrentSectionId(prevState => lessonData.length-1 !== prevState ? ++prevState : prevState)
-        setCurrentPageId(0)
+    if(isGoNextPage) {
+      if(currentPageId !== (data[currentSectionId].pageCount-1)){
+        setCurrentPageId(prevState => lessonData.length-1 !== prevState ? ++prevState : prevState)
+      }else{
+        if(courseData[`course_${0}`][`modules`][`module_${0}`][`lectures`][`lecture_${currentPageId + 1}`].lectureAvailable){
+          setCurrentSectionId(prevState => lessonData.length-1 !== prevState ? ++prevState : prevState)
+          setCurrentPageId(0)
+        }
       }
     }
 
-    await updateLectureProgress(isUserAuthorized, 0, 0, currentSectionId, currentPageId, courseData, setCourseData)
+    await updateLectureProgress(isUserAuthorized, 0, currentModuleId.get('id'), currentSectionId, currentPageId, courseData, setCourseData)
   }
+
+  const updateTestProgressHandler = async (userAnswers) => await updateQuizProgress(isUserAuthorized, userAnswers, 0, currentModuleId.get('id'), currentSectionId, currentPageId, courseData, setCourseData)
 
   const setCompletedStateForPageButton = (index) => {
     let state = 'null'
@@ -151,30 +194,36 @@ const StudyPlatform = ({courseData, setCourseData}) => {
     return state
   }
 
-  useEffect(() => {
-    console.log(courseData)
-  },[courseData])
-
-
   return(
       <>
-        <SectionsWrapper>
-          <SectionTitle>{courseInfo.courseName}</SectionTitle>
-          <Devider />
-          {
-            sectionsTitle.map((secTitle, index) => {
-              return <SectionButton
-                key={index}
-                sectionDone={doneSections[index] ? secondColor() : null}
-                active={index === currentSectionId ? hoverColor() : null}
-                onClick={changeCurrentSection.bind(this, index)}
-                disabled={courseData ? !courseData[`course_${0}`][`modules`][`module_${0}`][`lectures`][`lecture_${index}`].lectureAvailable : true}
-              >
-                {index + 1}. {secTitle}
-              </SectionButton>
-            })
-          }
-        </SectionsWrapper>
+        {
+          width <= 500 ?
+            <SectionBurgerButton onClick={openSectionTab} showSectionTab={showSectionTab}>
+              <MenuIcon/>
+            </SectionBurgerButton>
+            : null
+        }
+        {
+          width >= 500 || showSectionTab ?
+            <SectionsWrapper>
+              <SectionTitle>{courseInfo.courseName}</SectionTitle>
+              <Devider />
+              {
+                sectionsTitle.map((secTitle, index) => {
+                  return <SectionButton
+                    key={index}
+                    sectionDone={doneSections[index] ? secondColor() : null}
+                    active={index === currentSectionId ? hoverColor() : null}
+                    onClick={changeCurrentSection.bind(this, index)}
+                    disabled={courseData ? !courseData[`course_${0}`][`modules`][`module_${currentModuleId.get('id')}`][`lectures`][`lecture_${index}`].lectureAvailable : true}
+                  >
+                    {index + 1}. {secTitle}
+                  </SectionButton>
+                })
+              }
+            </SectionsWrapper>
+            : null
+        }
         <ContentWrapper>
           {
             lessonData.length ?
@@ -194,19 +243,36 @@ const StudyPlatform = ({courseData, setCourseData}) => {
                   }
                 </PageButtonContainer>
                 <Devider />
-                <ContentTextWrapper>
-                  <PageContent pageData={pageData} currentPageId={currentPageId} currentSectionId={currentSectionId} />
-                </ContentTextWrapper>
-                <ButtonWrapper>
-                  <Button
-                    variant="contained"
-                    color='success'
-                    disabled={isDisabledEndButton}
-                    onClick={completedPageHandler}
-                  >
-                    Завершить
-                  </Button>
-                </ButtonWrapper>
+                {
+                  sectionJsonData.pageType[currentPageId] === 'Т' ?
+                    <QuizComponent
+                      pageData={pageData[`page${currentPageId+1}`][0]}
+                      doneBtnHandler={completedPageHandler}
+                      currentPageIsDone={-lessonData[currentSectionId][currentPageId]}
+                      updateTestProgressHandler={updateTestProgressHandler}
+                      currentQuizAnswers={courseData[`course_${0}`][`modules`][`module_${0}`][`lectures`][`lecture_${currentSectionId}`].quizProgress}
+                    />
+                    :
+                    <>
+                      <ContentTextWrapper>
+                        <PageContent pageData={pageData} currentPageId={currentPageId} currentSectionId={currentSectionId} />
+                      </ContentTextWrapper>
+                      {
+                        courseData[`course_${0}`][`modules`][`module_${currentModuleId.get('id')}`][`lectures`][`lecture_0`].lectureAvailable ?
+                          <ButtonWrapper>
+                            <Button
+                              variant="contained"
+                              color='success'
+                              disabled={isDisabledEndButton}
+                              onClick={completedPageHandler}
+                            >
+                              Завершить
+                            </Button>
+                          </ButtonWrapper>
+                          : null
+                      }
+                    </>
+                }
               </>
             :
               <Loader />

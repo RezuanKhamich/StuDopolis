@@ -4,7 +4,7 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "fire
 import {collection, addDoc, setDoc, doc, getDoc} from "firebase/firestore";
 import {useNavigate} from "react-router-dom";
 import moment from "moment";
-import {createDBArchitecture} from "../utils/services/ createCourseDBArchitecture";
+import {createDBArchitecture} from "../utils/services/createCourseDBArchitecture";
 
 const AuthContext = React.createContext()
 

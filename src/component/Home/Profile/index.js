@@ -19,9 +19,27 @@ const InteractiveCard = styled(Card)`
   }
 `;
 
+const UserPhoto = styled('img')`
+  width: 200px;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  margin-right: 20px;
+
+  @media (max-width: 430px) {
+    width: 80px;
+  }
+`;
+
+const Text = styled(Typography)`
+  @media (max-width: 430px) {
+    font-size: 20px!important;
+  }
+`;
+
 const Profile = ({userData, setIsUserAuthorized, courseData}) => {
 
   const [completedLessons, totalCountLessons] = useAllCoursesProgress(courseData);
+  const { innerWidth: width, innerHeight: height } = window;
   const [progress, setProgress] = useState(10);
 
   function LinearProgressWithLabel(props) {
@@ -71,38 +89,41 @@ const Profile = ({userData, setIsUserAuthorized, courseData}) => {
   return(
     <>
       <PageWrapper>
+        { width <= 500 ? <Button style={{ position: 'relative', left: '78%' }} variant="outlined"  onClick={exitProfileHandler}>Выйти</Button> : null }
+
         <div style={{display: 'flex', alignItems: 'center', marginBottom: 20 }}>
-          <img style={{width: 200, border: '1px solid transparent', borderRadius: '50%', marginRight: 20}} src={playerHead} alt=""/>
+          <UserPhoto src={playerHead} alt=""/>
           <Box style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', width: '100%'}}>
             <Box>
-              <Typography variant="h3">{userData?.firstName} {userData?.lastName}</Typography>
-              <Typography sx={{display: 'flex', marginBottom: 3}} color="text.secondary" variant="h5">
-                Должность: <Typography sx={{marginLeft: 1}} color="black" variant="h5">{careersRang[userData?.careerPosition]?.vacancy}</Typography>
-              </Typography>
+              <Text sx={{fontSize: '32px!important'}} variant="h3">{userData?.firstName} {userData?.lastName}</Text>
+              <Text sx={{display: 'flex', marginBottom: 3}} color="text.secondary" variant="h5">
+                Должность:
+                <Text sx={{marginLeft: 1 }} color="black" variant="h5">{careersRang[userData?.careerPosition]?.vacancy}</Text>
+              </Text>
             </Box>
-            <Button variant="outlined" onClick={exitProfileHandler}>Выйти</Button>
+            { width >= 500 ? <Button variant="outlined" onClick={exitProfileHandler}>Выйти</Button> : null }
           </Box>
         </div>
         <Card sx={{marginBottom: 5}}>
           <CardContent sx={{ width: '100%' }}>
             <Box sx={{display: 'flex', justifyContent: 'space-between'}}>
               <Box>
-                <Typography variant="p" color="text.secondary">Опыт:</Typography>
-                <Typography variant="h5">
-                  <GameIcon width={80} icon="0" /> {userData?.experienceAmount}
-                </Typography>
+                <Text variant="p" color="text.secondary">Опыт:</Text>
+                <Text variant="h5">
+                  <GameIcon mobileWidth={35} width={80} icon="0" /> {userData?.experienceAmount}
+                </Text>
               </Box>
               <Box>
-                <Typography variant="p" color="text.secondary">GoldCoin:</Typography>
-                <Typography variant="h5">
-                  <GameIcon width={80} icon="1" /> {userData?.goldCoinAmount}
-                </Typography>
+                <Text variant="p" color="text.secondary">GoldCoin:</Text>
+                <Text variant="h5">
+                  <GameIcon mobileWidth={35} width={80} icon="1" /> {userData?.goldCoinAmount}
+                </Text>
               </Box>
               <Box>
-                <Typography variant="p" color="text.secondary">GreenCoin:</Typography>
-                <Typography variant="h5">
-                  <GameIcon width={80} icon="2" /> {userData?.greenCoinAmount}
-                </Typography>
+                <Text variant="p" color="text.secondary">GreenCoin:</Text>
+                <Text variant="h5">
+                  <GameIcon mobileWidth={35} width={80} icon="2" /> {userData?.greenCoinAmount}
+                </Text>
               </Box>
             </Box>
           </CardContent>

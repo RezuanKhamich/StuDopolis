@@ -26,6 +26,7 @@ export const useCourseData = (userAuthData) => {
     if (userAuthData) {
       const courseSnap = await getDoc(doc(db, "courses", userAuthData.uid))
       if (courseSnap.exists()) {
+        console.log(`all`, courseSnap)
         setCourseData(courseSnap.data());
       } else {
         console.log("Не найдено courseSnap!");

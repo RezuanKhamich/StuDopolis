@@ -41,8 +41,6 @@ const InteractiveCard = styled(Card)`
   }
 `;
 
-
-
 function LinearProgressWithLabel(props) {
   return (
     <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -59,35 +57,36 @@ function LinearProgressWithLabel(props) {
 }
 
 
-const Modules = ({courseData}) => {
+const Modules = ({courseData, setCurrentModuleId}) => {
   const theme = useTheme();
+  const { innerWidth: width, innerHeight: height } = window;
   const [progress, setProgress] = useState(100);
   const [completedLessons, totalCountLessons] = useModulesProgress(courseData, 0)
 
   const CardWrapper = ({ module, index, disabled }) => (
     <InteractiveCard
       disabled={disabled}
-      className={completedLessons[index] === totalCountLessons[index] ? 'completed': null}
+      className={completedLessons[index] === totalCountLessons[index] ? 'completed' : null}
     >
       <CardMedia
         component="img"
-        sx={{ width: 250 }}
+        sx={{width: width >= 500 ? 250 : 150, height: width >= 500 ? '100%' : 90 }}
         image={module.image}
         alt="Live from space album cover"
       />
-      <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-        <CardContent sx={{ flex: '1 0 auto' }}>
-          <Typography component="div" variant="h5">
-            {index+1}. {module.name}
+      <Box sx={{display: 'flex', flexDirection: 'column'}}>
+        <CardContent sx={{flex: '1 0 auto'}}>
+          <Typography component="div" variant="h5" sx={{fontSize: width >= 500 ? '1.5em' : '0.9em'}}>
+            {index + 1}. {module.name}
           </Typography>
-          <Typography variant="subtitle1" color="text.secondary" component="div">
+          <Typography variant="subtitle1" color="text.secondary" component="div" sx={{fontSize: width >= 500 ? '1em' : '0.7em'}}>
             Прогресс {completedLessons[index]}/{totalCountLessons[index]}
           </Typography>
         </CardContent>
       </Box>
     </InteractiveCard>
   )
-  {console.log()}
+
   return(
     <>
       <MainPageTitle>Модули</MainPageTitle>
@@ -95,23 +94,15 @@ const Modules = ({courseData}) => {
       <PageWrapper>
         {
           courseData ?
-          modulesData.map((module, index) => (
-            !courseData[`course_0`][`modules`][`module_${index}`][`info`]?.moduleAvailable ?
+          modulesData.map((module, index) => {
+            return (
               <>
-                <CardWrapper
-                  module={module}
-                  // disabled={!courseData[`course_0`][`modules`][`module_${index}`][`info`].moduleAvailable}
-                  index={index}
-                /> <br/>
-              </>
-              :
-              <>
-                <Link to="learn" key={index}>
+                <Link to={`learn?id=${index}`} key={index}>
                   <CardWrapper module={module} index={index} />
                 </Link>
                 <br/>
               </>
-          ))
+            )})
             : null
         }
       </PageWrapper>

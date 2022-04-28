@@ -42,3 +42,25 @@ export const updateLectureProgress = async (isUserAuthorized, courseId, moduleId
     console.log("No such document!");
   }
 }
+
+export const updateQuizProgress = async (isUserAuthorized, userAnswers, courseId, moduleId, lectureId, pageCompletedId, courseData, setCourseData) => {
+  const lectureDocRef = doc(db, "courses", isUserAuthorized.uid);
+
+  let currentQuizProgress = courseData[`course_${courseId}`][`modules`][`module_${moduleId}`][`lectures`][`lecture_${lectureId}`].quizProgress.split('')
+  userAnswers.forEach((elem, index) => {
+    currentQuizProgress[index] = elem
+  })
+  console.log(currentQuizProgress)
+  let resultPageProgress = currentQuizProgress.join('')
+
+  await updateDoc(lectureDocRef, {
+    [`course_${courseId}.modules.module_${moduleId}.lectures.lecture_${lectureId}.quizProgress`]: `${resultPageProgress}`,
+  });
+
+  const courseDataNew = await getDoc(lectureDocRef);
+  if (courseDataNew.exists()) {
+    setCourseData(courseDataNew.data())
+  } else {
+    console.log("No such document!");
+  }
+}

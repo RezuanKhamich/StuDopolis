@@ -13,34 +13,38 @@ import {
 
 const InteractiveCard = styled(Card)`
   opacity: ${props => props.disabled ? '0.5' : '1'};
+  max-width: 345px;
+  height: 380px;
+  position: relative;
+  
   &:hover{
     transition: 0.5s;
     box-shadow: 0px 5px 5px -3px rgb(0 0 0 / 20%), 0px 8px 10px 1px rgb(0 0 0 / 14%), 0px 3px 14px 2px rgb(0 0 0 / 12%);
     cursor: pointer;
   }
+
+  @media (max-width: 430px) {
+    margin: auto;
+    height: 305px;
+  }
 `;
 
 const Courses = ({courseData}) => {
-
+  const { innerWidth: width, innerHeight: height } = window;
   const [completedLessons, totalCountLessons] = useAllCoursesProgress(courseData)
-  // console.log(completedLessons)
-  // console.log(totalCountLessons)
 
   return (
     <>
-      <MainPageTitle>Выбери направление и стань профи</MainPageTitle>
+      <MainPageTitle>Выбери направление</MainPageTitle>
 
       <Grid style={{maxWidth: 1190, margin: "auto"}} container rowSpacing={5} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
         {
           coursesData.map((elem, index) => (
-            <Grid item xs={4} key={index}>
-              <InteractiveCard
-                sx={{ maxWidth: 345 }}
-                style={elem.disabled ? {height: 425, position: 'relative', opacity: 0.5} : {height: 425, position: 'relative'}}
-              >
+            <Grid item xs={ width > 500 ? 4 : 12 } key={index}>
+              <InteractiveCard disabled={elem.disabled}>
                 <CardMedia
                   component="img"
-                  height="200"
+                  height={ width > 500 ? 200 : 150 }
                   image={elem.iconURL}
                 />
                 <CardContent>

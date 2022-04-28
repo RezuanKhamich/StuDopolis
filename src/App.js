@@ -21,6 +21,7 @@ import Modules from "./component/Modules";
 import Freelance from "./component/Freelance";
 import {doc, getDoc} from "firebase/firestore";
 import {useCourseData, useUserData} from "./hooks";
+import Messages from "./component/Messages";
 
 const AppStyle = styled('div')`
   padding-left: 100px;
@@ -28,6 +29,10 @@ const AppStyle = styled('div')`
   position: relative;
   min-height: 100%;
   padding-bottom: 120px;
+
+  @media (max-width: 430px) {
+    padding: 0 10px 80px 10px;
+  }
 `
 
 const App = () => {
@@ -35,6 +40,7 @@ const App = () => {
 
   const [userData, setUserData] = useUserData(userAuthData);
   const [courseData, setCourseData] = useCourseData(userAuthData);
+  const [currentModuleId, setCurrentModuleId] = useState(0)
 
   return (
     <AuthProvider>
@@ -49,9 +55,10 @@ const App = () => {
           <Route path='career' element={<Career />}/>
           <Route path='freelance' element={<Freelance />}/>
           <Route path='administration' element={<Admin />}/>
+          <Route path='messages' element={<Messages />}/>
 
-          <Route path='courses/modules' element={<Modules courseData={courseData} />} />
-          <Route path='courses/modules/learn' element={<StudyPlatform courseData={courseData} setCourseData={setCourseData} userData={userData} />} />
+          <Route path='courses/modules' element={<Modules courseData={courseData} setCurrentModuleId={setCurrentModuleId} />} />
+          <Route path='courses/modules/learn' element={<StudyPlatform courseData={courseData} setCourseData={setCourseData} userData={userData} currentModuleId={currentModuleId} />} />
 
           {/*{*/}
           {/*  onAuthStateChanged(auth, (user) => {*/}

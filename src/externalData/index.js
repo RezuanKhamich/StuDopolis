@@ -13,10 +13,12 @@ import freelanceImg from "../component/Header/Navbar/media/freelance_new.png";
 import ratingImg from "../component/Header/Navbar/media/rating_new.png";
 import companyImg from "../component/Header/Navbar/media/company_new.png";
 import html_bg from "../media/html_background.png";
+import messageImg from "../component/Header/Navbar/media/message_new.png";
 import css_bg from "../media/css_background.png";
 import js_bg from "../media/js_background.png";
 import react_bg from "../media/react_background.png";
 import redux_bg from "../media/redux_background.png";
+import admin from "../component/Header/Navbar/media/admin_logo_important.png";
 
 export const careersRang = [
   {vacancy: 'Стажер', requiredExp: '-', rewardGoldCoin: '-', rewardGreenCoin: '2000' },
@@ -85,15 +87,15 @@ export const coursesData = [
 
 export const pageNavigationData = [
   {img: logo, msg: false, logo: true, link: ''},
-  {name: 'Обучение', img: learn_newImg, msg: true, link: 'courses'},
+  {name: 'Обучение', img: learn_newImg, msg: false, link: 'courses'},
   {name: 'Фриланс', img: freelanceImg, msg: false, link: 'freelance'},
   {name: 'Рейтинг', img: ratingImg, msg: false, link: 'rating'},
   // {name: 'Модель', img: ratingImg, msg: false, link: 'model'},
   {name: 'Карьера', img: companyImg, msg: false, link: 'career'},
-  // {name: 'Учитель', img: admin, msg: false, link: 'administration'},
+  {name: 'Учитель', img: admin, msg: false, link: 'administration'},
   // {name: 'Кабинет', img: homeImg, msg: false, link: 'profile'},
   // {name: 'Новости', img: newsImg, msg: false},
-  // {name: 'Почта', img: messageImg, msg: false},
+  {name: 'Почта', img: messageImg, msg: false, link: 'messages'},
   // {name: 'Помощь', img: helpImg, msg: false},
   // {name: 'Выйти', img: exitImg, msg: false},
 ]

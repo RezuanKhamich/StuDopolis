@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import {mainColor, textColor1} from "../../constants/colors";
+import {FrontEnd_s1} from "../../externalData/FrontEnd/FrontEnd_1/FrontEnd_s1";
 
 const ContentSubTitle = styled('h3')`
   margin-top: 30px;
@@ -33,7 +34,7 @@ const PageContent = ({
     }else if(Object.keys(el)[0] === 'pageText'){
       return(
         <ContentText key={index}>
-          {el.pageText}
+          <FrontEnd_s1/>
         </ContentText>
       )
     }

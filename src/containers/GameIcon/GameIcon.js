@@ -9,6 +9,10 @@ const IconWrapper = styled.img`
   width: ${props => props.width ? props.width : '30px'};
   margin: 5px;
   vertical-align: middle;
+
+  @media (max-width: 430px) {
+    width: ${props => props.mobileWidth ? props.mobileWidth : '30px'}
+  }
 `
 
 const GameIcon = ({

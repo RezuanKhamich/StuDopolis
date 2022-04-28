@@ -30,10 +30,11 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-const TableWrapper = styled(TableContainer)( () =>({
-  width: '700px',
+const TableWrapper = styled(TableContainer)( (props) =>({
+  minWidth: props.width >= 500 ? '700px' : '100%',
   margin: 'auto',
   marginTop: '40px',
+  width: props.width >= 500 ? 700 : '100%',
 }));
 
 const ToogleWrapper = styled(ToggleButtonGroup)( () =>({
@@ -42,6 +43,7 @@ const ToogleWrapper = styled(ToggleButtonGroup)( () =>({
 }));
 
 const Rating = props => {
+  const { innerWidth: width, innerHeight: height } = window;
   const [alignment, setAlignment] = React.useState('experience');
 
   const ratingFilterChange = (event, newAlignment) => {
@@ -71,8 +73,8 @@ const Rating = props => {
           <ToggleButton value="greenCoin">GreenCoin</ToggleButton>
       </ToogleWrapper>
 
-      <TableWrapper component={Paper}>
-        <Table sx={{ minWidth: 700 }} aria-label="customized table">
+      <TableWrapper component={Paper} width={width}>
+        <Table sx={{ minWidth: width >= 500 ? 700 : 'inherit' }} aria-label="customized table">
           <TableHead>
             <TableRow>
               <StyledTableCell >Место</StyledTableCell>
