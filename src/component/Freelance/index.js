@@ -2,10 +2,26 @@ import React, {useState} from "react";
 import MainPageTitle from "../../containers/MainPageTitle";
 import {hoverColor, mainColor, secondColor, textColor2} from "../../constants/colors";
 import styled from "styled-components";
-import {Card, CardActions, CardContent, CardMedia, Chip, Grid, Typography} from "@mui/material";
+import {
+  Card,
+  CardActions,
+  CardContent,
+  CardMedia,
+  Chip,
+  Grid,
+  ToggleButton,
+  ToggleButtonGroup,
+  Typography
+} from "@mui/material";
 import {Link} from "react-router-dom";
 import Button from "@mui/material/Button";
 import {coursesData} from "../../externalData";
+import GameIcon from "../../containers/GameIcon/GameIcon";
+
+const ToogleWrapper = styled(ToggleButtonGroup)( () =>({
+  display: 'block!important',
+  textAlign: 'center',
+}));
 
 const SectionsWrapper = styled('div')`
   background: ${mainColor};
@@ -49,8 +65,19 @@ const ContentWrapper = styled('div')`
 `
 
 const Freelance = () => {
-
   const [currentCourse, setCurrentCourse] = useState(0);
+  const tableHeaders = [
+    {title: 'Опыт', baseName: 'experienceAmount'},
+    {title: 'Карьера', baseName: 'careerPosition'},
+    {title: 'GoldCoins', baseName: 'goldCoinAmount'},
+    {title: 'GreenCoins', baseName: 'greenCoinAmount'},
+  ]
+
+  const [alignment, setAlignment] = useState(tableHeaders[0]);
+
+  const ratingFilterChange = (event, newAlignment) => {
+    if(newAlignment) setAlignment(tableHeaders[+newAlignment]);
+  };
 
   return(
     <>
@@ -73,41 +100,68 @@ const Freelance = () => {
       </SectionsWrapper>
       <ContentWrapper>
         <MainPageTitle>Мой фриланс</MainPageTitle>
+        <ToogleWrapper
+          color="primary"
+          value={alignment}
+          exclusive
+          onChange={ratingFilterChange}
+        >
+          <ToggleButton value="0">Новые</ToggleButton>
+          <ToggleButton value="1">Выполненные</ToggleButton>
+        </ToogleWrapper>
         <Grid style={{maxWidth: 1190, margin: "auto"}} container rowSpacing={5} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
           {
             coursesData.map((elem, index) => (
               <Grid item xs={6} key={index}>
                 <Card
-                  // sx={{ maxWidth: 345 }}
+                  sx={{ maxWidth: 520 }}
                   style={elem.disabled ? {height: 230, position: 'relative', opacity: 0.5} : {height: 230, position: 'relative'}}
                   raised = {!elem.disabled}
                 >
-                  <CardMedia
-                    component="img"
-                    height="50"
-                    image={elem.iconURL}
-                  />
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <div style={{ display: 'flex', padding: '0 5px', fontWeight: '500' }}>
+                      <Typography variant="p" component="span" sx={{ display: 'flex', alignItems: 'center' }}>
+                        +200 <GameIcon mobileWidth={35} width={40} icon="2" bold />
+                      </Typography>
+                      <Typography variant="p" component="span" sx={{ display: 'flex', alignItems: 'center' }}>
+                        +200 <GameIcon mobileWidth={35} width={40} icon="0" />
+                      </Typography>
+                    </div>
+
+                    <CardMedia
+                      component="img"
+                      height="50"
+                      sx={{
+                        width: '280px',
+                        marginLeft: 'auto',
+                        borderBottomLeftRadius: '11px',
+                      }}
+                      image={elem.iconURL}
+                    />
+                  </div>
+
                   <CardContent>
                     <Typography gutterBottom variant="h5" component="div">
                       {elem.name}
                     </Typography>
-                    <Chip label="легко" color="success" />
-                    <Chip label="средне" color="warning" />
-                    <Typography variant="body2" color="text.secondary">
+                    <Chip label="Сложность:" sx={{ marginRight: '8px' }}/>
+                    <Chip label="легко" color="success" sx={{ marginRight: '8px' }} />
+                    {/*<Chip label="средне" color="warning" />*/}
+                    <Typography variant="body2" color="text.secondary" marginTop="10px">
                       {elem.description}
                     </Typography>
                   </CardContent>
-                  <CardActions style={{textAlign: 'center', position: 'absolute', bottom: 0, right: 0}}>
-                    {
-                      !elem.disabled ?
-                        <Link to="modules">
-                          <Button size="small">Выполнить</Button>
-                        </Link>
-                        :
-                        <Button size="small" disabled>Выполнить</Button>
-                    }
+                  {/*<CardActions style={{textAlign: 'center', position: 'absolute', bottom: 0, right: 0}}>*/}
+                  {/*  {*/}
+                  {/*    !elem.disabled ?*/}
+                  {/*      <Link to="modules">*/}
+                  {/*        <Button size="small">Выполнить</Button>*/}
+                  {/*      </Link>*/}
+                  {/*      :*/}
+                  {/*      <Button size="small" disabled>Выполнить</Button>*/}
+                  {/*  }*/}
 
-                  </CardActions>
+                  {/*</CardActions>*/}
                 </Card>
               </Grid>
             ))

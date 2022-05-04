@@ -50,7 +50,7 @@ const App = () => {
           {/*<Route path="/" element={<App />} />*/}
           <Route path='/' element={<Home userData={userData} setUserData={setUserData} setCourseData={setCourseData} courseData={courseData} />} />
           <Route path='courses' element={<Courses courseData={courseData}/>} />
-          <Route path='rating' element={<Rating />} />
+          <Route path='rating' element={<Rating userId={userData} />} />
           <Route path='model' element={<Model />}/>
           <Route path='career' element={<Career />}/>
           <Route path='freelance' element={<Freelance />}/>
@@ -58,7 +58,7 @@ const App = () => {
           <Route path='messages' element={<Messages />}/>
 
           <Route path='courses/modules' element={<Modules courseData={courseData} setCurrentModuleId={setCurrentModuleId} />} />
-          <Route path='courses/modules/learn' element={<StudyPlatform courseData={courseData} setCourseData={setCourseData} userData={userData} currentModuleId={currentModuleId} />} />
+          <Route path='courses/modules/learn' element={<StudyPlatform courseData={courseData} setCourseData={setCourseData} userData={userData} setUserData={setUserData} currentModuleId={currentModuleId} />} />
 
           {/*{*/}
           {/*  onAuthStateChanged(auth, (user) => {*/}

@@ -107,14 +107,3 @@ export const modulesData = [
   {name: 'Основы React.js', disabled: true, image: react_bg},
   {name: 'Redux + бонус', disabled: true, image: redux_bg},
 ]
-
-export const userRatingData = [
-  {user: 'Хамуков Р.', experience: 159, career: 'middle', goldCoin: 500, greenCoin: 23400 },
-  {user: 'Хамуков Р.', experience: 159, career: 'middle', goldCoin: 500, greenCoin: 23400 },
-  {user: 'Хамуков Р.', experience: 159, career: 'middle', goldCoin: 500, greenCoin: 23400 },
-  {user: 'Хамуков Р.', experience: 159, career: 'middle', goldCoin: 500, greenCoin: 23400 },
-  {user: 'Хамуков Р.', experience: 159, career: 'middle', goldCoin: 500, greenCoin: 23400 },
-  {user: 'Хамуков Р.', experience: 159, career: 'middle', goldCoin: 500, greenCoin: 23400 },
-  {user: 'Хамуков Р.', experience: 159, career: 'middle', goldCoin: 500, greenCoin: 23400 },
-  {user: 'Хамуков Р.', experience: 159, career: 'middle', goldCoin: 500, greenCoin: 23400 },
-];

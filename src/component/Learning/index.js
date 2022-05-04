@@ -13,6 +13,7 @@ import Quiz from "../Quiz";
 import Layout from "../../hoc/Layout";
 import MainPageTitle from "../../containers/MainPageTitle";
 import {
+  saveUsersAward,
   setDoneSectionCells,
   setEmptyPageCells,
   updateLectureProgress, updateQuizProgress,
@@ -132,7 +133,7 @@ const PageButton = styled('button')`
   }
 `
 
-const StudyPlatform = ({courseData, setCourseData}) => {
+const StudyPlatform = ({courseData, setCourseData, userData, setUserData}) => {
   const { innerWidth: width, innerHeight: height } = window;
 
   const [currentModuleId, setCurrentModuleId] = useSearchParams();
@@ -150,6 +151,8 @@ const StudyPlatform = ({courseData, setCourseData}) => {
 
   const sectionJsonData = data[currentSectionId];
   const pageData = data[currentSectionId].pageFlow;
+  let awardBtnDisabled = useMemo(() => courseData ? courseData[`course_${0}`][`modules`][`module_${0}`][`lectures`][`lecture_${currentPageId}`].isAwardReceived : null, [courseData])
+
   const sectionsTitle = data.map((el)=>{
     return el.sectionName
   })
@@ -185,6 +188,10 @@ const StudyPlatform = ({courseData, setCourseData}) => {
   }
 
   const updateTestProgressHandler = async (userAnswers) => await updateQuizProgress(isUserAuthorized, userAnswers, 0, currentModuleId.get('id'), currentSectionId, currentPageId, courseData, setCourseData)
+
+  const saveUserAwardHandler = async (greenCoinCount, expCount, goldCoinCount) => {
+    await saveUsersAward(isUserAuthorized, userData, setUserData, greenCoinCount, expCount, goldCoinCount, 0, currentModuleId.get('id'), currentSectionId, setCourseData)
+  }
 
   const setCompletedStateForPageButton = (index) => {
     let state = 'null'
@@ -251,6 +258,8 @@ const StudyPlatform = ({courseData, setCourseData}) => {
                       currentPageIsDone={-lessonData[currentSectionId][currentPageId]}
                       updateTestProgressHandler={updateTestProgressHandler}
                       currentQuizAnswers={courseData[`course_${0}`][`modules`][`module_${0}`][`lectures`][`lecture_${currentSectionId}`].quizProgress}
+                      saveUserAwardHandler={saveUserAwardHandler}
+                      awardBtnDisabled={awardBtnDisabled}
                     />
                     :
                     <>

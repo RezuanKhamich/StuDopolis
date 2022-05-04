@@ -28,7 +28,7 @@ export const createDBArchitecture = () => {
           lectureAvailable: (i === 0 && j=== 0 && k === 0),
           quizProgress: '0000000000',
           pageProgress: '00',
-          isAwardReceived: true,
+          isAwardReceived: false,
         }
       }
     }
