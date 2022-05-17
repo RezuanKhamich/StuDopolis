@@ -4,9 +4,21 @@ import greenCoinImg from "../../media/GreenCoin.png"
 import experienceImg from "../../media/experience.png";
 import React from "react";
 
-export const giveUserAwards = (greenCoin, experience, goldCoin) => {
+export const giveUserAwards = (awardBtnDisabled, saveUserAwardHandler, greenCoin, experience, goldCoin) => {
   const awardsType = [greenCoin, experience, goldCoin];
+  const awardIcons = [greenCoinImg, experienceImg, goldCoinImg];
+
   return(
-    <Snackbar message={`Получена награда в +${greenCoin}`} awardsType={awardsType} rightIcon={greenCoinImg} />
+    <Snackbar
+      awardsType={awardsType}
+      rightIcon={awardIcons}
+      saveUserAwardHandler={saveUserAwardHandler}
+      awardBtnDisabled={awardBtnDisabled}
+    />
   )
 }
+
+export const getAllUsers = () => {
+
+}
+

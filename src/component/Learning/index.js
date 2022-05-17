@@ -13,6 +13,7 @@ import Quiz from "../Quiz";
 import Layout from "../../hoc/Layout";
 import MainPageTitle from "../../containers/MainPageTitle";
 import {
+  saveUsersAward, saveUsersAwardDB,
   setDoneSectionCells,
   setEmptyPageCells,
   updateLectureProgress, updateQuizProgress,
@@ -24,6 +25,9 @@ import {courseMaterials} from "../../data/courseData/FrontEnd";
 import {useSearchParams} from "react-router-dom";
 import MenuIcon from '@mui/icons-material/Menu';
 import QuizComponent from "../QuizComponent";
+import {useDispatch, useSelector} from "react-redux";
+import {setCourseData, setUserData} from "../../utils/reducers/repoReducer";
+import {giveUserAwards} from "../../utils/services";
 
 const SectionsWrapper = styled('div')`
   background: ${mainColor};
@@ -85,7 +89,7 @@ const SectionButton = styled('button')`
   width: 100%;
   text-align: left;
   padding: 5px;
-  font-size: 16px;
+  font-size: 14px;
   border-bottom: 1px solid ${props => props.sectionDone || textColor2()};
   padding-top: 10px;
   opacity: ${props => props.disabled ? 0.3 : 1};
@@ -132,13 +136,16 @@ const PageButton = styled('button')`
   }
 `
 
-const StudyPlatform = ({courseData, setCourseData}) => {
+const StudyPlatform = () => {
   const { innerWidth: width, innerHeight: height } = window;
+  const dispatch = useDispatch()
+  const courseData = useSelector(state => state.repos.courseData)
+  const userData = useSelector(state => state.repos.userData)
 
-  const [currentModuleId, setCurrentModuleId] = useSearchParams();
-  const data = courseMaterials()[currentModuleId.get('id')];
+  const [urlParametersId, setUrlParametersId] = useSearchParams();
+  const data = courseMaterials()[urlParametersId.get('moduleId')];
 
-  const lessonData = useLecturesProgress(courseData, 0, currentModuleId.get('id'))
+  const lessonData = useLecturesProgress(courseData, 0, urlParametersId.get('moduleId'))
   const [isUserAuthorized, setIsUserAuthorized] = useState(JSON.parse(localStorage.getItem('st_user_authorized')))
   const [currentSectionId, setCurrentSectionId] = useState(0)
   const [currentPageId, setCurrentPageId] = useState(0)
@@ -150,6 +157,8 @@ const StudyPlatform = ({courseData, setCourseData}) => {
 
   const sectionJsonData = data[currentSectionId];
   const pageData = data[currentSectionId].pageFlow;
+  let awardBtnDisabled = useMemo(() => courseData[`course_${urlParametersId.get('courseId')}`] ? courseData[`course_${urlParametersId.get('courseId')}`][`modules`][urlParametersId.get('moduleId')][`lectures`][currentSectionId].isAwardReceived: null, [courseData]);
+
   const sectionsTitle = data.map((el)=>{
     return el.sectionName
   })
@@ -165,26 +174,44 @@ const StudyPlatform = ({courseData, setCourseData}) => {
 
   const openSectionTab = () => setShowSectionTab(prevState => !prevState)
 
+  const setCourseDataHandler = payload => {
+    dispatch(setCourseData(payload))
+  }
+
+  const setUserDataHandler = payload => {
+    dispatch(setUserData(payload))
+  }
+
+
   const completedPageHandler = async (isGoNextPage) => {
     let newDonePage = donePage.slice();
     newDonePage[currentSectionId][currentPageId] = 1;
     setDonePage(newDonePage)
+    console.log(isUserAuthorized.uid)
+
+    if(lessonData[currentSectionId].filter(el => el === '0').length === 1){
+      await saveUsersAwardDB(isUserAuthorized, userData, setUserDataHandler, 450, 850)
+    }
 
     if(isGoNextPage) {
       if(currentPageId !== (data[currentSectionId].pageCount-1)){
         setCurrentPageId(prevState => lessonData.length-1 !== prevState ? ++prevState : prevState)
       }else{
-        if(courseData[`course_${0}`][`modules`][`module_${0}`][`lectures`][`lecture_${currentPageId + 1}`].lectureAvailable){
+        if(courseData[`course_${urlParametersId.get('courseId')}`][`modules`][urlParametersId.get('moduleId')][`lectures`][currentPageId + 1].lectureAvailable){
           setCurrentSectionId(prevState => lessonData.length-1 !== prevState ? ++prevState : prevState)
           setCurrentPageId(0)
         }
       }
     }
 
-    await updateLectureProgress(isUserAuthorized, 0, currentModuleId.get('id'), currentSectionId, currentPageId, courseData, setCourseData)
+    await updateLectureProgress(isUserAuthorized, 0, urlParametersId.get('moduleId'), currentSectionId, currentPageId, courseData, setCourseDataHandler)
   }
 
-  const updateTestProgressHandler = async (userAnswers) => await updateQuizProgress(isUserAuthorized, userAnswers, 0, currentModuleId.get('id'), currentSectionId, currentPageId, courseData, setCourseData)
+  const updateTestProgressHandler = async (userAnswers) => await updateQuizProgress(isUserAuthorized, userAnswers, 0, urlParametersId.get('moduleId'), currentSectionId, currentPageId, courseData, setCourseDataHandler)
+
+  const saveUserAwardHandler = async (greenCoinCount, expCount, goldCoinCount) => {
+    await saveUsersAward(isUserAuthorized, userData, setUserDataHandler, greenCoinCount, expCount, goldCoinCount, 0, urlParametersId.get('moduleId'), currentSectionId, setCourseDataHandler)
+  }
 
   const setCompletedStateForPageButton = (index) => {
     let state = 'null'
@@ -215,7 +242,7 @@ const StudyPlatform = ({courseData, setCourseData}) => {
                     sectionDone={doneSections[index] ? secondColor() : null}
                     active={index === currentSectionId ? hoverColor() : null}
                     onClick={changeCurrentSection.bind(this, index)}
-                    disabled={courseData ? !courseData[`course_${0}`][`modules`][`module_${currentModuleId.get('id')}`][`lectures`][`lecture_${index}`].lectureAvailable : true}
+                    disabled={courseData[`course_${urlParametersId.get('courseId')}`] ? !courseData[`course_${urlParametersId.get('courseId')}`][`modules`][urlParametersId.get('moduleId')][`lectures`][index].lectureAvailable : true}
                   >
                     {index + 1}. {secTitle}
                   </SectionButton>
@@ -250,7 +277,9 @@ const StudyPlatform = ({courseData, setCourseData}) => {
                       doneBtnHandler={completedPageHandler}
                       currentPageIsDone={-lessonData[currentSectionId][currentPageId]}
                       updateTestProgressHandler={updateTestProgressHandler}
-                      currentQuizAnswers={courseData[`course_${0}`][`modules`][`module_${0}`][`lectures`][`lecture_${currentSectionId}`].quizProgress}
+                      currentQuizAnswers={courseData[`course_${urlParametersId.get('courseId')}`][`modules`][urlParametersId.get('moduleId')][`lectures`][currentSectionId].quizProgress}
+                      saveUserAwardHandler={saveUserAwardHandler}
+                      awardBtnDisabled={awardBtnDisabled}
                     />
                     :
                     <>
@@ -258,7 +287,7 @@ const StudyPlatform = ({courseData, setCourseData}) => {
                         <PageContent pageData={pageData} currentPageId={currentPageId} currentSectionId={currentSectionId} />
                       </ContentTextWrapper>
                       {
-                        courseData[`course_${0}`][`modules`][`module_${currentModuleId.get('id')}`][`lectures`][`lecture_0`].lectureAvailable ?
+                        courseData[`course_${urlParametersId.get('courseId')}`][`modules`][urlParametersId.get('moduleId')][`lectures`][currentSectionId].lectureAvailable ?
                           <ButtonWrapper>
                             <Button
                               variant="contained"

@@ -18,8 +18,15 @@ const RightIcon = styled.img`
   margin-left: 5px;
 `;
 
-function MyApp({ message, leftIcon, rightIcon }) {
+const ButtonWrapper = styled.div`
+  margin-top: 20px;
+  text-align: center;
+`;
+
+function MyApp({ awardsType, leftIcon, rightIcon, saveUserAwardHandler, awardBtnDisabled }) {
   const { enqueueSnackbar } = useSnackbar();
+  const fillAwardsType = awardsType.filter(el => el !== undefined)
+  let awardIndex = 0;
 
   const handleClickVariant = (variant) => () => {
     enqueueSnackbar(ResultMessage(), {
@@ -34,22 +41,39 @@ function MyApp({ message, leftIcon, rightIcon }) {
     return (
       <MessageWrapper>
         { leftIcon && <LeftIcon src={leftIcon} /> }
-        { message }
-        { rightIcon && <RightIcon src={rightIcon} /> }
+        Получена награда +{fillAwardsType[awardIndex]}
+        { rightIcon && <RightIcon src={rightIcon[awardIndex]} /> }
       </MessageWrapper>
     )
   }
 
   return (
-    <React.Fragment>
-      <Button onClick={handleClickVariant()}>Получить награду</Button>
-    </React.Fragment>
+    <ButtonWrapper>
+      <Button
+        variant="contained"
+        color='success'
+        disabled={awardBtnDisabled}
+        onClick={() => {
+          fillAwardsType.map((elem, index) => {
+            awardIndex = index;
+            handleClickVariant()();
+          })
+          console.log('получаем награду')
+          saveUserAwardHandler(fillAwardsType[0], fillAwardsType[1], fillAwardsType[3])
+        }}>Получить награду</Button>
+    </ButtonWrapper>
   );
 }
 
-const Snackbar = ({ message, leftIcon, rightIcon }) => (
+const Snackbar = ({ awardsType, rightIcon, leftIcon, saveUserAwardHandler, awardBtnDisabled }) => (
   <SnackbarProvider maxSnack={3}>
-    <MyApp message={message} leftIcon={leftIcon} rightIcon={rightIcon} />
+    <MyApp
+      awardsType={awardsType}
+      leftIcon={leftIcon}
+      rightIcon={rightIcon}
+      saveUserAwardHandler={saveUserAwardHandler}
+      awardBtnDisabled={awardBtnDisabled}
+    />
   </SnackbarProvider>
 )
 

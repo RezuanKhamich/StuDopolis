@@ -39,7 +39,7 @@ const SignUp = ({handleClick}) => {
   async function handleSubmit(e) {
     e.preventDefault()
 
-    const userData = {
+    const userEnteredData = {
       firstNameRef,
       lastNameRef,
       emailRef,
@@ -48,7 +48,7 @@ const SignUp = ({handleClick}) => {
     try {
       setError('')
       setLoading(true)
-      await signup(userData, setError, handleClick)
+      await signup(userEnteredData, setError, handleClick)
       setLoading(false)
     } catch {
       setError('Ошибка при создании аккаунта')

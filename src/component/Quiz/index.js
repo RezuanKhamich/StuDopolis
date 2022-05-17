@@ -63,7 +63,6 @@ class Quiz extends Component{
     }
 
     onAnswerClickHandler = answerId => {
-        console.log(answerId);
 
         const question = this.state.quiz[this.state.activeQuestion];
         const results = this.state.results;
@@ -78,12 +77,10 @@ class Quiz extends Component{
             })
 
             const timeOut = window.setTimeout(()=>{
-                console.log(this.state.activeQuestion + 1 === this.state.quiz.length)
                 if(this.isQuizFinished()){
                     this.setState({
                         isFinished: true
                     })
-                    console.log(this.state.isFinished)
                 }else{
                     this.setState({
                         activeQuestion: this.state.activeQuestion + 1,

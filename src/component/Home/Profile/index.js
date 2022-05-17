@@ -9,6 +9,7 @@ import GameIcon from "../../../containers/GameIcon/GameIcon";
 import {careersRang, coursesData} from "../../../externalData";
 import {Link} from "react-router-dom";
 import {useAllCoursesProgress} from "../../../utils/services/сalculationService/courseProgress";
+import {useSelector} from "react-redux";
 
 const InteractiveCard = styled(Card)`
   opacity: ${props => props.disabled ? '0.5' : '1'};
@@ -36,10 +37,13 @@ const Text = styled(Typography)`
   }
 `;
 
-const Profile = ({userData, setIsUserAuthorized, courseData}) => {
+const Profile = ({setIsUserAuthorized}) => {
+  const userData = useSelector(state => state.repos.userData)
+  const courseData = useSelector(state => state.repos.courseData)
 
   const [completedLessons, totalCountLessons] = useAllCoursesProgress(courseData);
   const { innerWidth: width, innerHeight: height } = window;
+
   const [progress, setProgress] = useState(10);
 
   function LinearProgressWithLabel(props) {
@@ -106,19 +110,19 @@ const Profile = ({userData, setIsUserAuthorized, courseData}) => {
         </div>
         <Card sx={{marginBottom: 5}}>
           <CardContent sx={{ width: '100%' }}>
-            <Box sx={{display: 'flex', justifyContent: 'space-between'}}>
+            <Box sx={{display: 'flex', justifyContent: 'space-around'}}>
               <Box>
                 <Text variant="p" color="text.secondary">Опыт:</Text>
                 <Text variant="h5">
                   <GameIcon mobileWidth={35} width={80} icon="0" /> {userData?.experienceAmount}
                 </Text>
               </Box>
-              <Box>
-                <Text variant="p" color="text.secondary">GoldCoin:</Text>
-                <Text variant="h5">
-                  <GameIcon mobileWidth={35} width={80} icon="1" /> {userData?.goldCoinAmount}
-                </Text>
-              </Box>
+              {/*<Box>*/}
+              {/*  <Text variant="p" color="text.secondary">GoldCoin:</Text>*/}
+              {/*  <Text variant="h5">*/}
+              {/*    <GameIcon mobileWidth={35} width={80} icon="1" /> {userData?.goldCoinAmount}*/}
+              {/*  </Text>*/}
+              {/*</Box>*/}
               <Box>
                 <Text variant="p" color="text.secondary">GreenCoin:</Text>
                 <Text variant="h5">

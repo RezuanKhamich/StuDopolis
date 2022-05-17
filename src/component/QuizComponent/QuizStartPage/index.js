@@ -24,7 +24,7 @@ const ButtonWrapper = styled.div`
   text-align: center;
 `;
 
-const QuizStartPage = ({ startQuizHandler }) => {
+const QuizStartPage = ({ startQuizHandler, pageData }) => {
 
   return(
     <>
@@ -42,13 +42,13 @@ const QuizStartPage = ({ startQuizHandler }) => {
 
         <QuizDetails>
           <Typography gutterBottom variant="h5" component="div" textAlign="center" display="flex" alignItems="center">
-            <Icon color="warning">timer</Icon> 60 c.
+            <Icon color="warning">timer</Icon> {pageData * 20} c.
           </Typography>
           <Typography gutterBottom variant="h5" component="div" textAlign="center" display="flex" alignItems="center">
-            +500<GameIcon mobileWidth={35} width={50} icon="2" />
+            +{pageData * 100}<GameIcon mobileWidth={35} width={50} icon="2" />
           </Typography>
           <Typography gutterBottom variant="h5" component="div" textAlign="center" display="flex" alignItems="center">
-            +500<GameIcon mobileWidth={35} width={50} icon="0" />
+            +{pageData * 300}<GameIcon mobileWidth={35} width={50} icon="0" />
           </Typography>
         </QuizDetails>
 

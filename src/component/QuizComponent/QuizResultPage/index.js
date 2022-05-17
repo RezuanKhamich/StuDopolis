@@ -1,7 +1,10 @@
-import React from "react";
-import {Card, CardContent, Grid, Typography} from "@mui/material";
+import React, {useEffect} from "react";
+import {Card, CardContent, Grid, Icon, Typography} from "@mui/material";
 import {giveUserAwards} from "../../../utils/services";
 import styled from "styled-components";
+import GameIcon from "../../../containers/GameIcon/GameIcon";
+import {doc, getDoc, updateDoc} from "firebase/firestore";
+import {db} from "../../../firebase";
 
 const InteractiveCard = styled(Card)`
   opacity: ${props => props.disabled ? '0.5' : '1'};
@@ -32,12 +35,19 @@ const QuizPageWrapper = styled.div`
   min-height: 400px;
 `;
 
-const QuizResultPage = ({userAnswers, pageData, currentQuizAnswers}) => {
+const AwardWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  margin: 40px 0;
+`;
 
-  const getRightAnswersCount = (userAnswers, dataAnswers) => {
+const QuizResultPage = ({userAnswers, pageData, currentQuizAnswers, saveUserAwardHandler, awardBtnDisabled}) => {
+
+  const getRightAnswersCount = (userAnswers, currentQuizAnswers, dataAnswers) => {
     let rightAnswerCount = 0;
     dataAnswers.forEach((elem, index) => {
-      if(userAnswers[index] === elem.rightAnswerId) ++rightAnswerCount;
+      if(userAnswers[index] === elem.rightAnswerId || currentQuizAnswers[index] == elem.rightAnswerId) ++rightAnswerCount;
+      else rightAnswerCount += 0.5;
     })
     return rightAnswerCount;
   }
@@ -55,10 +65,20 @@ const QuizResultPage = ({userAnswers, pageData, currentQuizAnswers}) => {
         <Typography gutterBottom variant="h5" component="div" color="gray">
           Тест
         </Typography>
-        <Typography gutterBottom variant="h3" component="div">
-          Результат: {getRightAnswersCount(userAnswers, pageData.pageTest)}/{pageData.pageTest.length}
+        <Typography gutterBottom variant="h3" component="div" textAlign="center">
+          Результат: {Math.floor(getRightAnswersCount(userAnswers, currentQuizAnswers.split(''), pageData.pageTest))}/{pageData.pageTest.length}
         </Typography>
-        {giveUserAwards(500)}
+        <AwardWrapper>
+          <Typography marginRight="10px" gutterBottom variant="h5" component="div" textAlign="center" display="flex" alignItems="center">
+            Награда:
+          </Typography>
+          <Typography marginRight="10px" gutterBottom variant="h5" component="div" textAlign="center" display="flex" alignItems="center">
+            +{getRightAnswersCount(userAnswers, currentQuizAnswers.split(''), pageData.pageTest) * 100}<GameIcon mobileWidth={35} width={50} icon="2" />
+          </Typography>
+          <Typography gutterBottom variant="h5" component="div" textAlign="center" display="flex" alignItems="center">
+            +{getRightAnswersCount(userAnswers, currentQuizAnswers.split(''), pageData.pageTest) * 300}<GameIcon mobileWidth={35} width={50} icon="0" />
+          </Typography>
+        </AwardWrapper>
       </div>
       <Grid style={{margin: "auto", width: '100%'}} rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
         {
@@ -78,6 +98,13 @@ const QuizResultPage = ({userAnswers, pageData, currentQuizAnswers}) => {
           ))
         }
       </Grid>
+      {
+        giveUserAwards(
+          awardBtnDisabled,
+          saveUserAwardHandler,
+        100 * getRightAnswersCount(userAnswers, currentQuizAnswers.split(''), pageData.pageTest),
+        300 * getRightAnswersCount(userAnswers, currentQuizAnswers.split(''), pageData.pageTest),
+      )}
     </QuizPageWrapper>
   )
 }

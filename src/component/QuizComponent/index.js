@@ -3,7 +3,10 @@ import QuizStartPage from "./QuizStartPage";
 import QuizResultPage from "./QuizResultPage";
 import QuizQuestionsPage from "./QuizQuestionsPage";
 
-const QuizComponent = ({ pageData, doneBtnHandler, currentPageIsDone, updateTestProgressHandler, currentQuizAnswers }) => {
+const QuizComponent = ({
+  pageData, doneBtnHandler, currentPageIsDone, updateTestProgressHandler,
+  currentQuizAnswers, saveUserAwardHandler, awardBtnDisabled
+}) => {
 
   const [questionId, setQuestionId] = useState(0);
   const [userAnswers, setUserAnswers] = useState([]);
@@ -43,10 +46,16 @@ const QuizComponent = ({ pageData, doneBtnHandler, currentPageIsDone, updateTest
     <>
       {
         showQuizStartPage && !currentPageIsDone ?
-          <QuizStartPage startQuizHandler={startQuizHandler}/>
+          <QuizStartPage startQuizHandler={startQuizHandler} pageData={pageData.pageTest.length}/>
           :
           timeIsLeft || questionId === pageData.pageTest.length || currentPageIsDone?
-            <QuizResultPage userAnswers={userAnswers} pageData={pageData} currentQuizAnswers={currentQuizAnswers} />
+            <QuizResultPage
+              userAnswers={userAnswers}
+              pageData={pageData}
+              currentQuizAnswers={currentQuizAnswers}
+              saveUserAwardHandler={saveUserAwardHandler}
+              awardBtnDisabled={awardBtnDisabled}
+            />
             :
             <QuizQuestionsPage
               userAnswers={userAnswers}

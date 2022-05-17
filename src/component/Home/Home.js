@@ -1,11 +1,11 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 
 import SignUp from "../SignUp/SignUp";
 import SignIn from "../SignIn/SignIn";
 import Profile from "./Profile";
-import moment from "moment";
+import {useSelector} from "react-redux";
 
-const Home = ({userData, setUserData, setCourseData, courseData}) => {
+const Home = () => {
   const [createAccount, setCreateAccount] = useState(false)
   const [isUserAuthorized, setIsUserAuthorized] = useState(localStorage.getItem('st_user_authorized'))
 
@@ -16,8 +16,8 @@ const Home = ({userData, setUserData, setCourseData, courseData}) => {
   return(
     <>
       {
-        isUserAuthorized ? <Profile userData={userData} setIsUserAuthorized={setIsUserAuthorized} courseData={courseData}/>
-          : createAccount ? <SignUp handleClick={handleClick}></SignUp> : <SignIn setUserData={setUserData} handleClick={handleClick} setCourseData={setCourseData}></SignIn>
+        isUserAuthorized ? <Profile setIsUserAuthorized={setIsUserAuthorized} />
+          : createAccount ? <SignUp handleClick={handleClick} /> : <SignIn handleClick={handleClick} />
       }
     </>
   )
