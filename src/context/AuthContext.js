@@ -1,10 +1,11 @@
 import React, {useContext, useEffect, useState} from "react";
 import { auth, db } from '../firebase'
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
-import {collection, addDoc, setDoc, doc, getDoc} from "firebase/firestore";
+import { setDoc, doc, getDoc} from "firebase/firestore";
 import {useNavigate} from "react-router-dom";
-import moment from "moment";
 import {createDBArchitecture} from "../utils/services/createCourseDBArchitecture";
+import {useDispatch, useSelector} from "react-redux";
+import {setCourseData, setUserData} from "../utils/reducers/repoReducer";
 
 const AuthContext = React.createContext()
 
@@ -13,18 +14,18 @@ export const useAuth = () => useContext(AuthContext)
 let user = '';
 
 export const AuthProvider = ({children}) => {
+  const dispatch = useDispatch();
   const [currentUser, setCurrentUser] = useState()
   const [loading, setLoading] = useState(true)
   const navigate = useNavigate();
 
-
-  const signup = (userData, setError, handleClick) => (
-    createUserWithEmailAndPassword(auth, userData.emailRef.current.value, userData.passwordRef.current.value)
+  const signup = (userEnteredData, setError, handleClick) => (
+    createUserWithEmailAndPassword(auth, userEnteredData.emailRef.current.value, userEnteredData.passwordRef.current.value)
       .then(async (userCredential) => {
         user = userCredential.user;
         await setDoc(doc(db, "users", user.uid), {
-          firstName: userData.firstNameRef.current.value,
-          lastName: userData.lastNameRef.current.value,
+          firstName: userEnteredData.firstNameRef.current.value,
+          lastName: userEnteredData.lastNameRef.current.value,
           email: user.email,
           createdAt: user.metadata.createdAt,
           lastLoginAt: user.metadata.lastLoginAt,
@@ -46,9 +47,8 @@ export const AuthProvider = ({children}) => {
       })
   )
 
-   const signin =  (userData, setError, setLoading, setUserData, setCourseData) => {
-    // console.log(userData);
-    signInWithEmailAndPassword(auth, userData.emailRef.current.value, userData.passwordRef.current.value)
+   const signin = (userEnteredData, setError, setLoading) => {
+    signInWithEmailAndPassword(auth, userEnteredData.emailRef.current.value, userEnteredData.passwordRef.current.value)
       .then(async (userCredential) => {
         user = userCredential.user;
         localStorage.setItem('st_user_authorized', JSON.stringify(user));
@@ -58,13 +58,13 @@ export const AuthProvider = ({children}) => {
         console.log('authorized')
 
         if (userDataSnap.exists()) {
-          setUserData(userDataSnap.data());
+          dispatch(setUserData(userDataSnap.data()));
         } else {
           console.log("No such userDataSnap!");
         }
 
         if (courseSnap.exists()) {
-          setCourseData(courseSnap.data());
+          dispatch(setCourseData(courseSnap.data()));
         } else {
           console.log("No such courseSnap!");
         }

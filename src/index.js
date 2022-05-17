@@ -3,15 +3,15 @@ import ReactDOM from 'react-dom';
 import './reset.css'
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
-// import store from "./utils/store/createStore";
-// import {Provider} from "react-redux";
+import {store} from "./utils/reducers";
+import {Provider} from "react-redux";
 
 const application = (
-  // <Provider store={store}>
+  <Provider store={store}>
     <BrowserRouter>
       <App />
     </BrowserRouter>
-  // </Provider>
+  </Provider>
 )
 
 ReactDOM.render(

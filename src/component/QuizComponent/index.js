@@ -2,7 +2,6 @@ import React, {useState, useEffect} from "react";
 import QuizStartPage from "./QuizStartPage";
 import QuizResultPage from "./QuizResultPage";
 import QuizQuestionsPage from "./QuizQuestionsPage";
-import {saveUsersAward, saveUsersReward} from "../../utils/services/learnPageService";
 
 const QuizComponent = ({
   pageData, doneBtnHandler, currentPageIsDone, updateTestProgressHandler,
@@ -36,8 +35,6 @@ const QuizComponent = ({
       doneBtnHandler(false);
     }
   }
-
-  console.log(pageData.pageTest.length)
 
   useEffect(() => {
     if(userAnswers.length === pageData.pageTest.length){

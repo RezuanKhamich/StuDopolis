@@ -70,7 +70,7 @@ const Rating = props => {
   const tableHeaders = [
     {title: 'Опыт', baseName: 'experienceAmount'},
     {title: 'Карьера', baseName: 'careerPosition'},
-    {title: 'GoldCoins', baseName: 'goldCoinAmount'},
+    // {title: 'GoldCoins', baseName: 'goldCoinAmount'},
     {title: 'GreenCoins', baseName: 'greenCoinAmount'},
   ]
 
@@ -86,38 +86,22 @@ const Rating = props => {
     if(newAlignment) setAlignment(tableHeaders[+newAlignment]);
   };
 
-  const [usersData, setUsersData] = useState([])
+  const [usersRate, setUsersRate] = useState([])
 
   useEffect(async () => {
     if (alignment) {
-      setUsersData([]);
+      setUsersRate([]);
 
       const citiesRef = collection(db, "users");
       const q = query(citiesRef, orderBy(`${alignment.baseName}`, "desc"), limit(20));
 
       onSnapshot(q, (snapshot => {
         snapshot.docs.forEach((doc) => {
-          setUsersData(prevState => [...prevState, {... doc.data(), id: doc.id}])
+          setUsersRate(prevState => [...prevState, {... doc.data(), id: doc.id}])
         })
       }))
     }
   }, [alignment])
-
-  // useEffect(async () => {
-  //   if (isUserAuthorized) {
-  //     // console.log(isUserAuthorized.uid)
-  //     const citiesRef = collection(db, "users");
-  //     const q = query(citiesRef, where(isUserAuthorized.uid, "==", isUserAuthorized.uid), orderBy(`goldCoinAmount`, "desc"));
-  //     // console.log(q)
-  //     onSnapshot(q, (snapshot => {
-  //       console.log(snapshot)
-  //       // snapshot.docs.forEach((doc) => {
-  //       //   console.log('hii')
-  //       //   console.log(doc.data())
-  //       // })
-  //     }))
-  //   }
-  // }, [isUserAuthorized])
 
   return (
     <>
@@ -130,11 +114,11 @@ const Rating = props => {
         >
           <ToggleButton value="0">Опыт</ToggleButton>
           <ToggleButton value="1">Карьера</ToggleButton>
-          <ToggleButton value="2">GoldCoin</ToggleButton>
-          <ToggleButton value="3">GreenCoin</ToggleButton>
+          {/*<ToggleButton value="2">GoldCoin</ToggleButton>*/}
+          <ToggleButton value="2">GreenCoin</ToggleButton>
       </ToogleWrapper>
 
-      { usersData.length ?
+      { usersRate.length ?
           <TableWrapper component={Paper} width={width}>
             <Table sx={{ minWidth: width >= 500 ? 700 : 'inherit' }} aria-label="customized table">
               <TableHead>
@@ -145,7 +129,7 @@ const Rating = props => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {usersData.map((data, index) => (
+                {usersRate.map((data, index) => (
                   <StyledTableRow key={index}>
                     <StyledTableCell>
                       {index < 3 ?

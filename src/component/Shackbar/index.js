@@ -58,6 +58,7 @@ function MyApp({ awardsType, leftIcon, rightIcon, saveUserAwardHandler, awardBtn
             awardIndex = index;
             handleClickVariant()();
           })
+          console.log('получаем награду')
           saveUserAwardHandler(fillAwardsType[0], fillAwardsType[1], fillAwardsType[3])
         }}>Получить награду</Button>
     </ButtonWrapper>

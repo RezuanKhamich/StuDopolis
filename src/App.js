@@ -14,14 +14,14 @@ import Footer from "./component/Footer";
 import {AuthProvider} from "./context/AuthContext";
 import {mainColor} from "./constants/colors";
 import {app, db} from './firebase'
-import { auth } from './firebase'
-import { onAuthStateChanged } from "firebase/auth";
 import Courses from "./component/Courses";
 import Modules from "./component/Modules";
 import Freelance from "./component/Freelance";
 import {doc, getDoc} from "firebase/firestore";
-import {useCourseData, useUserData} from "./hooks";
 import Messages from "./component/Messages";
+import FreelanceTask from "./component/FreelanceTask";
+import {useDispatch, useSelector} from "react-redux";
+import {setCourseData, setUserData} from "./utils/reducers/repoReducer";
 
 const AppStyle = styled('div')`
   padding-left: 100px;
@@ -37,10 +37,26 @@ const AppStyle = styled('div')`
 
 const App = () => {
   const userAuthData = JSON.parse(localStorage.getItem('st_user_authorized'))
-
-  const [userData, setUserData] = useUserData(userAuthData);
-  const [courseData, setCourseData] = useCourseData(userAuthData);
+  const dispatch = useDispatch();
   const [currentModuleId, setCurrentModuleId] = useState(0)
+
+  useEffect(async () => {
+    if (userAuthData) {
+      const courseSnap = await getDoc(doc(db, "courses", userAuthData.uid))
+      if (courseSnap.exists()) {
+        dispatch(setCourseData(courseSnap.data()));
+      } else {
+        console.log("Не найдено courseSnap!");
+      }
+
+      const userDataSnap = await getDoc(doc(db, "users", userAuthData.uid))
+      if (userDataSnap.exists()) {
+        dispatch(setUserData(userDataSnap.data()));
+      } else {
+        console.log("Не найдено userDataSnap!");
+      }
+    }
+  }, [])
 
   return (
     <AuthProvider>
@@ -48,17 +64,18 @@ const App = () => {
       <AppStyle>
         <Routes>
           {/*<Route path="/" element={<App />} />*/}
-          <Route path='/' element={<Home userData={userData} setUserData={setUserData} setCourseData={setCourseData} courseData={courseData} />} />
-          <Route path='courses' element={<Courses courseData={courseData}/>} />
-          <Route path='rating' element={<Rating userId={userData} />} />
+          <Route path='/' element={<Home />} />
+          <Route path='courses' element={<Courses />} />
+          <Route path='rating' element={<Rating />} />
           <Route path='model' element={<Model />}/>
           <Route path='career' element={<Career />}/>
           <Route path='freelance' element={<Freelance />}/>
+          <Route path='freelance/task' element={<FreelanceTask />}/>
           <Route path='administration' element={<Admin />}/>
           <Route path='messages' element={<Messages />}/>
 
-          <Route path='courses/modules' element={<Modules courseData={courseData} setCurrentModuleId={setCurrentModuleId} />} />
-          <Route path='courses/modules/learn' element={<StudyPlatform courseData={courseData} setCourseData={setCourseData} userData={userData} setUserData={setUserData} currentModuleId={currentModuleId} />} />
+          <Route path='courses/modules' element={<Modules setCurrentModuleId={setCurrentModuleId} />} />
+          <Route path='courses/modules/learn' element={<StudyPlatform />} />
 
           {/*{*/}
           {/*  onAuthStateChanged(auth, (user) => {*/}

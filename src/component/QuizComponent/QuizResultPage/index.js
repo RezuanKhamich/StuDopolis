@@ -47,6 +47,7 @@ const QuizResultPage = ({userAnswers, pageData, currentQuizAnswers, saveUserAwar
     let rightAnswerCount = 0;
     dataAnswers.forEach((elem, index) => {
       if(userAnswers[index] === elem.rightAnswerId || currentQuizAnswers[index] == elem.rightAnswerId) ++rightAnswerCount;
+      else rightAnswerCount += 0.5;
     })
     return rightAnswerCount;
   }
@@ -65,7 +66,7 @@ const QuizResultPage = ({userAnswers, pageData, currentQuizAnswers, saveUserAwar
           Тест
         </Typography>
         <Typography gutterBottom variant="h3" component="div" textAlign="center">
-          Результат: {getRightAnswersCount(userAnswers, currentQuizAnswers.split(''), pageData.pageTest)}/{pageData.pageTest.length}
+          Результат: {Math.floor(getRightAnswersCount(userAnswers, currentQuizAnswers.split(''), pageData.pageTest))}/{pageData.pageTest.length}
         </Typography>
         <AwardWrapper>
           <Typography marginRight="10px" gutterBottom variant="h5" component="div" textAlign="center" display="flex" alignItems="center">

@@ -18,6 +18,7 @@ const ContentText = styled('p')`
   color: ${textColor1};
   margin-top: 10px;
   text-align: justify;
+  font-size: 16px;
 `
 
 const PageContent = ({

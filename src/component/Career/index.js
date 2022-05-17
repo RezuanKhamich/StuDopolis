@@ -85,7 +85,8 @@ const Career = () => {
                 <StyledTableRow key={row.vacancy}>
                   <StyledTableCell >{index+1}. {row.vacancy}</StyledTableCell>
                   <StyledTableCell align="right">{row.requiredExp} {row.requiredExp !== '-' ? <GameIcon mobileWidth={18} icon="0" /> : null}</StyledTableCell>
-                  <StyledTableCell >+{row.rewardGoldCoin} {row.rewardGoldCoin !== '-' ? <GameIcon mobileWidth={18} icon="1" /> : null}<br/>+{row.rewardGreenCoin} <GameIcon icon="2" /></StyledTableCell>
+                  {/*<StyledTableCell >+{row.rewardGoldCoin} {row.rewardGoldCoin !== '-' ? <GameIcon mobileWidth={18} icon="1" /> : null}<br/>+{row.rewardGreenCoin} <GameIcon icon="2" /></StyledTableCell>*/}
+                  <StyledTableCell >+{row.rewardGreenCoin} <GameIcon icon="2" /></StyledTableCell>
                   <StyledTableCell align="right">+{row.rewardGreenCoin} <GameIcon mobileWidth={18} icon="2" /></StyledTableCell>
                 </StyledTableRow>
               ))
