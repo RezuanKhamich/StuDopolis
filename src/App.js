@@ -21,7 +21,12 @@ import {doc, getDoc} from "firebase/firestore";
 import Messages from "./component/Messages";
 import FreelanceTask from "./component/FreelanceTask";
 import {useDispatch, useSelector} from "react-redux";
-import {setCourseData, setUserData} from "./utils/reducers/repoReducer";
+import {setCourseData, setFreelanceData, setUserData} from "./utils/reducers/repoReducer";
+import Shop from "./component/Shop";
+import News from "./component/News";
+import teacherData from "./component/Header/Navbar/teacherData.json";
+import Student from "./component/Admin/Student";
+import LectureProgress from "./component/Admin/LectureProgress";
 
 const AppStyle = styled('div')`
   padding-left: 100px;
@@ -39,7 +44,6 @@ const App = () => {
   const userAuthData = JSON.parse(localStorage.getItem('st_user_authorized'))
   const dispatch = useDispatch();
   const [currentModuleId, setCurrentModuleId] = useState(0)
-
   useEffect(async () => {
     if (userAuthData) {
       const courseSnap = await getDoc(doc(db, "courses", userAuthData.uid))
@@ -55,8 +59,15 @@ const App = () => {
       } else {
         console.log("Не найдено userDataSnap!");
       }
+
+      const freelanceDataSnap = await getDoc(doc(db, "freelance", userAuthData.uid))
+      if (freelanceDataSnap.exists()) {
+        dispatch(setFreelanceData(freelanceDataSnap.data()));
+      } else {
+        console.log("Не найдено freelanceDataSnap!");
+      }
     }
-  }, [])
+  }, [userAuthData])
 
   return (
     <AuthProvider>
@@ -68,11 +79,15 @@ const App = () => {
           <Route path='courses' element={<Courses />} />
           <Route path='rating' element={<Rating />} />
           <Route path='model' element={<Model />}/>
-          <Route path='career' element={<Career />}/>
+          {/*<Route path='career' element={<Career />}/>*/}
           <Route path='freelance' element={<Freelance />}/>
           <Route path='freelance/task' element={<FreelanceTask />}/>
-          <Route path='administration' element={<Admin />}/>
-          <Route path='messages' element={<Messages />}/>
+          <Route path='administration' element={ teacherData.teacherHash === userAuthData?.uid ? <Admin /> : null}/>
+          <Route path='administration/student' element={teacherData.teacherHash === userAuthData?.uid ? <Student /> : null}/>
+          <Route path='administration/student/progress' element={teacherData.teacherHash === userAuthData?.uid ? <LectureProgress /> : null}/>
+          <Route path='shop' element={<Shop />}/>
+          {/*<Route path='messages' element={<Messages />}/>*/}
+          <Route path='news' element={<News />}/>
 
           <Route path='courses/modules' element={<Modules setCurrentModuleId={setCurrentModuleId} />} />
           <Route path='courses/modules/learn' element={<StudyPlatform />} />

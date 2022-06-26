@@ -24,7 +24,7 @@ const ButtonWrapper = styled.div`
   text-align: center;
 `;
 
-const QuizStartPage = ({ startQuizHandler, pageData }) => {
+const QuizStartPage = ({ startQuizHandler, pageData, awardRatio = [300, 100], testBtnDisabled}) => {
 
   return(
     <>
@@ -45,10 +45,10 @@ const QuizStartPage = ({ startQuizHandler, pageData }) => {
             <Icon color="warning">timer</Icon> {pageData * 20} c.
           </Typography>
           <Typography gutterBottom variant="h5" component="div" textAlign="center" display="flex" alignItems="center">
-            +{pageData * 100}<GameIcon mobileWidth={35} width={50} icon="2" />
+            +{pageData * awardRatio[1]}<GameIcon mobileWidth={35} width={50} icon="2" />
           </Typography>
           <Typography gutterBottom variant="h5" component="div" textAlign="center" display="flex" alignItems="center">
-            +{pageData * 300}<GameIcon mobileWidth={35} width={50} icon="0" />
+            +{pageData * awardRatio[0]}<GameIcon mobileWidth={35} width={50} icon="0" />
           </Typography>
         </QuizDetails>
 
@@ -57,6 +57,7 @@ const QuizStartPage = ({ startQuizHandler, pageData }) => {
             variant="contained"
             color='success'
             onClick={startQuizHandler}
+            disabled={testBtnDisabled}
           >
             Начать тест
           </Button>

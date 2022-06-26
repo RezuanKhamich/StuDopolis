@@ -6,6 +6,7 @@ import {useNavigate} from "react-router-dom";
 import {createDBArchitecture} from "../utils/services/createCourseDBArchitecture";
 import {useDispatch, useSelector} from "react-redux";
 import {setCourseData, setUserData} from "../utils/reducers/repoReducer";
+import {createFreelanceDBArchitecture} from "../utils/services/createFreelanceDBArchitecture";
 
 const AuthContext = React.createContext()
 
@@ -25,6 +26,7 @@ export const AuthProvider = ({children}) => {
         user = userCredential.user;
         await setDoc(doc(db, "users", user.uid), {
           firstName: userEnteredData.firstNameRef.current.value,
+          photoIdRef: userEnteredData.photoSelected,
           lastName: userEnteredData.lastNameRef.current.value,
           email: user.email,
           createdAt: user.metadata.createdAt,
@@ -38,6 +40,8 @@ export const AuthProvider = ({children}) => {
         })
 
         await setDoc(doc(db, "courses", user.uid), createDBArchitecture())
+        await setDoc(doc(db, "freelance", user.uid), createFreelanceDBArchitecture())
+
         handleClick()
       })
       .catch((error) => {

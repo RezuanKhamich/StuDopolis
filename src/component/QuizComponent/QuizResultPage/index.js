@@ -41,7 +41,7 @@ const AwardWrapper = styled.div`
   margin: 40px 0;
 `;
 
-const QuizResultPage = ({userAnswers, pageData, currentQuizAnswers, saveUserAwardHandler, awardBtnDisabled}) => {
+const QuizResultPage = ({userAnswers, pageData, currentQuizAnswers, saveUserAwardHandler, awardBtnDisabled, awardRatio = [300, 100]}) => {
 
   const getRightAnswersCount = (userAnswers, currentQuizAnswers, dataAnswers) => {
     let rightAnswerCount = 0;
@@ -73,10 +73,10 @@ const QuizResultPage = ({userAnswers, pageData, currentQuizAnswers, saveUserAwar
             Награда:
           </Typography>
           <Typography marginRight="10px" gutterBottom variant="h5" component="div" textAlign="center" display="flex" alignItems="center">
-            +{getRightAnswersCount(userAnswers, currentQuizAnswers.split(''), pageData.pageTest) * 100}<GameIcon mobileWidth={35} width={50} icon="2" />
+            +{getRightAnswersCount(userAnswers, currentQuizAnswers.split(''), pageData.pageTest) * awardRatio[1]}<GameIcon mobileWidth={35} width={50} icon="2" />
           </Typography>
           <Typography gutterBottom variant="h5" component="div" textAlign="center" display="flex" alignItems="center">
-            +{getRightAnswersCount(userAnswers, currentQuizAnswers.split(''), pageData.pageTest) * 300}<GameIcon mobileWidth={35} width={50} icon="0" />
+            +{getRightAnswersCount(userAnswers, currentQuizAnswers.split(''), pageData.pageTest) * awardRatio[0]}<GameIcon mobileWidth={35} width={50} icon="0" />
           </Typography>
         </AwardWrapper>
       </div>
@@ -102,8 +102,8 @@ const QuizResultPage = ({userAnswers, pageData, currentQuizAnswers, saveUserAwar
         giveUserAwards(
           awardBtnDisabled,
           saveUserAwardHandler,
-        100 * getRightAnswersCount(userAnswers, currentQuizAnswers.split(''), pageData.pageTest),
-        300 * getRightAnswersCount(userAnswers, currentQuizAnswers.split(''), pageData.pageTest),
+          awardRatio[1] * getRightAnswersCount(userAnswers, currentQuizAnswers.split(''), pageData.pageTest),
+          awardRatio[0] * getRightAnswersCount(userAnswers, currentQuizAnswers.split(''), pageData.pageTest),
       )}
     </QuizPageWrapper>
   )

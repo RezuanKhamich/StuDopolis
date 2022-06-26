@@ -1,6 +1,7 @@
 import {doc, getDoc, updateDoc} from "firebase/firestore";
 import {db} from "../../../firebase";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
+import {setCourseData, setFreelanceData} from "../../reducers/repoReducer";
 
 export const setEmptyPageCells = (data) => {
   let resultPageArray = [];
@@ -64,6 +65,22 @@ export const updateQuizProgress = async (isUserAuthorized, userAnswers, courseId
   }
 }
 
+export const updateFreelanceAvailableTasks = async (isUserAuthorized, courseId, moduleId, lectureId, dispatch, setFreelanceData) => {
+  const freelanceDocRef = doc(db, "freelance", isUserAuthorized.uid);
+
+  await updateDoc(freelanceDocRef, {
+    [`course_${courseId}.modules.${moduleId}.lectures.${lectureId}.task_0.taskAvailable`]: true,
+    [`course_${courseId}.modules.${moduleId}.lectures.${lectureId}.task_1.taskAvailable`]: true,
+  });
+
+  const freelanceDataNew = await getDoc(freelanceDocRef);
+  if (freelanceDataNew.exists()) {
+    dispatch(setFreelanceData(freelanceDataNew.data()))
+  } else {
+    console.log("No such document!");
+  }
+}
+
 export const saveUsersAward = async (isUserAuthorized, userData, setUserData, greenCoinCount, expCount, goldCoinCount, courseId, moduleId, lectureId, setCourseData) => {
   const courseDocRef = doc(db, "courses", isUserAuthorized.uid);
 
@@ -82,7 +99,6 @@ export const saveUsersAward = async (isUserAuthorized, userData, setUserData, gr
 }
 
 export const saveUsersAwardDB = async(isUserAuthorized, userData, setUserData, greenCoinCount, expCount, goldCoinCount) => {
-  console.log(isUserAuthorized)
   const userDocRef = doc(db, "users", isUserAuthorized.uid);
 
   if(greenCoinCount){

@@ -20,7 +20,7 @@ import PageWrapper from "../../containers/PageWrapper/PageWrapper";
 import {coursesData, modulesData} from "../../externalData";
 import {useAllCoursesProgress, useModulesProgress} from "../../utils/services/сalculationService/courseProgress";
 import {useSelector} from "react-redux";
-import {courseMaterials} from "../../data/courseData/FrontEnd";
+import {materialCollection} from "../../data/courseData/index";
 import Tooltip from "@mui/material/Tooltip";
 import Zoom from "@mui/material/Zoom";
 import ListAltIcon from "@mui/icons-material/ListAlt";
@@ -39,26 +39,34 @@ const InteractiveCard = styled(Card)`
   opacity: ${props => props.disabled ? '0.5' : '1'};
   margin-right: ${props => props.rightCard ? '0px' : '30px'};
   position: relative;
-  &:hover{
+
+  &:hover {
     transition: 0.5s;
     box-shadow: 0px 5px 5px -3px rgb(0 0 0 / 20%), 0px 8px 10px 1px rgb(0 0 0 / 14%), 0px 3px 14px 2px rgb(0 0 0 / 12%);
     cursor: pointer;
   }
-  &.completed{
-    &:after{
+
+  &.completed {
+    &:after {
       position: absolute;
       content: '';
       display: inline-block;
       width: 100%;
       height: 151px;
-      background: rgba(255, 215, 0, 0.7)
+      background: repeating-linear-gradient(45deg,rgb(255 218 19 / 50%),rgb(255 218 19 / 50%) 10px,transparent 10px,transparent 20px);
+      //background: #2e7d32;
+      //background: repeating-linear-gradient(45deg, rgba(255, 215, 0, 0.7), rgba(255, 215, 0, 0.7) 10px, transparent 10px, transparent 20px);
     }
+  }
+  
+  @media (max-width: 430px) {
+    margin: auto;
   }
 `;
 
 const CourseDetailsContainer = styled('div')`
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   color: #212529;
   margin-top: 10px;
 `;
@@ -68,6 +76,24 @@ const DetailsBox = styled('span')`
   align-items: center;
   font-weight: 500;
   font-size: 14px;
+`;
+
+const TypographyMobile = styled(Typography)`
+  @media (max-width: 430px) {
+    ${props => props.mobileSize ? `font-size: ${props.mobileSize}rem!important;` : null}
+  }
+`;
+
+const CardMediaMobile = styled(CardMedia)`
+  @media (max-width: 430px) {
+    position: absolute!important;
+    width: 100px!important;
+    height: 41px!important;
+    border-radius: 0 0px 0px 15px!important;
+    right: 0!important;
+    top: 0!important;
+    padding: 0!important;
+  }
 `;
 
 const AwardStats = styled('div')`
@@ -101,42 +127,40 @@ const Modules = ({setCurrentModuleId}) => {
   const [progress, setProgress] = useState(100);
   const [currentCourseId, setCurrentCourseId] = useSearchParams();
 
-  const [completedLessons, totalCountLessons] = useModulesProgress(courseData, 0)
+  const [completedLessons, totalCountLessons] = useAllCoursesProgress(courseData)
+  const [moduleCompletedLessons, moduleCountLessons] = useModulesProgress(courseData, currentCourseId.get('courseId'))
+
+  const getTotalCountTasks = (index) => courseData[`course_${index}`] ? (totalCountLessons[index] - Object.keys(courseData[`course_${index}`][`modules`]).length) * 3 : null
+  const getModuleCountTask = (index) => (moduleCountLessons[index] - 1) * 3
 
   const CardWrapper = ({ moduleName, index, disabled, rightCard }) => (
     <InteractiveCard
       disabled={disabled}
-      className={completedLessons[index] === totalCountLessons[index] ? 'completed' : null}
+      className={moduleCompletedLessons[index] === moduleCountLessons[index] ? 'completed' : null}
       rightCard={rightCard}
     >
-      <CardMedia
+      <CardMediaMobile
         component="img"
         sx={{ width: '206px', padding: '16px', borderRadius: '20px', height: '142px' }}
         image={modulesData[index].image}
       />
       <CardContent sx={{ maxWidth: '280px', padding: '16px 16px 16px 0' }}>
-        <Typography gutterBottom variant="h6" component="div" fontSize="16px">
+        <TypographyMobile gutterBottom variant="h6" component="div" fontSize="16px">
           {index + 1}. {moduleName}
-        </Typography>
-        <Typography variant="body2" color="text.secondary" fontSize="14px" height="42px">
+        </TypographyMobile>
+        <TypographyMobile variant="body2" color="text.secondary" fontSize="14px" height="42px">
           {coursesData[currentCourseId.get('courseId')].description}
-        </Typography>
+        </TypographyMobile>
         <CourseDetailsContainer>
           <Tooltip TransitionComponent={Zoom} placement="top" arrow title="Количество домашних заданий и тестов">
             <DetailsBox>
-              <ListAltIcon sx={{ marginRight: '4px', width: '20px' }} />25
+              <ListAltIcon sx={{ marginRight: '4px', width: '20px' }} />{getModuleCountTask(index)}
             </DetailsBox>
           </Tooltip>
 
           <Tooltip TransitionComponent={Zoom} placement="top" arrow title="Прогресс по лекциям/Общее количество лекций">
             <DetailsBox>
-              <BeenhereIcon sx={{ marginRight: '4px', width: '20px' }} />7
-            </DetailsBox>
-          </Tooltip>
-
-          <Tooltip TransitionComponent={Zoom} placement="top" arrow title="Прогресс по лекциям/Общее количество лекций">
-            <DetailsBox>
-              <BeenhereIcon sx={{ marginRight: '4px', width: '20px' }} />7
+              <BeenhereIcon sx={{ marginRight: '4px', width: '20px' }} />{moduleCompletedLessons[index]}/{moduleCountLessons[index]}
             </DetailsBox>
           </Tooltip>
         </CourseDetailsContainer>
@@ -145,13 +169,13 @@ const Modules = ({setCurrentModuleId}) => {
       <AwardStats>
         <Tooltip TransitionComponent={Zoom} placement="top" arrow title="Награда в виде опыта">
           <DetailsBox style={{ justifyContent: 'end', marginBottom: '10px' }}>
-            <GamePointsBadge count="2810" pointType="1" small/>
+            <GamePointsBadge count="+2810" pointType="1" small/>
           </DetailsBox>
         </Tooltip>
 
         <Tooltip TransitionComponent={Zoom} placement="top" arrow title="Награда в виде GreenCoin">
           <DetailsBox style={{ justifyContent: 'end' }}>
-            <GamePointsBadge count="2460" pointType="0" small/>
+            <GamePointsBadge count="+2460" pointType="0" small/>
           </DetailsBox>
         </Tooltip>
       </AwardStats>
@@ -163,7 +187,7 @@ const Modules = ({setCurrentModuleId}) => {
 
       <Grid style={{maxWidth: 1190, margin: "auto"}} rowSpacing={5} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
         <CourseCard sx={{ display: 'flex' }}>
-          <CardMedia
+          <CardMediaMobile
             component="img"
             // height={ width > 500 ? 200 : 150 }
             sx={{ width: '230px', padding: '16px', borderRadius: '20px', height: '160px' }}
@@ -179,13 +203,13 @@ const Modules = ({setCurrentModuleId}) => {
             <CourseDetailsContainer>
               <Tooltip TransitionComponent={Zoom} placement="top" arrow title="Количество домашних заданий и тестов">
                 <DetailsBox>
-                  <ListAltIcon sx={{ marginRight: '4px', width: '20px' }} />sd
+                  <ListAltIcon sx={{ marginRight: '4px', width: '20px' }} />{getTotalCountTasks(currentCourseId.get('courseId'))}
                 </DetailsBox>
               </Tooltip>
 
               <Tooltip TransitionComponent={Zoom} placement="top" arrow title="Прогресс по лекциям/Общее количество лекций">
                 <DetailsBox>
-                  <BeenhereIcon sx={{ marginRight: '4px', width: '20px' }} />sd
+                  <BeenhereIcon sx={{ marginRight: '4px', width: '20px' }} />{completedLessons[currentCourseId.get('courseId')]}/{totalCountLessons[currentCourseId.get('courseId')]}
                 </DetailsBox>
               </Tooltip>
 
@@ -197,15 +221,15 @@ const Modules = ({setCurrentModuleId}) => {
             </CourseDetailsContainer>
           </CardContent>
           <AwardStats>
-            <Tooltip TransitionComponent={Zoom} placement="top" arrow title="Время прохождения курса">
+            <Tooltip TransitionComponent={Zoom} placement="top" arrow title="Награда в виде опыта">
               <DetailsBox style={{ justifyContent: 'end', marginBottom: '10px' }}>
-                <GamePointsBadge count="14050" pointType="1"/>
+                <GamePointsBadge count="+14050" pointType="1"/>
               </DetailsBox>
             </Tooltip>
 
-            <Tooltip TransitionComponent={Zoom} placement="top" arrow title="Время прохождения курса" >
+            <Tooltip TransitionComponent={Zoom} placement="top" arrow title="Награда в виде GreenCoin" >
               <DetailsBox style={{ justifyContent: 'end' }}>
-                <GamePointsBadge count="12300" pointType="0"/>
+                <GamePointsBadge count="+12300" pointType="0"/>
               </DetailsBox>
             </Tooltip>
           </AwardStats>
@@ -216,7 +240,7 @@ const Modules = ({setCurrentModuleId}) => {
           courseData[`course_${currentCourseId.get('courseId')}`] ?
             courseData[`course_${currentCourseId.get('courseId')}`].info.modulesName.map((name, index) => {
               return (
-                <Grid item xs={ 6 } key={index}>
+                <Grid item xs={ width > 500 ? 6 : 12  } key={index}>
                   <Link to={`learn?courseId=${currentCourseId.get('courseId')}&moduleId=${index}`} key={index}>
                     <CardWrapper moduleName={name} img="" index={index} rightCard={index % 2 !== 0} />
                   </Link>
