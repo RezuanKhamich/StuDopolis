@@ -39,21 +39,21 @@ export const createDBArchitecture = () => {
       courseArchitecture[`course_${i}`][`modules`][j] = {
         lectures: {},
         info: {
-          moduleAvailable: j === 0,
+          moduleAvailable: false,
         },
       }
 
       for(let k = 0; k < coursesData[i].lectureCount_DB[j]; k++) {
         if(k === (coursesData[i].lectureCount_DB[j] - 1)){
           courseArchitecture[`course_${i}`][`modules`][j][`lectures`][k] = {
-            lectureAvailable: (i === 0 && j=== 0 && k === 0),
+            lectureAvailable: false,
             quizProgress: '0000000000',
             pageProgress: '0',
             isAwardReceived: false,
           }
         }else{
           courseArchitecture[`course_${i}`][`modules`][j][`lectures`][k] = {
-            lectureAvailable: (i === 0 && j=== 0 && k === 0),
+            lectureAvailable: false,
             quizProgress: '0000000000',
             pageProgress: '000',
             isAwardReceived: false,

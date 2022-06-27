@@ -1,6 +1,7 @@
 import {useMemo} from "react";
 import {doc, getDoc, updateDoc} from "firebase/firestore";
 import {db} from "../../../firebase";
+import {materialCollection} from "../../../data/courseData";
 
 export const useAllCoursesProgress = (courseData) => (
   useMemo(() => {
@@ -59,3 +60,32 @@ export const useLecturesProgress = (courseData, courseIndex, moduleIndex) => (
     return lessonData
   }, [courseData])
 )
+
+export const getFullLessonCountInCourse = (currentCourseData) => {
+  let totalCountLessons = 0;
+
+  if(currentCourseData){
+    currentCourseData.info.lectureCountDB.forEach(el => {
+      totalCountLessons += el;
+    })
+  }
+  return totalCountLessons;
+}
+
+export const getFullModuleCountInCourse = (currentCourseData) => currentCourseData ? Object.keys(currentCourseData[`modules`]).length : null
+
+export const getFullLectureQuestionCount = (currentCourseData, courseIndex) => {
+  // const externalData = materialCollection()[courseIndex][elem.moduleId][elem.lectureId].freelanceTasks[elem.taskId]
+
+  let totalQuestionCount = 0
+
+  if(currentCourseData){
+    for(let i = 0; i < Object.keys(currentCourseData[`modules`]).length; i++){
+      for(let j = 0; j < Object.keys(currentCourseData[`modules`][i][`lectures`]).length; j++){
+        totalQuestionCount += materialCollection()[courseIndex][i][j]?.pageFlow?.page2?.[0]?.pageTest.length || 0
+      }
+    }
+  }
+
+  return totalQuestionCount;
+}

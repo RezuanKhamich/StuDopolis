@@ -30,7 +30,6 @@ const InteractiveCard = styled(Card)`
 
   @media (max-width: 430px) {
     margin: auto;
-    height: 305px;
   }
 `;
 
@@ -57,6 +56,7 @@ const EmailWrapper = styled('span')`
 const Student = () => {
   const dispatch = useDispatch();
   const usersList = useSelector(state => state.repos.usersList);
+  const { innerWidth: width, innerHeight: height } = window;
   const [userId, setUserId] = useSearchParams();
   const adminCourse = useSelector(state => state.repos.adminCourse);
   const adminFreelance = useSelector(state => state.repos.adminFreelance);
@@ -101,8 +101,7 @@ const Student = () => {
                 <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                   {
                     coursesData.map((elem, index) => (
-                      // <Grid item xs={ width > 500 ? 4 : 12 } key={index}>
-                      <Grid item xs={ 6 } key={index}>
+                      <Grid item xs={ width > 500 ? 6 : 12 } key={index}>
                         <Link to={`progress?userId=${userId.get('userId')}&uid=${userId.get('uid')}&courseId=${index}&`}>
                         <InteractiveCard sx={{ display: 'flex' }}>
                           <CardContent sx={{ padding: '16px 16px 16px 0', display: 'flex', alignItems: 'center', justifyContent: "space-between" }}>

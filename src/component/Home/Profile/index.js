@@ -8,7 +8,12 @@ import playerHead from "../../../media/player-head.png";
 import GameIcon from "../../../containers/GameIcon/GameIcon";
 import {careersRang, coursesData} from "../../../externalData";
 import {Link} from "react-router-dom";
-import {useAllCoursesProgress} from "../../../utils/services/сalculationService/courseProgress";
+import {
+  getFullLectureQuestionCount,
+  getFullLessonCountInCourse, getFullModuleCountInCourse,
+  useAllCoursesProgress,
+  useModulesProgress
+} from "../../../utils/services/сalculationService/courseProgress";
 import {useSelector} from "react-redux";
 import GamePointsBadge from "../../GamePointsBadge";
 import CustomBadge from "../../CustomBadge";
@@ -23,6 +28,7 @@ import RacoonIcon from "../../../media/racoon_photo.png";
 import BearIcon from "../../../media/bear_photo.png";
 import FoxIcon from "../../../media/fox_photo.png";
 import TigerIcon from "../../../media/tiger_photo.png";
+import {getMaxCourseAward} from "../../../utils/services/ServiceEconomics";
 
 const InteractiveCard = styled(Card)`
   opacity: ${props => props.disabled ? '0.5' : '1'};
@@ -84,6 +90,7 @@ const Profile = ({setIsUserAuthorized}) => {
   const courseData = useSelector(state => state.repos.courseData)
 
   const [completedLessons, totalCountLessons] = useAllCoursesProgress(courseData);
+
   const { innerWidth: width, innerHeight: height } = window;
 
   const userPhotos = [
@@ -219,13 +226,17 @@ const Profile = ({setIsUserAuthorized}) => {
                           <CustomBadge sx={{ marginRight: '8px' }} message="Награда:" colorType={0} small />
                           <Tooltip TransitionComponent={Zoom} placement="top" arrow title="Награда в виде опыта">
                             <DetailsBox style={{ marginRight: '6px' }}>
-                              <GamePointsBadge count="+14050" pointType="1" small rectangular/>
+                              <GamePointsBadge
+                                count={`+${getMaxCourseAward(getFullLessonCountInCourse(courseData[`course_${index}`]), getFullLectureQuestionCount(courseData[`course_${index}`], index), getFullModuleCountInCourse(courseData[`course_${index}`]))[0]}`}
+                                pointType="1" small rectangular/>
                             </DetailsBox>
                           </Tooltip>
 
                           <Tooltip TransitionComponent={Zoom} placement="top" arrow title="Награда в виде GreenCoin">
                             <DetailsBox>
-                              <GamePointsBadge count="+12300" pointType="0" small rectangular/>
+                              <GamePointsBadge
+                                count={`+${getMaxCourseAward(getFullLessonCountInCourse(courseData[`course_${index}`]), getFullLectureQuestionCount(courseData[`course_${index}`], index), getFullModuleCountInCourse(courseData[`course_${index}`]))[1]}`}
+                                pointType="0" small rectangular/>
                             </DetailsBox>
                           </Tooltip>
                         </AwardStats>
@@ -245,7 +256,6 @@ const Profile = ({setIsUserAuthorized}) => {
                               />
                             </Box>
                         </div>
-
                       </CardContent>
                     </div>
                   </InteractiveCard>
