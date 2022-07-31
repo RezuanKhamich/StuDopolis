@@ -18,7 +18,9 @@ import css_bg from "../media/css_background.png";
 import js_bg from "../media/js_background.png";
 import react_bg from "../media/react_background.png";
 import redux_bg from "../media/redux_background.png";
+import newsImg from "../component/Header/Navbar/media/news_new.png";
 import admin from "../component/Header/Navbar/media/admin_logo_important.png";
+import shop from "../component/Header/Navbar/media/bitcoin.png";
 
 export const careersRang = [
   {vacancy: 'Стажер', requiredExp: '-', rewardGoldCoin: '-', rewardGreenCoin: '2000' },
@@ -77,7 +79,7 @@ export const coursesData = [
     passingTime: '3,5',
     disabled: true,
   },
-  { name: 'Космическое проектирование в KSP',
+  { name: 'Космо-проектирование KSP',
     iconURL: ksp_icon,
     description: `Обучение конструированию ракет, запусков на дальние орбиты и построение траектории`,
     passingTime: '2',
@@ -87,15 +89,15 @@ export const coursesData = [
 
 export const pageNavigationData = [
   {img: logo, msg: false, logo: true, link: ''},
-  {name: 'Обучение', img: learn_newImg, msg: false, link: 'courses'},
-  {name: 'Фриланс', img: freelanceImg, msg: false, link: 'freelance'},
+  {name: 'Обучение', img: learn_newImg, msg: 'learn', link: 'courses'},
+  {name: 'Фриланс', img: freelanceImg, msg: 'freelance', link: 'freelance'},
   {name: 'Рейтинг', img: ratingImg, msg: false, link: 'rating'},
   // {name: 'Модель', img: ratingImg, msg: false, link: 'model'},
-  {name: 'Карьера', img: companyImg, msg: false, link: 'career'},
-  {name: 'Учитель', img: admin, msg: false, link: 'administration'},
+  // {name: 'Карьера', img: companyImg, msg: false, link: 'career'},
+  {name: 'G-Pay', img: shop, msg: false, link: 'shop'},
   // {name: 'Кабинет', img: homeImg, msg: false, link: 'profile'},
-  // {name: 'Новости', img: newsImg, msg: false},
-  {name: 'Почта', img: messageImg, msg: false, link: 'messages'},
+  {name: 'Новости', img: newsImg, msg: false, link: 'news'},
+  // {name: 'Почта', img: messageImg, msg: false, link: 'messages'},
   // {name: 'Помощь', img: helpImg, msg: false},
   // {name: 'Выйти', img: exitImg, msg: false},
 ]
@@ -104,6 +106,6 @@ export const modulesData = [
   {name: 'Изучаем HTML5', disabled: false, image: html_bg},
   {name: 'Основы CSS/CSS3', disabled: false, image: css_bg},
   {name: 'JavaScript ES6+', disabled: true, image: js_bg},
+  {name: 'JavaScript работа с DOM', disabled: true, image: js_bg},
   {name: 'Основы React.js', disabled: true, image: react_bg},
-  {name: 'Redux + бонус', disabled: true, image: redux_bg},
 ]

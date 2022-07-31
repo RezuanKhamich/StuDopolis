@@ -27,6 +27,7 @@ export const createDBArchitecture = () => {
     courseArchitecture[`course_${i}`] = {
       modules: {},
       info: {
+        courseAvailable: false,
         courseName: coursesData[i].courseName,
         modulesName: coursesData[i].modulesName,
         moduleImg: coursesData[i].moduleImg,
@@ -38,16 +39,25 @@ export const createDBArchitecture = () => {
       courseArchitecture[`course_${i}`][`modules`][j] = {
         lectures: {},
         info: {
-          moduleAvailable: j === 0,
+          moduleAvailable: false,
         },
       }
 
       for(let k = 0; k < coursesData[i].lectureCount_DB[j]; k++) {
-        courseArchitecture[`course_${i}`][`modules`][j][`lectures`][k] = {
-          lectureAvailable: (i === 0 && j=== 0 && k === 0),
-          quizProgress: '0000000000',
-          pageProgress: '00',
-          isAwardReceived: false,
+        if(k === (coursesData[i].lectureCount_DB[j] - 1)){
+          courseArchitecture[`course_${i}`][`modules`][j][`lectures`][k] = {
+            lectureAvailable: false,
+            quizProgress: '0000000000',
+            pageProgress: '0',
+            isAwardReceived: false,
+          }
+        }else{
+          courseArchitecture[`course_${i}`][`modules`][j][`lectures`][k] = {
+            lectureAvailable: false,
+            quizProgress: '0000000000',
+            pageProgress: '000',
+            isAwardReceived: false,
+          }
         }
       }
     }

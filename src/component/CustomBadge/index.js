@@ -20,7 +20,7 @@ const CustomBadge = ({ sx, message, colorType, small }) => {
     {title: 'warning', color: '#ed6c02'},
     {title: 'primary', color: '#1976d2'},
   ]
-  console.log(colorParameters[colorType])
+
   return(
     <BadgeContent style={sx} color={colorParameters[colorType].color} small={small}>
       {message}

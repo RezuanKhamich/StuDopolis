@@ -5,7 +5,7 @@ import experienceImg from "../../media/experience.png";
 import React from "react";
 
 export const giveUserAwards = (awardBtnDisabled, saveUserAwardHandler, greenCoin, experience, goldCoin) => {
-  const awardsType = [greenCoin, experience, goldCoin];
+  const awardsType = [Math.floor(greenCoin), Math.floor(experience), goldCoin];
   const awardIcons = [greenCoinImg, experienceImg, goldCoinImg];
 
   return(

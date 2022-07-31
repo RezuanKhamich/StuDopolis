@@ -1,7 +1,12 @@
 import React, {useRef, useState} from "react";
 import styled from "styled-components";
-import {Alert, Button, FormControl, InputLabel, MenuItem, Select, TextField} from "@mui/material";
+import {Alert, Button, FormControl, InputLabel, MenuItem, Select, TextField, Typography} from "@mui/material";
 import { useAuth } from "../../context/AuthContext";
+import WolfIcon from "../../media/wolf_photo.png";
+import RacoonIcon from "../../media/racoon_photo.png";
+import BearIcon from "../../media/bear_photo.png";
+import FoxIcon from "../../media/fox_photo.png";
+import TigerIcon from "../../media/tiger_photo.png";
 
 const PageTitle = styled('h1')`
     text-align: center;
@@ -26,6 +31,33 @@ const Form = styled('form')`
     margin: auto;
   `;
 
+const StudentPhoto = styled.img`
+  width: 100px;
+  border: 1px solid #0000002e;
+  padding: 5px;
+  border-radius: 10px;
+  filter: grayscale(1);
+  opacity: 0.5;
+
+  ${props => props.selected ? `
+    filter: none;
+    opacity: 1;` 
+    : `
+    filter: grayscale(1);
+    opacity: 0.5;
+  `}
+  
+  &:hover{
+    filter: none;
+    cursor: pointer;
+  }
+
+  @media (max-width: 430px) {
+    width: 70px;
+    margin-bottom: 20px;
+  }
+`;
+
 const SignUp = ({handleClick}) => {
   const firstNameRef = useRef();
   const lastNameRef = useRef();
@@ -33,6 +65,7 @@ const SignUp = ({handleClick}) => {
   const passwordRef = useRef();
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [photoSelected, setPhotoSelected] = useState(null)
 
   const { signup, currentUser } = useAuth();
 
@@ -43,7 +76,8 @@ const SignUp = ({handleClick}) => {
       firstNameRef,
       lastNameRef,
       emailRef,
-      passwordRef
+      passwordRef,
+      photoSelected: photoSelected || '0',
     }
     try {
       setError('')
@@ -62,6 +96,14 @@ const SignUp = ({handleClick}) => {
       <Description>Создай свой профиль и врывайся в безумный мир IT</Description>
       <SectionTitle>Регистрация</SectionTitle>
       <Form onSubmit={handleSubmit}>
+        <Typography variant="body2" color="text.secondary" sx={{ marginBottom: '20px', textAlign: 'center' }}>Выбери свой аватар</Typography>
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <StudentPhoto src={WolfIcon} selected={photoSelected === 0} onClick={() => setPhotoSelected(0)} alt=""/>
+          <StudentPhoto src={RacoonIcon} selected={photoSelected === 1} onClick={() => setPhotoSelected(1)} alt=""/>
+          <StudentPhoto src={BearIcon} selected={photoSelected === 2} onClick={() => setPhotoSelected(2)} alt=""/>
+          <StudentPhoto src={FoxIcon} selected={photoSelected === 3} onClick={() => setPhotoSelected(3)} alt=""/>
+          <StudentPhoto src={TigerIcon} selected={photoSelected === 4} onClick={() => setPhotoSelected(4)} alt=""/>
+        </div>
         {error && <Alert severity="error">{error}</Alert>}
         <TextField
           required

@@ -5,7 +5,7 @@ import QuizQuestionsPage from "./QuizQuestionsPage";
 
 const QuizComponent = ({
   pageData, doneBtnHandler, currentPageIsDone, updateTestProgressHandler,
-  currentQuizAnswers, saveUserAwardHandler, awardBtnDisabled
+  currentQuizAnswers, saveUserAwardHandler, awardBtnDisabled, awardRatio, testBtnDisabled
 }) => {
 
   const [questionId, setQuestionId] = useState(0);
@@ -37,7 +37,7 @@ const QuizComponent = ({
   }
 
   useEffect(() => {
-    if(userAnswers.length === pageData.pageTest.length){
+    if(userAnswers?.length === pageData?.pageTest?.length){
       updateTestProgressHandler(userAnswers);
     }
   },[userAnswers])
@@ -46,7 +46,7 @@ const QuizComponent = ({
     <>
       {
         showQuizStartPage && !currentPageIsDone ?
-          <QuizStartPage startQuizHandler={startQuizHandler} pageData={pageData.pageTest.length}/>
+          <QuizStartPage startQuizHandler={startQuizHandler} pageData={pageData?.pageTest?.length} awardRatio={awardRatio} testBtnDisabled={testBtnDisabled} />
           :
           timeIsLeft || questionId === pageData.pageTest.length || currentPageIsDone?
             <QuizResultPage
@@ -55,6 +55,7 @@ const QuizComponent = ({
               currentQuizAnswers={currentQuizAnswers}
               saveUserAwardHandler={saveUserAwardHandler}
               awardBtnDisabled={awardBtnDisabled}
+              awardRatio={awardRatio}
             />
             :
             <QuizQuestionsPage

@@ -9,7 +9,11 @@ const PointContainer = styled('span')`
   ${props => props.small && `
     font-size: 14px;
     padding: 2px 8px;
-  `}
+  `};
+  
+  @media (max-width: 430px) {
+    font-size: 12px;
+  }
 `;
 
 const GamePointsBadge = ({ count, pointType= 0, small, rectangular }) => {
@@ -19,7 +23,7 @@ const GamePointsBadge = ({ count, pointType= 0, small, rectangular }) => {
   ]
   return (
     <PointContainer color={pointsParameters[pointType].color} small={small} rectangular={rectangular}>
-      {`+${count} ${pointsParameters[pointType].title}`}
+      {`${count} ${pointsParameters[pointType].title}`}
     </PointContainer>
   );
 }

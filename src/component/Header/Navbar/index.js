@@ -4,6 +4,8 @@ import {mainColor} from "../../../constants/colors";
 import NavElement from "../NavElement";
 import {Link} from "react-router-dom";
 import {pageNavigationData} from "../../../externalData";
+import admin from "./media/admin_logo_important.png";
+import teacherData from "./teacherData.json";
 
 const NavContainer = styled('nav')`
   background: ${mainColor};
@@ -34,6 +36,8 @@ const ListWrapper = styled('ul')`
 `
 
 const Navbar = () => {
+  const userAuthData = JSON.parse(localStorage.getItem('st_user_authorized'))
+
   return(
     <NavContainer>
       <ListWrapper>
@@ -49,6 +53,16 @@ const Navbar = () => {
               />
             </Link>
           ))
+        }
+        {
+          teacherData.teacherHash === userAuthData?.uid ?
+            <Link to={'/administration'}>
+              <NavElement
+                titleName={'Учитель'}
+                titleImg={admin}
+                titleMsg={false}
+              />
+            </Link> : null
         }
       </ListWrapper>
     </NavContainer>

@@ -19,6 +19,12 @@ import { query, orderBy, where, limit, onSnapshot } from "firebase/firestore";
 
 import {db} from "../../firebase";
 import Loader from "../Loader";
+import WolfIcon from "../../media/wolf_photo.png";
+import RacoonIcon from "../../media/racoon_photo.png";
+import BearIcon from "../../media/bear_photo.png";
+import FoxIcon from "../../media/fox_photo.png";
+import TigerIcon from "../../media/tiger_photo.png";
+import {addFieldForAllUsers} from "../../utils/services/_UpdateUsersDBData";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -34,7 +40,6 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:nth-of-type(odd)': {
     backgroundColor: theme.palette.action.hover,
   },
-  // hide last border
   '&:last-child td, &:last-child th': {
     border: 0,
   },
@@ -59,8 +64,6 @@ const UserIndex = styled('span')`
 
 const UserImage = styled('img')`
   width: 40px;
-  border: 2px solid #2125293d;
-  border-radius: 50%;
   margin-right: 8px;
 `;
 
@@ -69,9 +72,14 @@ const Rating = props => {
   const [isUserAuthorized, setIsUserAuthorized] = useState(JSON.parse(localStorage.getItem('st_user_authorized')))
   const tableHeaders = [
     {title: 'Опыт', baseName: 'experienceAmount'},
-    {title: 'Карьера', baseName: 'careerPosition'},
+    // {title: 'Карьера', baseName: 'careerPosition'},
     // {title: 'GoldCoins', baseName: 'goldCoinAmount'},
     {title: 'GreenCoins', baseName: 'greenCoinAmount'},
+    // {title: 'Фриланс', baseName: 'freelanceTaskCount'},
+  ]
+
+  const userPhotos = [
+    WolfIcon, RacoonIcon, BearIcon, FoxIcon, TigerIcon
   ]
 
   const [alignment, setAlignment] = useState(tableHeaders[0]);
@@ -90,17 +98,17 @@ const Rating = props => {
 
   useEffect(async () => {
     if (alignment) {
-      setUsersRate([]);
-
       const citiesRef = collection(db, "users");
-      const q = query(citiesRef, orderBy(`${alignment.baseName}`, "desc"), limit(20));
-
+      const q = await query(citiesRef, orderBy(`${alignment.baseName}`, "desc"), limit(20));
       onSnapshot(q, (snapshot => {
+        setUsersRate([]);
         snapshot.docs.forEach((doc) => {
           setUsersRate(prevState => [...prevState, {... doc.data(), id: doc.id}])
         })
       }))
     }
+
+    await addFieldForAllUsers()
   }, [alignment])
 
   return (
@@ -113,9 +121,10 @@ const Rating = props => {
           onChange={ratingFilterChange}
         >
           <ToggleButton value="0">Опыт</ToggleButton>
-          <ToggleButton value="1">Карьера</ToggleButton>
+          {/*<ToggleButton value="1">Карьера</ToggleButton>*/}
           {/*<ToggleButton value="2">GoldCoin</ToggleButton>*/}
-          <ToggleButton value="2">GreenCoin</ToggleButton>
+          <ToggleButton value="1">GreenCoin</ToggleButton>
+          {/*<ToggleButton value="2">Фриланс</ToggleButton>*/}
       </ToogleWrapper>
 
       { usersRate.length ?
@@ -133,7 +142,7 @@ const Rating = props => {
                   <StyledTableRow key={index}>
                     <StyledTableCell>
                       {index < 3 ?
-                        <div style={{ textAlign: 'center', width: '40px' }}>
+                        <div style={{ textAlign: 'center', width: '40px', position: 'relative' }}>
                           <img style={{ width: '40px', position: 'absolute' }} src={wreathArray[index].img} alt=""/>
                           <UserIndex color={wreathArray[index].color}>{wreathArray[index].index}</UserIndex>
                         </div>
@@ -143,7 +152,7 @@ const Rating = props => {
                     </StyledTableCell>
                     <StyledTableCell>
                       <span style={{ display: 'flex', alignItems: 'center' }}>
-                        <UserImage src={playerHeadImg} alt=""/>
+                        <UserImage src={data?.photoIdRef ? userPhotos[data?.photoIdRef] : userPhotos[0]} alt=""/>
                         {data.firstName} {data.lastName}
                       </span>
                     </StyledTableCell>

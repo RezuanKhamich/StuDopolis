@@ -32,7 +32,6 @@ const InteractiveCard = styled(Card)`
 
   @media (max-width: 430px) {
     margin: auto;
-    height: 305px;
   }
 `;
 
@@ -50,10 +49,30 @@ const DetailsBox = styled('span')`
   font-size: 14px;
 `;
 
+const TypographyMobile = styled(Typography)`
+  @media (max-width: 430px) {
+    ${props => props.mobileSize ? `font-size: ${props.mobileSize}rem!important;` : null}
+  }
+`
+
+const CardMediaMobile = styled(CardMedia)`
+  @media (max-width: 430px) {
+    position: absolute!important;
+    width: 100px!important;
+    height: 41px!important;
+    border-radius: 0 0px 0px 15px!important;
+    right: 0!important;
+    top: 0!important;
+    padding: 0!important;
+  }
+`;
+
 const Courses = () => {
   const { innerWidth: width, innerHeight: height } = window;
   const courseData = useSelector(state => state.repos.courseData)
   const [completedLessons, totalCountLessons] = useAllCoursesProgress(courseData)
+
+  let getTotalCountTasks = (index) => courseData[`course_${index}`] ? (totalCountLessons[index] - Object.keys(courseData[`course_${index}`][`modules`]).length) * 3 : null
 
   return (
     <>
@@ -62,27 +81,25 @@ const Courses = () => {
       <Grid style={{maxWidth: 1190, margin: "auto"}} container rowSpacing={5} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
         {
           coursesData.map((elem, index) => (
-            // <Grid item xs={ width > 500 ? 4 : 12 } key={index}>
-            <Grid item xs={ 6 } key={index}>
+            <Grid item xs={ width > 500 ? 6 : 12 } key={index}>
               <Link to={`modules?courseId=${index}`}>
                 <InteractiveCard sx={{ display: 'flex' }}>
-                  <CardMedia
+                  <CardMediaMobile
                     component="img"
-                    // height={ width > 500 ? 200 : 150 }
                     sx={{ width: '230px', padding: '16px', borderRadius: '20px', height: '160px' }}
                     image={elem.iconURL}
                   />
-                  <CardContent sx={{ padding: '16px 16px 16px 0' }}>
-                    <Typography gutterBottom variant="h6" component="div" fontSize="18px">
+                  <CardContent sx={{ padding: width > 500 ? '16px 16px 16px 0' : '16px 16px 16px 16px', width: '100%' }}>
+                    <TypographyMobile gutterBottom variant="h6" component="div" fontSize="18px">
                       {elem.name}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary" fontSize="14px" height="52px">
+                    </TypographyMobile>
+                    <TypographyMobile variant="body2" color="text.secondary" fontSize="14px" height="52px">
                       {elem.description}
-                    </Typography>
+                    </TypographyMobile>
                     <CourseDetailsContainer>
                       <Tooltip TransitionComponent={Zoom} placement="top" arrow title="Количество домашних заданий и тестов">
                         <DetailsBox>
-                            <ListAltIcon sx={{ marginRight: '4px', width: '20px' }} />{totalCountLessons[index]*3}
+                            <ListAltIcon sx={{ marginRight: '4px', width: '20px' }} />{getTotalCountTasks(index)}
                         </DetailsBox>
                       </Tooltip>
 

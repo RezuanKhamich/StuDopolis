@@ -1,97 +1,108 @@
-import React, {useState} from "react";
+import React, {useMemo, useState} from "react";
 import styled from "styled-components";
-import {coursesData} from "../../externalData";
 import {hoverColor, mainColor, secondColor, textColor2} from "../../constants/colors";
 import MainPageTitle from "../../containers/MainPageTitle";
-import {courseMaterials} from "../../data/courseData/FrontEnd";
+import {materialCollection} from "../../data/courseData/index";
 import {useSearchParams} from "react-router-dom";
 import QuizComponent from "../QuizComponent";
 import {Card, CardContent, Chip, Typography} from "@mui/material";
-import {useSelector} from "react-redux";
-
-const SectionsWrapper = styled('div')`
-  background: ${mainColor};
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 300px;
-  z-index: 250;
-  color: white;
-`
-const SectionTitle = styled('h1')`
-  text-align: center;
-  font-size: 20px;
-  padding: 5px;
-  margin: 20px 0;
-`
-const Devider = styled('hr')`
-  background-color: #6c757d;
-  height: 1px;
-  border: none;
-  margin: 0;
-`
+import {useDispatch, useSelector} from "react-redux";
+import {
+  saveUsersAward,
+  saveUsersAwardDB,
+  updateLectureProgress,
+  updateQuizProgress
+} from "../../utils/services/learnPageService";
+import {doc, getDoc, updateDoc} from "firebase/firestore";
+import {db} from "../../firebase";
+import {setFreelanceData, setUserData} from "../../utils/reducers/repoReducer";
+import {serviceEconomics} from "../../utils/services/ServiceEconomics";
 
 const ContentWrapper = styled('div')`
-  padding-right: 320px;
-`
-
-const SectionButton = styled('button')`
-  border: none;
-  background: ${props => props.active || "none"};
-  color: white;
-  width: 100%;
-  text-align: left;
-  padding: 5px;
-  font-size: 16px;
-  border-bottom: 1px solid ${props => props.sectionDone || textColor2()};
-  padding-top: 10px;
-  &:hover{
-    cursor: pointer;
-    background-color: ${hoverColor()};
-  }
+  max-width: 1190px;
+  margin: auto;
 `
 
 const FreelanceTask = () => {
-  const courseData = useSelector(state => state.repos.courseData)
+  const dispatch = useDispatch();
+  const freelanceData = useSelector(state => state.repos.freelanceData)
+  const userData = useSelector(state => state.repos.userData)
+  const [isUserAuthorized, setIsUserAuthorized] = useState(JSON.parse(localStorage.getItem('st_user_authorized')))
+  const [urlParametersId, setUrlParametersId] = useSearchParams();
+  const courseId = urlParametersId.get('courseId');
+  const moduleId = urlParametersId.get('moduleId');
+  const lectureId = urlParametersId.get('lectureId');
+  const taskId = urlParametersId.get('taskId');
+  let awardBtnDisabled = useMemo(() => freelanceData[`course_${courseId}`] ? freelanceData[`course_${courseId}`][`modules`][moduleId][`lectures`][lectureId][`task_${taskId}`].isAwardReceived: null, [freelanceData]);
+  const data = materialCollection()[courseId][moduleId][lectureId].freelanceTasks[taskId]
 
-  const [currentCourse, setCurrentCourse] = useState(0);
-  const [currentModuleId, setCurrentModuleId] = useSearchParams();
-  const [awardBtnDisabled, setAwardBtnDisabled] = useState(false);
-
-  const data = courseMaterials()[currentModuleId.get('id')];
-
-  const doneTaskHandler = () => {
+  const doneTaskHandler = async () => {
     console.log('завершено')
   }
 
-  const updateTestProgressHandler = () => {
-    console.log('сохранили данные')
+  const updateTestProgressHandler = async (userAnswers) => await updateTaskProgress(isUserAuthorized, userAnswers, courseId, moduleId, lectureId, taskId, freelanceData, setFreelanceDataHandler)
+
+  const setUserDataHandler = (payload) => {
+    dispatch(setUserData(payload))
   }
 
-  const saveUserAwardHandler = () => {
-    console.log('Сохранили данные по награде')
+  const setFreelanceDataHandler = (payload) => {
+    dispatch(setFreelanceData(payload))
+  }
+
+  const getAwardRatio = () => {
+    const taskDifficult = freelanceData[`course_${courseId}`][`modules`][moduleId][`lectures`][lectureId][`task_${taskId}`].difficult;
+
+    if(taskDifficult === 0){
+      return [serviceEconomics().easyFreelanceTaskDone.exp, serviceEconomics().easyFreelanceTaskDone.greenCoin]
+    }
+    return [serviceEconomics().hardFreelanceTaskDone.exp, serviceEconomics().hardFreelanceTaskDone.greenCoin]
+  }
+
+  const saveUserAwardHandler = async (greenCoinCount, expCount, goldCoinCount) => {
+    await saveTaskAward(isUserAuthorized, userData, setUserDataHandler, greenCoinCount, expCount, goldCoinCount, courseId, moduleId, lectureId, taskId, setFreelanceDataHandler)
+  }
+
+  const saveTaskAward = async (isUserAuthorized, userData, setUserData, greenCoinCount, expCount, goldCoinCount, courseId, moduleId, lectureId, taskId, setFreelanceData) => {
+    const freelanceDocRef = doc(db, "freelance", isUserAuthorized.uid);
+
+    await updateDoc(freelanceDocRef, {
+      [`course_${courseId}.modules.${moduleId}.lectures.${lectureId}.task_${taskId}.isAwardReceived`]: true,
+    });
+
+    const freelanceDocNew = await getDoc(freelanceDocRef);
+    if (freelanceDocNew.exists()) {
+      setFreelanceData(freelanceDocNew.data())
+    } else {
+      console.log("No such document!");
+    }
+
+    await saveUsersAwardDB(isUserAuthorized, userData, setUserData, greenCoinCount, expCount, goldCoinCount)
+  }
+
+  const updateTaskProgress = async (isUserAuthorized, userAnswers, courseId, moduleId, lectureId, taskId, freelanceData, setFreelanceData) => {
+    const freelanceDocRef = doc(db, "freelance", isUserAuthorized.uid);
+
+    let currentQuizProgress = freelanceData[`course_${courseId}`][`modules`][moduleId][`lectures`][lectureId][`task_${taskId}`].taskProgress.split('')
+    userAnswers.forEach((elem, index) => {
+      currentQuizProgress[index] = elem
+    })
+    let resultPageProgress = currentQuizProgress.join('')
+
+    await updateDoc(freelanceDocRef, {
+      [`course_${courseId}.modules.${moduleId}.lectures.${lectureId}.task_${taskId}.taskProgress`]: `${resultPageProgress}`,
+    });
+
+    const freelanceDataNew = await getDoc(freelanceDocRef);
+    if (freelanceDataNew.exists()) {
+      setFreelanceData(freelanceDataNew.data())
+    } else {
+      console.log("No such document!");
+    }
   }
 
   return (
     <>
-      <SectionsWrapper>
-        <SectionTitle>Доступные направления</SectionTitle>
-        <Devider />
-        {
-          coursesData.map((course, index) => {
-            return <SectionButton
-              key={index}
-              sectionDone={course[index] ? secondColor() : null}
-              active={index === currentCourse ? hoverColor() : null}
-              disabled={course.disabled}
-              // onClick={changeCurrentSection.bind(this, index)}
-            >
-              {index + 1}. {course.name}
-            </SectionButton>
-          })
-        }
-      </SectionsWrapper>
       <ContentWrapper>
         <MainPageTitle>FrontEnd - разработчик</MainPageTitle>
 
@@ -108,24 +119,25 @@ const FreelanceTask = () => {
               Задача:
             </Typography>
             <Typography gutterBottom variant="h5" component="div">
-              {data[0].freelanceTasks[0].mainTitle}
+              {data.mainTitle}
             </Typography>
             <Typography variant="body2" color="text.secondary">
               Описание
             </Typography>
             <Typography variant="p">
-              {data[0].freelanceTasks[0].description}
+              {data.description}
             </Typography>
           </CardContent>
         </Card>
         <QuizComponent
-          pageData={data[0].freelanceTasks[0]}
+          pageData={data}
           doneBtnHandler={doneTaskHandler}
-          currentPageIsDone={false}
+          currentPageIsDone={awardBtnDisabled}
           updateTestProgressHandler={updateTestProgressHandler}
-          currentQuizAnswers={'0000000000'}
+          currentQuizAnswers={freelanceData[`course_${courseId}`] ? freelanceData[`course_${courseId}`][`modules`][moduleId][`lectures`][lectureId][`task_${taskId}`].taskProgress : null}
           saveUserAwardHandler={saveUserAwardHandler}
           awardBtnDisabled={awardBtnDisabled}
+          awardRatio={getAwardRatio()}
         />
       </ContentWrapper>
     </>
