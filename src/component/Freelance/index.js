@@ -27,6 +27,7 @@ import _ from 'lodash';
 import {materialCollection} from "../../data/courseData/index";
 import MenuIcon from "@mui/icons-material/Menu";
 import courseInfo from "../../externalData/FrontEnd/courseInfo.json";
+import {serviceEconomics} from "../../utils/services/ServiceEconomics";
 
 const ToogleWrapper = styled(ToggleButtonGroup)( () =>({
   display: 'block!important',
@@ -256,13 +257,13 @@ const Freelance = () => {
                         <AwardStats>
                           <Tooltip TransitionComponent={Zoom} placement="top" arrow title="Награда в виде опыта">
                             <DetailsBox style={{marginRight: '6px'}}>
-                              <GamePointsBadge count={`+${externalData.pageTest.length * 300 * (elem.data.difficult + 1)}`} pointType="1" small rectangular/>
+                              <GamePointsBadge count={`+${elem.data.difficult === 0 ? serviceEconomics().easyFreelanceTaskDone.exp : serviceEconomics().hardFreelanceTaskDone.exp}`} pointType="1" small rectangular/>
                             </DetailsBox>
                           </Tooltip>
 
                           <Tooltip TransitionComponent={Zoom} placement="top" arrow title="Награда в виде GreenCoin">
                             <DetailsBox>
-                              <GamePointsBadge count={`+${externalData.pageTest.length * 100 * (elem.data.difficult + 1)}`} pointType="0" small rectangular/>
+                              <GamePointsBadge count={`+${elem.data.difficult === 0 ? serviceEconomics().easyFreelanceTaskDone.greenCoin : serviceEconomics().hardFreelanceTaskDone.greenCoin}`} pointType="0" small rectangular/>
                             </DetailsBox>
                           </Tooltip>
                         </AwardStats>

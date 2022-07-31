@@ -43,11 +43,19 @@ const AwardWrapper = styled.div`
 
 const QuizResultPage = ({userAnswers, pageData, currentQuizAnswers, saveUserAwardHandler, awardBtnDisabled, awardRatio = [300, 100]}) => {
 
-  const getRightAnswersCount = (userAnswers, currentQuizAnswers, dataAnswers) => {
+  const getRightAnswersCoef = (userAnswers, currentQuizAnswers, dataAnswers) => {
     let rightAnswerCount = 0;
     dataAnswers.forEach((elem, index) => {
       if(userAnswers[index] === elem.rightAnswerId || currentQuizAnswers[index] == elem.rightAnswerId) ++rightAnswerCount;
       else rightAnswerCount += 0.5;
+    })
+    return rightAnswerCount;
+  }
+
+  const getRightAnswerCount = (userAnswers, currentQuizAnswers, dataAnswers) => {
+    let rightAnswerCount = 0;
+    dataAnswers.forEach((elem, index) => {
+      if(userAnswers[index] === elem.rightAnswerId || currentQuizAnswers[index] == elem.rightAnswerId) ++rightAnswerCount;
     })
     return rightAnswerCount;
   }
@@ -66,17 +74,17 @@ const QuizResultPage = ({userAnswers, pageData, currentQuizAnswers, saveUserAwar
           Тест
         </Typography>
         <Typography gutterBottom variant="h3" component="div" textAlign="center">
-          Результат: {Math.floor(getRightAnswersCount(userAnswers, currentQuizAnswers.split(''), pageData.pageTest))}/{pageData.pageTest.length}
+          Результат: {Math.floor(getRightAnswerCount(userAnswers, currentQuizAnswers.split(''), pageData.pageTest))}/{pageData.pageTest.length}
         </Typography>
         <AwardWrapper>
           <Typography marginRight="10px" gutterBottom variant="h5" component="div" textAlign="center" display="flex" alignItems="center">
             Награда:
           </Typography>
           <Typography marginRight="10px" gutterBottom variant="h5" component="div" textAlign="center" display="flex" alignItems="center">
-            +{getRightAnswersCount(userAnswers, currentQuizAnswers.split(''), pageData.pageTest) * awardRatio[1]}<GameIcon mobileWidth={35} width={50} icon="2" />
+            +{Math.floor(getRightAnswersCoef(userAnswers, currentQuizAnswers.split(''), pageData.pageTest) * awardRatio[1] / pageData.pageTest.length)}<GameIcon mobileWidth={35} width={50} icon="2" />
           </Typography>
           <Typography gutterBottom variant="h5" component="div" textAlign="center" display="flex" alignItems="center">
-            +{getRightAnswersCount(userAnswers, currentQuizAnswers.split(''), pageData.pageTest) * awardRatio[0]}<GameIcon mobileWidth={35} width={50} icon="0" />
+            +{Math.floor(getRightAnswersCoef(userAnswers, currentQuizAnswers.split(''), pageData.pageTest) * awardRatio[0] / pageData.pageTest.length)}<GameIcon mobileWidth={35} width={50} icon="0" />
           </Typography>
         </AwardWrapper>
       </div>
@@ -102,8 +110,8 @@ const QuizResultPage = ({userAnswers, pageData, currentQuizAnswers, saveUserAwar
         giveUserAwards(
           awardBtnDisabled,
           saveUserAwardHandler,
-          awardRatio[1] * getRightAnswersCount(userAnswers, currentQuizAnswers.split(''), pageData.pageTest),
-          awardRatio[0] * getRightAnswersCount(userAnswers, currentQuizAnswers.split(''), pageData.pageTest),
+          awardRatio[1] * getRightAnswersCoef(userAnswers, currentQuizAnswers.split(''), pageData.pageTest) / pageData.pageTest.length,
+          awardRatio[0] * getRightAnswersCoef(userAnswers, currentQuizAnswers.split(''), pageData.pageTest) / pageData.pageTest.length,
       )}
     </QuizPageWrapper>
   )

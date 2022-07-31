@@ -43,7 +43,7 @@ const QuizQuestionsPage = ({ userAnswers, pageData, questionId, timerEndHandler,
 
         <Timer startValue={pageData.pageTest.length * 20} timeEndHandler={timerEndHandler} />
 
-        <Typography style={{ fontSize: '3.5vw', overflowWrap: 'anywhere' }} gutterBottom variant="h3" component="div" height="150px" textAlign="center">
+        <Typography style={{ fontSize: '180%', overflowWrap: 'anywhere' }} gutterBottom variant="h3" component="div" height="150px" textAlign="center">
           {pageData.pageTest[questionId].question}
         </Typography>
       </div>

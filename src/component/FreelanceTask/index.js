@@ -16,6 +16,7 @@ import {
 import {doc, getDoc, updateDoc} from "firebase/firestore";
 import {db} from "../../firebase";
 import {setFreelanceData, setUserData} from "../../utils/reducers/repoReducer";
+import {serviceEconomics} from "../../utils/services/ServiceEconomics";
 
 const ContentWrapper = styled('div')`
   max-width: 1190px;
@@ -51,7 +52,11 @@ const FreelanceTask = () => {
 
   const getAwardRatio = () => {
     const taskDifficult = freelanceData[`course_${courseId}`][`modules`][moduleId][`lectures`][lectureId][`task_${taskId}`].difficult;
-    return [300 * (taskDifficult + 1), 100 * (taskDifficult + 1)]
+
+    if(taskDifficult === 0){
+      return [serviceEconomics().easyFreelanceTaskDone.exp, serviceEconomics().easyFreelanceTaskDone.greenCoin]
+    }
+    return [serviceEconomics().hardFreelanceTaskDone.exp, serviceEconomics().hardFreelanceTaskDone.greenCoin]
   }
 
   const saveUserAwardHandler = async (greenCoinCount, expCount, goldCoinCount) => {
@@ -132,7 +137,7 @@ const FreelanceTask = () => {
           currentQuizAnswers={freelanceData[`course_${courseId}`] ? freelanceData[`course_${courseId}`][`modules`][moduleId][`lectures`][lectureId][`task_${taskId}`].taskProgress : null}
           saveUserAwardHandler={saveUserAwardHandler}
           awardBtnDisabled={awardBtnDisabled}
-          awardRatio={freelanceData[`course_${courseId}`] ? getAwardRatio() : [300, 100]}
+          awardRatio={getAwardRatio()}
         />
       </ContentWrapper>
     </>

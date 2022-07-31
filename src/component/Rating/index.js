@@ -24,6 +24,7 @@ import RacoonIcon from "../../media/racoon_photo.png";
 import BearIcon from "../../media/bear_photo.png";
 import FoxIcon from "../../media/fox_photo.png";
 import TigerIcon from "../../media/tiger_photo.png";
+import {addFieldForAllUsers} from "../../utils/services/_UpdateUsersDBData";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -74,6 +75,7 @@ const Rating = props => {
     // {title: 'Карьера', baseName: 'careerPosition'},
     // {title: 'GoldCoins', baseName: 'goldCoinAmount'},
     {title: 'GreenCoins', baseName: 'greenCoinAmount'},
+    // {title: 'Фриланс', baseName: 'freelanceTaskCount'},
   ]
 
   const userPhotos = [
@@ -94,7 +96,6 @@ const Rating = props => {
 
   const [usersRate, setUsersRate] = useState([])
 
-
   useEffect(async () => {
     if (alignment) {
       const citiesRef = collection(db, "users");
@@ -106,6 +107,8 @@ const Rating = props => {
         })
       }))
     }
+
+    await addFieldForAllUsers()
   }, [alignment])
 
   return (
@@ -121,6 +124,7 @@ const Rating = props => {
           {/*<ToggleButton value="1">Карьера</ToggleButton>*/}
           {/*<ToggleButton value="2">GoldCoin</ToggleButton>*/}
           <ToggleButton value="1">GreenCoin</ToggleButton>
+          {/*<ToggleButton value="2">Фриланс</ToggleButton>*/}
       </ToogleWrapper>
 
       { usersRate.length ?

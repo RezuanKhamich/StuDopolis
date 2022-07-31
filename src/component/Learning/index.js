@@ -9,8 +9,6 @@ import { db } from '../../firebase'
 
 import courseInfo from "../../externalData/FrontEnd/courseInfo.json"
 
-import Quiz from "../Quiz";
-import Layout from "../../hoc/Layout";
 import MainPageTitle from "../../containers/MainPageTitle";
 import {
   saveUsersAward, saveUsersAwardDB,
@@ -28,6 +26,7 @@ import QuizComponent from "../QuizComponent";
 import {useDispatch, useSelector} from "react-redux";
 import {setCourseData, setFreelanceData, setUserData} from "../../utils/reducers/repoReducer";
 import {giveUserAwards} from "../../utils/services";
+import {serviceEconomics} from "../../utils/services/ServiceEconomics";
 
 const SectionsWrapper = styled('div')`
   background: ${mainColor};
@@ -137,7 +136,7 @@ const PageButton = styled('button')`
 `
 
 const StudyPlatform = () => {
-  const { innerWidth: width, innerHeight: height } = window;
+  const {innerWidth: width, innerHeight: height} = window;
   const dispatch = useDispatch()
   const courseData = useSelector(state => state.repos.courseData)
   const userData = useSelector(state => state.repos.userData)
@@ -159,7 +158,16 @@ const StudyPlatform = () => {
   const sectionJsonData = data[currentSectionId];
   const pageData = data[currentSectionId].pageFlow;
 
-  let awardBtnDisabled = useMemo(() => courseData[`course_${urlParametersId.get('courseId')}`] ? courseData[`course_${urlParametersId.get('courseId')}`][`modules`][urlParametersId.get('moduleId')][`lectures`][currentSectionId].isAwardReceived: null, [courseData, currentPageId]);
+  let awardBtnDisabled = useMemo(() => courseData[`course_${urlParametersId.get('courseId')}`] ? courseData[`course_${urlParametersId.get('courseId')}`][`modules`][urlParametersId.get('moduleId')][`lectures`][currentSectionId].isAwardReceived : null, [courseData, currentPageId]);
+
+  const getSectionBtnDisable = (index) => {
+    if (courseData[`course_${urlParametersId.get('courseId')}`]) {
+      if (index === 0) {
+        return !courseData[`course_${urlParametersId.get('courseId')}`][`modules`][urlParametersId.get('moduleId')].info.moduleAvailable;
+      }
+      return !courseData[`course_${urlParametersId.get('courseId')}`][`modules`][urlParametersId.get('moduleId')][`lectures`][index - 1].lectureAvailable
+    }
+  }
 
   const sectionsTitle = data.map((el)=>{
     return el.sectionName
@@ -167,6 +175,10 @@ const StudyPlatform = () => {
 
   const pageBtnHandler = (pageId) => {
     setCurrentPageId(pageId)
+  }
+
+  const getAwardRatio = () => {
+    return [serviceEconomics().lectureTestDone.exp, serviceEconomics().lectureTestDone.greenCoin]
   }
 
   const changeCurrentSection = (sectionId) => {
@@ -253,7 +265,7 @@ const StudyPlatform = () => {
                     sectionDone={doneSections[index] ? secondColor() : null}
                     active={index === currentSectionId ? hoverColor() : null}
                     onClick={changeCurrentSection.bind(this, index)}
-                    disabled={courseData[`course_${urlParametersId.get('courseId')}`] ? !courseData[`course_${urlParametersId.get('courseId')}`][`modules`][urlParametersId.get('moduleId')][`lectures`][index].lectureAvailable : true}
+                    disabled={getSectionBtnDisable(index)}
                   >
                     {index + 1}. {secTitle}
                   </SectionButton>
@@ -292,6 +304,7 @@ const StudyPlatform = () => {
                       saveUserAwardHandler={saveUserAwardHandler}
                       awardBtnDisabled={awardBtnDisabled}
                       testBtnDisabled={!courseData[`course_${urlParametersId.get('courseId')}`][`modules`][urlParametersId.get('moduleId')][`lectures`][currentSectionId].lectureAvailable}
+                      awardRatio={getAwardRatio()}
                     />
                     :
                     <>

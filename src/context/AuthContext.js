@@ -34,6 +34,7 @@ export const AuthProvider = ({children}) => {
           experienceAmount: 0,
           goldCoinAmount: 10,
           greenCoinAmount: 2000,
+          resolvedFreelanceTaskCount: 0,
           careerPosition: 0,
           careerAwardDate: 0,
           careerAccumulatedAmount: 0,

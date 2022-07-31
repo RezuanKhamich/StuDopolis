@@ -18,7 +18,12 @@ import Button from "@mui/material/Button";
 import {Link, useSearchParams} from "react-router-dom";
 import PageWrapper from "../../containers/PageWrapper/PageWrapper";
 import {coursesData, modulesData} from "../../externalData";
-import {useAllCoursesProgress, useModulesProgress} from "../../utils/services/сalculationService/courseProgress";
+import {
+  getFullLectureQuestionCount,
+  getFullLessonCountInCourse, getFullModuleCountInCourse,
+  useAllCoursesProgress,
+  useModulesProgress
+} from "../../utils/services/сalculationService/courseProgress";
 import {useSelector} from "react-redux";
 import {materialCollection} from "../../data/courseData/index";
 import Tooltip from "@mui/material/Tooltip";
@@ -27,6 +32,7 @@ import ListAltIcon from "@mui/icons-material/ListAlt";
 import BeenhereIcon from "@mui/icons-material/Beenhere";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import GamePointsBadge from "../GamePointsBadge";
+import {getMaxCourseAward, getMaxModuleAward} from "../../utils/services/ServiceEconomics";
 
 const CourseCard = styled(Card)`
   display: flex;
@@ -123,6 +129,8 @@ function LinearProgressWithLabel(props) {
 const Modules = ({setCurrentModuleId}) => {
   const theme = useTheme();
   const courseData = useSelector(state => state.repos.courseData)
+  const userData = useSelector(state => state.repos.userData)
+
   const { innerWidth: width, innerHeight: height } = window;
   const [progress, setProgress] = useState(100);
   const [currentCourseId, setCurrentCourseId] = useSearchParams();
@@ -165,17 +173,22 @@ const Modules = ({setCurrentModuleId}) => {
           </Tooltip>
         </CourseDetailsContainer>
       </CardContent>
-
       <AwardStats>
         <Tooltip TransitionComponent={Zoom} placement="top" arrow title="Награда в виде опыта">
           <DetailsBox style={{ justifyContent: 'end', marginBottom: '10px' }}>
-            <GamePointsBadge count="+2810" pointType="1" small/>
+            <GamePointsBadge
+              count={`+${getMaxModuleAward(courseData[`course_${currentCourseId.get('courseId')}`].info.lectureCountDB[index])[0]}`}
+              pointType="1" small
+            />
           </DetailsBox>
         </Tooltip>
 
         <Tooltip TransitionComponent={Zoom} placement="top" arrow title="Награда в виде GreenCoin">
           <DetailsBox style={{ justifyContent: 'end' }}>
-            <GamePointsBadge count="+2460" pointType="0" small/>
+            <GamePointsBadge
+              count={`+${getMaxModuleAward(courseData[`course_${currentCourseId.get('courseId')}`].info.lectureCountDB[index])[1]}`}
+              pointType="0" small
+            />
           </DetailsBox>
         </Tooltip>
       </AwardStats>
@@ -223,13 +236,19 @@ const Modules = ({setCurrentModuleId}) => {
           <AwardStats>
             <Tooltip TransitionComponent={Zoom} placement="top" arrow title="Награда в виде опыта">
               <DetailsBox style={{ justifyContent: 'end', marginBottom: '10px' }}>
-                <GamePointsBadge count="+14050" pointType="1"/>
+                <GamePointsBadge
+                  count={`+${getMaxCourseAward(getFullLessonCountInCourse(courseData[`course_${currentCourseId.get('courseId')}`]), getFullModuleCountInCourse(courseData[`course_${currentCourseId.get('courseId')}`]))[0]}`}
+                  pointType="1"
+                />
               </DetailsBox>
             </Tooltip>
 
             <Tooltip TransitionComponent={Zoom} placement="top" arrow title="Награда в виде GreenCoin" >
               <DetailsBox style={{ justifyContent: 'end' }}>
-                <GamePointsBadge count="+12300" pointType="0"/>
+                <GamePointsBadge
+                  count={`+${getMaxCourseAward(getFullLessonCountInCourse(courseData[`course_${currentCourseId.get('courseId')}`]), getFullModuleCountInCourse(courseData[`course_${currentCourseId.get('courseId')}`]))[1]}`}
+                  pointType="0"
+                />
               </DetailsBox>
             </Tooltip>
           </AwardStats>

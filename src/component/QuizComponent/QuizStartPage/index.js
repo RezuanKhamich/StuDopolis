@@ -45,10 +45,10 @@ const QuizStartPage = ({ startQuizHandler, pageData, awardRatio = [300, 100], te
             <Icon color="warning">timer</Icon> {pageData * 20} c.
           </Typography>
           <Typography gutterBottom variant="h5" component="div" textAlign="center" display="flex" alignItems="center">
-            +{pageData * awardRatio[1]}<GameIcon mobileWidth={35} width={50} icon="2" />
+            +{awardRatio[1]}<GameIcon mobileWidth={35} width={50} icon="2" />
           </Typography>
           <Typography gutterBottom variant="h5" component="div" textAlign="center" display="flex" alignItems="center">
-            +{pageData * awardRatio[0]}<GameIcon mobileWidth={35} width={50} icon="0" />
+            +{awardRatio[0]}<GameIcon mobileWidth={35} width={50} icon="0" />
           </Typography>
         </QuizDetails>
 

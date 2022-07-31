@@ -161,13 +161,13 @@ const Profile = ({setIsUserAuthorized}) => {
               <AwardStats>
                 <Tooltip TransitionComponent={Zoom} placement="top" arrow title="Мой опыт">
                   <DetailsBox style={{ marginRight: '6px' }}>
-                    <GamePointsBadge count={userData?.experienceAmount} pointType="1" rectangular/>
+                    <GamePointsBadge count={Math.floor(userData?.experienceAmount)} pointType="1" rectangular/>
                   </DetailsBox>
                 </Tooltip>
 
                 <Tooltip TransitionComponent={Zoom} placement="top" arrow title="Мои GreenCoin">
                   <DetailsBox>
-                    <GamePointsBadge count={userData?.greenCoinAmount} pointType="0" rectangular/>
+                    <GamePointsBadge count={Math.floor(userData?.greenCoinAmount)} pointType="0" rectangular/>
                   </DetailsBox>
                 </Tooltip>
               </AwardStats>
@@ -199,6 +199,7 @@ const Profile = ({setIsUserAuthorized}) => {
         {/*    </Box>*/}
         {/*  </CardContent>*/}
         {/*</Card>*/}
+
         <TypographyMobile mobileSize={1} sx={{marginBottom: 4, textAlign: 'center'}} variant="h5" color="text.secondary">Мои курсы</TypographyMobile>
         <Grid container spacing={2}>
           {
@@ -227,7 +228,7 @@ const Profile = ({setIsUserAuthorized}) => {
                           <Tooltip TransitionComponent={Zoom} placement="top" arrow title="Награда в виде опыта">
                             <DetailsBox style={{ marginRight: '6px' }}>
                               <GamePointsBadge
-                                count={`+${getMaxCourseAward(getFullLessonCountInCourse(courseData[`course_${index}`]), getFullLectureQuestionCount(courseData[`course_${index}`], index), getFullModuleCountInCourse(courseData[`course_${index}`]))[0]}`}
+                                count={`+${getMaxCourseAward(getFullLessonCountInCourse(courseData[`course_${index}`]), getFullModuleCountInCourse(courseData[`course_${index}`]))[0]}`}
                                 pointType="1" small rectangular/>
                             </DetailsBox>
                           </Tooltip>
@@ -235,7 +236,7 @@ const Profile = ({setIsUserAuthorized}) => {
                           <Tooltip TransitionComponent={Zoom} placement="top" arrow title="Награда в виде GreenCoin">
                             <DetailsBox>
                               <GamePointsBadge
-                                count={`+${getMaxCourseAward(getFullLessonCountInCourse(courseData[`course_${index}`]), getFullLectureQuestionCount(courseData[`course_${index}`], index), getFullModuleCountInCourse(courseData[`course_${index}`]))[1]}`}
+                                count={`+${getMaxCourseAward(getFullLessonCountInCourse(courseData[`course_${index}`]), getFullModuleCountInCourse(courseData[`course_${index}`]))[1]}`}
                                 pointType="0" small rectangular/>
                             </DetailsBox>
                           </Tooltip>
