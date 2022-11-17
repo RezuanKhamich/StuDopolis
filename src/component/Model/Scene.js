@@ -41,6 +41,9 @@ export function Scene (props) {
                   { props.items && !props.items[index].isBought ? <meshBasicMaterial wireframe={props.items && !props.items[index].isBought}   color="#2125294f" /> : null}
                 </mesh>
               </group>
+
+
+              // asd
             ))
           }
 
