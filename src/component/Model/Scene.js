@@ -44,6 +44,7 @@ export function Scene (props) {
             ))
           }
 
+          {/*asdas*/}
 
           {/*<group position={[-1.47, 2.9, -1.08]}>*/}
           {/*  <mesh geometry={nodes.Object_16.geometry} material={materials.shower_light} />*/}
