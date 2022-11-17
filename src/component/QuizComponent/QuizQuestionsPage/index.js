@@ -3,8 +3,6 @@ import styled from "styled-components";
 import {Card, CardContent, Grid, Typography} from "@mui/material";
 import Timer from "../../Tools/Timer";
 import LinearWithValueLabel from "../../LinearProgressBar";
-import parse from "html-react-parser";
-import {textColor1} from "../../../constants/colors";
 
 const InteractiveCard = styled(Card)`
   opacity: ${props => props.disabled ? '0.5' : '1'};
@@ -35,30 +33,6 @@ const QuizPageWrapper = styled.div`
   min-height: 400px;
 `;
 
-const QuestionWrapper = styled(Typography)`
-  color: ${textColor1};
-  margin-top: 10px;
-  overflow-wrap: anywhere; 
-  text-align: center;
-  font-size: 180%!important;
-  & > div{
-    max-height: 400px;
-  }
-  & table{
-    background: transparent;
-    margin: 0;
-    color: white;
-  }
-  & table tr:hover{
-    color: white;
-  }
-  & table td:first-child{
-    color: #f9f9f93d;
-    padding: 0;
-    width: 30px;
-  }
-`
-
 const QuizQuestionsPage = ({ userAnswers, pageData, questionId, timerEndHandler, selectAnswerHandler  }) => {
   return (
     <QuizPageWrapper>
@@ -69,9 +43,9 @@ const QuizQuestionsPage = ({ userAnswers, pageData, questionId, timerEndHandler,
 
         <Timer startValue={pageData.pageTest.length * 20} timeEndHandler={timerEndHandler} />
 
-        <QuestionWrapper gutterBottom variant="h3" component="div" height="150px">
-          {parse(pageData.pageTest[questionId].question)}
-        </QuestionWrapper>
+        <Typography style={{ fontSize: '180%', overflowWrap: 'anywhere' }} gutterBottom variant="h3" component="div" height="150px" textAlign="center">
+          {pageData.pageTest[questionId].question}
+        </Typography>
       </div>
       <Grid style={{margin: "auto", width: '100%'}} container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
         {
@@ -79,8 +53,8 @@ const QuizQuestionsPage = ({ userAnswers, pageData, questionId, timerEndHandler,
             <Grid style={{ padding: '10px' }} item xs={ 6 } key={index}>
               <InteractiveCard style={{ display: 'flex' }} onClick={() => selectAnswerHandler(index, userAnswers)} >
                 <CardContent>
-                  <Typography gutterBottom fontSize="120%" variant="h5" margin="auto" component="div">
-                    {index+1}. {elem}
+                  <Typography gutterBottom variant="h5" component="div">
+                    {elem}
                   </Typography>
                 </CardContent>
               </InteractiveCard>
