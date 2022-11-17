@@ -20,6 +20,19 @@ const ContentText = styled('p')`
   margin-top: 10px;
   text-align: justify;
   font-size: 16px;
+  & > div{
+    max-height: 400px;
+  }
+  & table{
+    background: transparent;
+    margin: 0;
+    color: white;
+  }
+  & table td:first-child{
+    color: #f9f9f93d;
+    padding: 0;
+    width: 30px;
+  }
 `
 
 const PageContent = ({

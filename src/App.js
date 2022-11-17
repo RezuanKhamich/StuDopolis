@@ -27,6 +27,7 @@ import News from "./component/News";
 import teacherData from "./component/Header/Navbar/teacherData.json";
 import Student from "./component/Admin/Student";
 import LectureProgress from "./component/Admin/LectureProgress";
+import {updateCourseDataAllUsers} from "./utils/services/_UpdateUsersDBData";
 
 const AppStyle = styled('div')`
   padding-left: 100px;
@@ -68,7 +69,7 @@ const App = () => {
       }
     }
   }, [userAuthData])
-
+  updateCourseDataAllUsers()
   return (
     <AuthProvider>
       <Navbar />

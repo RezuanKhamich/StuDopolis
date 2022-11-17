@@ -157,7 +157,7 @@ const Modules = ({setCurrentModuleId}) => {
           {index + 1}. {moduleName}
         </TypographyMobile>
         <TypographyMobile variant="body2" color="text.secondary" fontSize="14px" height="42px">
-          {coursesData[currentCourseId.get('courseId')].description}
+          {coursesData[currentCourseId.get('courseId')].moduleDescription[index]}
         </TypographyMobile>
         <CourseDetailsContainer>
           <Tooltip TransitionComponent={Zoom} placement="top" arrow title="Количество домашних заданий и тестов">
