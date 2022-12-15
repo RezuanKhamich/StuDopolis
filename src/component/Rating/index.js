@@ -133,7 +133,7 @@ const Rating = props => {
               <TableHead>
                 <TableRow>
                   <StyledTableCell>Место</StyledTableCell>
-                  <StyledTableCell>ФИО ученика</StyledTableCell>
+                  <StyledTableCell>Разработчик</StyledTableCell>
                   <StyledTableCell style={{ width: '300px'}} align="right">{alignment.title}</StyledTableCell>
                 </TableRow>
               </TableHead>

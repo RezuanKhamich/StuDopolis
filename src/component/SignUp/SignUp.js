@@ -7,6 +7,7 @@ import RacoonIcon from "../../media/racoon_photo.png";
 import BearIcon from "../../media/bear_photo.png";
 import FoxIcon from "../../media/fox_photo.png";
 import TigerIcon from "../../media/tiger_photo.png";
+import teacherData from "../Header/Navbar/teacherData.json";
 
 const PageTitle = styled('h1')`
     text-align: center;

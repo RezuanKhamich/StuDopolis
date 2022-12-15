@@ -4,6 +4,7 @@ import SignUp from "../SignUp/SignUp";
 import SignIn from "../SignIn/SignIn";
 import Profile from "./Profile";
 import {useSelector} from "react-redux";
+import {isTeacherAccount} from "../../utils/services";
 
 const Home = () => {
   const [createAccount, setCreateAccount] = useState(false)
@@ -17,7 +18,14 @@ const Home = () => {
     <>
       {
         isUserAuthorized ? <Profile setIsUserAuthorized={setIsUserAuthorized} />
-          : createAccount ? <SignUp handleClick={handleClick} /> : <SignIn handleClick={handleClick} />
+          // With create account function
+          // : createAccount ? <SignUp handleClick={handleClick} /> : <SignIn handleClick={handleClick} />
+          : <SignIn handleClick={handleClick} />
+      }
+      {
+        isTeacherAccount() ? (
+          <SignUp handleClick={handleClick} />
+        ) : null
       }
     </>
   )

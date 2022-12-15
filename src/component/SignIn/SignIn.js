@@ -2,6 +2,7 @@ import React, {useRef, useState} from "react";
 import styled from "styled-components";
 import {Alert, Button, TextField} from "@mui/material";
 import {useAuth} from "../../context/AuthContext";
+import teacherData from "../Header/Navbar/teacherData.json";
 
 const PageTitle = styled('h1')`
     text-align: center;
@@ -88,7 +89,11 @@ const SignIn = ({handleClick}) => {
           disabled={loading}
         >Войти</Button>
         <br/>
-        <Button style={{display: 'block', margin: 'auto'}} variant="outlined" onClick={handleClick}>Создать аккаунт</Button>
+        {
+          teacherData.teacherHash === JSON.parse(localStorage.getItem('st_user_authorized'))?.uid ? (
+            <Button style={{display: 'block', margin: 'auto'}} variant="outlined" onClick={handleClick}>Создать аккаунт</Button>
+          ) : null
+        }
       </Form>
     </div>
   )

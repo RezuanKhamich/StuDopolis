@@ -72,6 +72,8 @@ const Courses = () => {
   const courseData = useSelector(state => state.repos.courseData)
   const [completedLessons, totalCountLessons] = useAllCoursesProgress(courseData)
 
+  const isUnityCourse = (elem) => elem.name === 'Разработка игр на Unity';
+
   let getTotalCountTasks = (index) => courseData[`course_${index}`] ? (totalCountLessons[index] - Object.keys(courseData[`course_${index}`][`modules`]).length) * 3 : null
 
   return (
@@ -82,8 +84,8 @@ const Courses = () => {
         {
           coursesData.map((elem, index) => (
             <Grid item xs={ width > 500 ? 6 : 12 } key={index}>
-              <Link to={`modules?courseId=${index}`}>
-                <InteractiveCard sx={{ display: 'flex' }}>
+              <Link to={`modules?courseId=${index}`} style={isUnityCourse(elem) ? {} : { pointerEvents: 'none' }}>
+                <InteractiveCard sx={{ display: 'flex' }} disabled={!isUnityCourse(elem)}>
                   <CardMediaMobile
                     component="img"
                     sx={{ width: '230px', padding: '16px', borderRadius: '20px', height: '160px' }}

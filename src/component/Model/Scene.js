@@ -41,14 +41,8 @@ export function Scene (props) {
                   { props.items && !props.items[index].isBought ? <meshBasicMaterial wireframe={props.items && !props.items[index].isBought}   color="#2125294f" /> : null}
                 </mesh>
               </group>
-
-
-              // asd
-
-              // asdasd
             ))
           }
-          {/*asds*/}
 
           {/*<group position={[-1.47, 2.9, -1.08]}>*/}
           {/*  <mesh geometry={nodes.Object_16.geometry} material={materials.shower_light} />*/}

@@ -151,7 +151,7 @@ const Profile = ({setIsUserAuthorized}) => {
           <UserPhoto src={userData?.photoIdRef ? userPhotos[userData?.photoIdRef] : userPhotos[0]} alt=""/>
           <Box style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', width: '100%'}}>
             <Box>
-              <TypographyMobile mobileSize={1} gutterBottom variant="h5" component="div" color="text.secondary">Ученик</TypographyMobile>
+              <TypographyMobile mobileSize={1} gutterBottom variant="h5" component="div" color="text.secondary">Разработчик</TypographyMobile>
               <TypographyMobile mobileSize={1.5} gutterBottom variant="h3" component="div">{userData?.firstName} {userData?.lastName}</TypographyMobile>
               {/*<Text sx={{fontSize: '32px!important'}} variant="h3"></Text>*/}
               {/*<Text sx={{display: 'flex', marginBottom: 3}} color="text.secondary" variant="h5">*/}

@@ -133,7 +133,6 @@ const Shop = () => {
         </ToogleWrapper>
         <div style={{ maxWidth: '670px', margin: 'auto' }}>
           <Alert variant="outlined" severity="info" sx={{ marginTop: '20px' }}>Приобретай за GreenCoins новые проекты и особые фриланс задачи!</Alert>
-          <Alert variant="outlined" severity="info" sx={{ marginTop: '20px' }}>Раздел в разработке до 01.07.2022</Alert>
         </div>
       </ContentWrapper>
     </>
