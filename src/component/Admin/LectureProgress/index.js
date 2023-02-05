@@ -40,7 +40,7 @@ const ContentWrapper = styled('div')`
 const UserDataWrapper = styled('div')`
   padding: 10px;
   position: relative;
-  box-shadow: 0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%);
+  box-shadow: 0px 2px 8px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%);
   background-color: white;
   margin-bottom: 40px;
   border-radius: 4px;
@@ -62,7 +62,7 @@ const DisabledModuleWrapper = styled.div`
   align-items: center;
   background: white;
   padding: 0 16px;
-  box-shadow: 0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%);
+  box-shadow: 0px 2px 8px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%);
   min-height: 48px;
   margin: 10px 0;
 `;

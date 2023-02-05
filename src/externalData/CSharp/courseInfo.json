@@ -1,0 +1,7 @@
+{
+  "update": "29.01.2022",
+  "courseName": "Программирование на C#",
+  "modulesName": ["Изучаем HTML5", "Основы CSS/CSS3", "JavaScript ES6+", "JavaScript работа с DOM", "Основы React.js"],
+  "moduleImg": ["html_background.png", "css_background.png", "js_background.png", "js_background.png", "react_background.png"],
+  "lectureCount_DB": [5, 9, 16, 8, 8]
+}

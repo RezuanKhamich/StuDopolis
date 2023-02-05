@@ -29,6 +29,23 @@ const InteractiveCard = styled(Card)`
     box-shadow: 0px 5px 5px -3px rgb(0 0 0 / 20%), 0px 8px 10px 1px rgb(0 0 0 / 14%), 0px 3px 14px 2px rgb(0 0 0 / 12%);
     cursor: pointer;
   }
+  &:before {
+    //content: 'hj';
+    content: ${props => props.status ? `'${props.status.title}'` : `'скоро'`};
+    display: inline-block;
+    width: 85px;
+    height: 30px;
+    background: ${props => props.status ? props.status.color : 'blue'};
+    position: absolute;
+    z-index: 3;
+    text-align: center;
+    color: white;
+    font-weight: 500;
+    padding: 0 6px;
+    font-size: 14px;
+    line-height: 26px;
+    border-radius: 0 0 11px 0;
+  }
 
   @media (max-width: 430px) {
     margin: auto;
@@ -56,6 +73,7 @@ const TypographyMobile = styled(Typography)`
 `
 
 const CardMediaMobile = styled(CardMedia)`
+  
   @media (max-width: 430px) {
     position: absolute!important;
     width: 100px!important;
@@ -72,8 +90,6 @@ const Courses = () => {
   const courseData = useSelector(state => state.repos.courseData)
   const [completedLessons, totalCountLessons] = useAllCoursesProgress(courseData)
 
-  const isUnityCourse = (elem) => elem.name === 'Разработка игр на Unity';
-
   let getTotalCountTasks = (index) => courseData[`course_${index}`] ? (totalCountLessons[index] - Object.keys(courseData[`course_${index}`][`modules`]).length) * 3 : null
 
   return (
@@ -84,8 +100,8 @@ const Courses = () => {
         {
           coursesData.map((elem, index) => (
             <Grid item xs={ width > 500 ? 6 : 12 } key={index}>
-              <Link to={`modules?courseId=${index}`} style={isUnityCourse(elem) ? {} : { pointerEvents: 'none' }}>
-                <InteractiveCard sx={{ display: 'flex' }} disabled={!isUnityCourse(elem)}>
+              <Link to={`modules?courseId=${index}`} style={!elem.disabled ? {} : { pointerEvents: 'none' }}>
+                <InteractiveCard sx={{ display: 'flex' }} disabled={elem.disabled} status={elem.status}>
                   <CardMediaMobile
                     component="img"
                     sx={{ width: '230px', padding: '16px', borderRadius: '20px', height: '160px' }}
@@ -113,7 +129,7 @@ const Courses = () => {
 
                       <Tooltip TransitionComponent={Zoom} placement="top" arrow title="Время прохождения курса">
                         <DetailsBox>
-                            <AccessTimeIcon sx={{ marginRight: '4px', width: '20px' }} />{elem.passingTime} месяца(ев)
+                            <AccessTimeIcon sx={{ marginRight: '4px', width: '20px' }} />{elem.passingTime}
                         </DetailsBox>
                       </Tooltip>
                     </CourseDetailsContainer>

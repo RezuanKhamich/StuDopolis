@@ -14,7 +14,7 @@ import {
   useAllCoursesProgress,
   useModulesProgress
 } from "../../../utils/services/сalculationService/courseProgress";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import GamePointsBadge from "../../GamePointsBadge";
 import CustomBadge from "../../CustomBadge";
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
@@ -28,7 +28,16 @@ import RacoonIcon from "../../../media/racoon_photo.png";
 import BearIcon from "../../../media/bear_photo.png";
 import FoxIcon from "../../../media/fox_photo.png";
 import TigerIcon from "../../../media/tiger_photo.png";
+import JuniorIcon from "../../../media/bronze_3.png";
+import MiddleIcon from "../../../media/silver_2.png";
+import SeniorIcon from "../../../media/gold_1.png";
 import {getMaxCourseAward} from "../../../utils/services/ServiceEconomics";
+import LinearWithValueLabel from "../../LinearProgressBar";
+import {saveUsersAwardDB, updateLectureProgress} from "../../../utils/services/learnPageService";
+import {setUserData} from "../../../utils/reducers/repoReducer";
+import {doc, getDoc, serverTimestamp, updateDoc} from 'firebase/firestore'
+import { Timestamp } from 'firebase/firestore'
+import {db} from "../../../firebase";
 
 const InteractiveCard = styled(Card)`
   opacity: ${props => props.disabled ? '0.5' : '1'};
@@ -47,6 +56,7 @@ const UserPhoto = styled('img')`
 
   @media (max-width: 430px) {
     width: 80px;
+    height: 80px;
   }
 `;
 
@@ -85,10 +95,33 @@ const DetailsBox = styled('span')`
   font-size: 14px;
 `;
 
-const Profile = ({setIsUserAuthorized}) => {
+const GridUsefulMobile = styled(Grid)`
+  @media (max-width: 430px) {
+    flex-direction: column-reverse !important;
+    & > div {
+      max-width: 100% !important;
+    }
+  }
+`;
+
+const Profile = () => {
   const userData = useSelector(state => state.repos.userData)
   const courseData = useSelector(state => state.repos.courseData)
+  const [isUserAuthorized, setIsUserAuthorized] = useState(JSON.parse(localStorage.getItem('st_user_authorized')))
+  const [disableCareerAwardBtn, setDisableCareerAwardBtn] = useState()
+  const dispatch = useDispatch();
+  const career = [
+    { name: 'Junior', salary: 1000, img: JuniorIcon, isActive: true, requirements: null },
+    { name: 'Middle', salary: 1800, img: MiddleIcon, isActive: false, requirements: 20000 },
+    { name: 'Senior', salary: 2400, img: SeniorIcon, isActive: false, requirements: 50000 },
+  ]
 
+  const studiosStats = [
+    { name: 'GingerPack', gCoins: 23000 },
+    { name: 'ProUnity', gCoins: 21800 },
+    { name: 'RockSlaves', gCoins: 12400 },
+    { name: 'FutureInc', gCoins: 11500 },
+  ]
   const [completedLessons, totalCountLessons] = useAllCoursesProgress(courseData);
 
   const { innerWidth: width, innerHeight: height } = window;
@@ -96,6 +129,21 @@ const Profile = ({setIsUserAuthorized}) => {
   const userPhotos = [
     WolfIcon, RacoonIcon, BearIcon, FoxIcon, TigerIcon
   ]
+
+  useEffect(async () => {
+    if (userData && userData.careerAccumulatedAmount) {
+      const serverDate = Timestamp.fromDate(new Date())
+      const currentDate = new Date(serverDate * 1000)
+      const awardDate = new Date(userData.careerAwardDate)
+      if (awardDate < currentDate) {
+        const userDocRef = doc(db, "users", isUserAuthorized.uid);
+        await updateDoc(userDocRef, {
+          careerAccumulatedAmount: 0,
+        });
+        dispatch(setUserData({...userData, careerAccumulatedAmount: 0}))
+      }
+    }
+  }, [userData])
 
   const [progress, setProgress] = useState(10);
 
@@ -116,6 +164,20 @@ const Profile = ({setIsUserAuthorized}) => {
       </Box>
     );
   }
+
+  function LinearCommandsProgress(props) {
+    return (
+      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <Box sx={{ width: '100%', mr: 1 }}>
+          <LinearProgress color="secondary" variant="determinate" {...props} />
+        </Box>
+        <Box style={{ width: '100px' }}>
+          <GamePointsBadge count={props.gCoins} pointType="0" small rectangular/>
+        </Box>
+      </Box>
+    );
+  }
+
   const exitProfileHandler = () => {
     localStorage.removeItem('st_user_authorized');
     setIsUserAuthorized(localStorage.getItem('st_user_authorized'))
@@ -143,6 +205,37 @@ const Profile = ({setIsUserAuthorized}) => {
       </CardContent>
     </InteractiveCard>
 
+  const setUserDataHandler = payload => {
+    dispatch(setUserData(payload))
+  }
+
+  const getDailySalary = async (salary) => {
+    const userDocRef = doc(db, "users", isUserAuthorized.uid);
+    const serverDate = Timestamp.fromDate(new Date())
+    const nextDate = new Date(serverDate*1000 + 24 * 3600 * 1000);
+    const nextAwardDate = new Date(
+      nextDate.getUTCFullYear(),
+      nextDate.getMonth(),
+      nextDate.getDate(),
+      0,
+      0,
+      0,
+    );
+
+    await updateDoc(userDocRef, {
+      careerAccumulatedAmount: 1,
+      greenCoinAmount: +userData.greenCoinAmount + salary,
+      careerAwardDate: nextAwardDate.getTime(),
+    });
+
+    const userDataNew = await getDoc(userDocRef);
+    if (userDataNew.exists()) {
+      dispatch(setUserData(userDataNew.data()))
+    } else {
+      console.log("No such document!");
+    }
+  }
+
   return(
     <>
       <PageWrapper>
@@ -153,11 +246,13 @@ const Profile = ({setIsUserAuthorized}) => {
             <Box>
               <TypographyMobile mobileSize={1} gutterBottom variant="h5" component="div" color="text.secondary">Разработчик</TypographyMobile>
               <TypographyMobile mobileSize={1.5} gutterBottom variant="h3" component="div">{userData?.firstName} {userData?.lastName}</TypographyMobile>
-              {/*<Text sx={{fontSize: '32px!important'}} variant="h3"></Text>*/}
-              {/*<Text sx={{display: 'flex', marginBottom: 3}} color="text.secondary" variant="h5">*/}
-              {/*  Должность:*/}
-              {/*  <Text sx={{marginLeft: 1 }} color="black" variant="h5">{careersRang[userData?.careerPosition]?.vacancy}</Text>*/}
-              {/*</Text>*/}
+              <Text sx={{display: 'flex', alignItems: 'center', marginBottom: 3}} color="text.secondary" variant="h5">
+                Должность:
+                <img style={{ margin: '0 10px', width: 20, height: 20 }} src={career[userData?.careerPosition]?.img} alt=""/>
+                <Text color="black" variant="h5">
+                  {career[userData?.careerPosition]?.name}
+                </Text>
+              </Text>
               <AwardStats>
                 <Tooltip TransitionComponent={Zoom} placement="top" arrow title="Мой опыт">
                   <DetailsBox style={{ marginRight: '6px' }}>
@@ -201,7 +296,7 @@ const Profile = ({setIsUserAuthorized}) => {
         {/*</Card>*/}
 
         <TypographyMobile mobileSize={1} sx={{marginBottom: 4, textAlign: 'center'}} variant="h5" color="text.secondary">Мои курсы</TypographyMobile>
-        <Grid container spacing={2}>
+        <Grid container spacing={2} marginBottom={10}>
           {
             coursesData.map((elem, index) => (
               courseData[`course_${index}`]?.info?.courseAvailable ?
@@ -273,6 +368,60 @@ const Profile = ({setIsUserAuthorized}) => {
               : null
           }
         </Grid>
+
+        <TypographyMobile mobileSize={1} sx={{marginBottom: 4, textAlign: 'center'}} variant="h5" color="text.secondary">Полезное</TypographyMobile>
+        <GridUsefulMobile container spacing={2} marginBottom={4}>
+          <Grid item xs={8} key="0">
+            <Card style={{ padding: '10px', height: '100%' }}>
+              <TypographyMobile mobileSize={1} sx={{marginBottom: 4, textAlign: 'center'}} variant="h5" color="text.secondary">Результаты студий</TypographyMobile>
+              <div>
+                {
+                  studiosStats.map((el, index) => (
+                    <div style={{ marginBottom: '28px' }} key={index}>
+                      <TypographyMobile variant="h5" color="text.secondary" fontSize={18} marginBottom={1}>
+                        {index+1}. Студия: "{el.name}"
+                      </TypographyMobile>
+                      <Box sx={{width: '100%'}}>
+                        <LinearCommandsProgress
+                          value={el.gCoins / 1000}
+                          gCoins={el.gCoins}
+                          index={0}
+                        />
+                      </Box>
+                    </div>
+                  ))
+                }
+              </div>
+            </Card>
+          </Grid>
+          <Grid item xs={4} key="0" textAlign="center">
+            {
+              career.map((el, index) => (
+                <Grid item xs={12} marginBottom={2}  key={index}>
+                  <Card style={{ padding: '10px', display: 'flex', alignItems: 'center' }}>
+                    <img style={{ marginRight: 10 }} src={el.img} alt=""/>
+                    <div>
+                      <TypographyMobile variant="h3" fontSize="30px" component="div">{index+1}. {el.name}</TypographyMobile>
+                      <TypographyMobile variant="p" color="text.secondary" fontSize="14px">+{el.salary} GCoin</TypographyMobile>
+                    </div>
+                  </Card>
+                </Grid>
+              ))
+            }
+            <Button
+              variant="contained"
+              color='success'
+              size="large"
+              disabled={!(userData && userData.careerAccumulatedAmount === 0)}
+              onClick={() => userData && getDailySalary(career[userData?.careerPosition]?.salary)}
+            >
+              Получить +{userData && career[userData?.careerPosition]?.salary} GCoin
+            </Button>
+            <TypographyMobile mobileSize={0.5} sx={{ marginTop: '6px', fontSize: '10px'}} variant="body2" color="text.secondary">
+              Получить следующую награду можно после 00:00
+            </TypographyMobile>
+          </Grid>
+        </GridUsefulMobile>
       </PageWrapper>
     </>
   )

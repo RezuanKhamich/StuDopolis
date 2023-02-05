@@ -33,7 +33,7 @@ export const AuthProvider = ({children}) => {
           lastLoginAt: user.metadata.lastLoginAt,
           experienceAmount: 0,
           goldCoinAmount: 10,
-          greenCoinAmount: 2000,
+          greenCoinAmount: 4900,
           resolvedFreelanceTaskCount: 0,
           careerPosition: 0,
           careerAwardDate: 0,
@@ -42,6 +42,34 @@ export const AuthProvider = ({children}) => {
 
         await setDoc(doc(db, "courses", user.uid), createDBArchitecture())
         await setDoc(doc(db, "freelance", user.uid), createFreelanceDBArchitecture())
+        await setDoc(doc(db, "shop", user.uid), {
+          items: [
+            {
+              name: 'Игра: RocketC',
+              price: 4900,
+              isAvailable: true,
+              isSold: false,
+            },
+            {
+              name: 'Продвинутый курс по C#',
+              price: 43000,
+              isAvailable: false,
+              isSold: false,
+            },
+            {
+              name: 'Ассет для 2D игры',
+              price: 9700,
+              isAvailable: false,
+              isSold: false,
+            },
+            {
+              name: 'Курс по Unity AI',
+              price: 28800,
+              isAvailable: false,
+              isSold: false,
+            },
+          ]
+        });
 
         handleClick()
       })

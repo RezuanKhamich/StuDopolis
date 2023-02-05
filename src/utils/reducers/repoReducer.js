@@ -1,6 +1,7 @@
 const SET_COURSE_DATA = "SET_COURSE_DATA"
 const SET_USER_DATA = "SET_USER_DATA"
 const SET_FREELANCE_DATA = "SET_FREELANCE_DATA"
+const SET_SHOP_DATA = "SET_SHOP_DATA"
 const SET_USERS_LIST = "SET_USERS_LIST"
 const SET_ADMIN_COURSE = "SET_ADMIN_COURSE"
 const SET_ADMIN_FREELANCE = "SET_ADMIN_FREELANCE"
@@ -10,7 +11,8 @@ const defaultState = {
   isFetching: true,
   courseData: {},
   userData: {},
-  freelanceData: {}
+  freelanceData: {},
+  shopData: {}
 }
 
 export default function reposReducer(state = defaultState, action) {
@@ -40,6 +42,11 @@ export default function reposReducer(state = defaultState, action) {
         ...state,
         adminCourse: action.payload
       }
+    case SET_SHOP_DATA:
+      return {
+        ...state,
+        shopData: action.payload
+      }
     case SET_ADMIN_FREELANCE:
       return {
         ...state,
@@ -53,6 +60,7 @@ export default function reposReducer(state = defaultState, action) {
 export const setCourseData = (data) => ({type: SET_COURSE_DATA, payload: data})
 export const setUserData = (data) => ({type: SET_USER_DATA, payload: data})
 export const setFreelanceData = (data) => ({type: SET_FREELANCE_DATA, payload: data})
+export const setShopData = (data) => ({type: SET_SHOP_DATA, payload: data})
 export const setUsersList = (data) => ({type: SET_USERS_LIST, payload: data})
 
 export const setAdminCourse = (data) => ({type: SET_ADMIN_COURSE, payload: data})

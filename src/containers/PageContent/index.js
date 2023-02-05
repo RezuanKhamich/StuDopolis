@@ -20,6 +20,10 @@ const ContentText = styled('p')`
   margin-top: 10px;
   text-align: justify;
   font-size: 16px;
+  & iframe {
+    display: block;
+    margin: auto;
+  }
 `
 
 const PageContent = ({
@@ -38,6 +42,17 @@ const PageContent = ({
         <ContentText key={index}>
           {parse(el.pageText)}
         </ContentText>
+      )
+    }else if(Object.keys(el)[0] === 'pageVideo'){
+      return(
+        <iframe
+          width="560"
+          height="315"
+          src={el.pageVideo}
+          frameBorder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+        />
       )
     }
   })

@@ -3,24 +3,40 @@ import React, {useState} from "react";
 import SignUp from "../SignUp/SignUp";
 import SignIn from "../SignIn/SignIn";
 import Profile from "./Profile";
-import {useSelector} from "react-redux";
-import {isTeacherAccount} from "../../utils/services";
+import { isTeacherAccount } from "../../utils/services";
+import Training from "../Training";
 
 const Home = () => {
   const [createAccount, setCreateAccount] = useState(false)
+  const [showTrainingPopup, setShowTrainingPopup] = useState(true)
   const [isUserAuthorized, setIsUserAuthorized] = useState(localStorage.getItem('st_user_authorized'))
 
   const handleClick = () => {
     setCreateAccount(!createAccount);
   }
 
+  const switchToSignIn = () => {
+    setShowTrainingPopup(false);
+  }
+
   return(
     <>
+
       {
-        isUserAuthorized ? <Profile setIsUserAuthorized={setIsUserAuthorized} />
-          // With create account function
-          // : createAccount ? <SignUp handleClick={handleClick} /> : <SignIn handleClick={handleClick} />
-          : <SignIn handleClick={handleClick} />
+        isUserAuthorized ?
+          <Profile isUserAuthorized={isUserAuthorized} setIsUserAuthorized={setIsUserAuthorized} />
+          :
+          createAccount ?
+            <SignUp handleClick={handleClick} />
+            : <>
+                <Training
+                  showTrainingPopup={showTrainingPopup}
+                  setShowTrainingPopup={setShowTrainingPopup}
+                  switchToSignIn={switchToSignIn}
+                  switchToSignUp={handleClick}
+                />
+                <SignIn handleClick={handleClick} />
+              </>
       }
       {
         isTeacherAccount() ? (

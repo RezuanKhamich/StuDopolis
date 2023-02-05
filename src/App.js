@@ -21,7 +21,7 @@ import {doc, getDoc} from "firebase/firestore";
 import Messages from "./component/Messages";
 import FreelanceTask from "./component/FreelanceTask";
 import {useDispatch, useSelector} from "react-redux";
-import {setCourseData, setFreelanceData, setUserData} from "./utils/reducers/repoReducer";
+import {setCourseData, setFreelanceData, setShopData, setUserData} from "./utils/reducers/repoReducer";
 import Shop from "./component/Shop";
 import News from "./component/News";
 import teacherData from "./component/Header/Navbar/teacherData.json";
@@ -65,6 +65,13 @@ const App = () => {
         dispatch(setFreelanceData(freelanceDataSnap.data()));
       } else {
         console.log("Не найдено freelanceDataSnap!");
+      }
+
+      const shopDataSnap = await getDoc(doc(db, "shop", userAuthData.uid))
+      if (shopDataSnap.exists()) {
+        dispatch(setShopData(shopDataSnap.data()));
+      } else {
+        console.log("Не найдено shopDataSnap!");
       }
     }
   }, [userAuthData])

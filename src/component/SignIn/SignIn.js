@@ -90,9 +90,7 @@ const SignIn = ({handleClick}) => {
         >Войти</Button>
         <br/>
         {
-          teacherData.teacherHash === JSON.parse(localStorage.getItem('st_user_authorized'))?.uid ? (
-            <Button style={{display: 'block', margin: 'auto'}} variant="outlined" onClick={handleClick}>Создать аккаунт</Button>
-          ) : null
+          <Button style={{display: 'block', margin: 'auto'}} variant="outlined" onClick={handleClick}>Создать аккаунт</Button>
         }
       </Form>
     </div>

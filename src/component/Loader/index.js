@@ -25,11 +25,11 @@ const LoaderWrapper = styled('div')`
     transform-origin: center center;
   }
   &:before {
-    box-shadow: inset 0 20px 0 rgba(0, 250, 250, 0.6), inset 20px 0 0 rgba(0, 200, 200, 0.6), inset 0 -20px 0 rgba(0, 150, 200, 0.6), inset -20px 0 0 rgba(0, 200, 250, 0.6);
+    box-shadow: inset 0 20px 0 rgba(33, 37, 41, 0.6), inset 20px 0 0 rgba(26, 29, 31, 0.6), inset 0 -20px 0 rgba(11, 19, 27, 0.6), inset -20px 0 0 rgba(126, 137, 148, 0.6);
     animation: rotate-before 2s -0.5s linear infinite;
   }
   &:after {
-    box-shadow: inset 0 20px 0 rgba(250, 250, 0, 0.6), inset 20px 0 0 rgba(250, 200, 0, 0.6), inset 0 -20px 0 rgba(250, 150, 0, 0.6), inset -20px 0 0 rgba(250, 100, 0, 0.6);
+    box-shadow: inset 0 20px 0 rgba(250, 214, 35, 0.6), inset 20px 0 0 rgba(250, 200, 0, 0.6), inset 0 -20px 0 rgba(250, 150, 0, 0.6), inset -20px 0 0 rgba(250, 100, 0, 0.6);
     animation: rotate-after 2s -0.5s linear infinite;
   }
   @keyframes rotate-after {

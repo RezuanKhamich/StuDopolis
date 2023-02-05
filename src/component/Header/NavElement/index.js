@@ -25,10 +25,12 @@ const ListRef = styled('button')`
 `
 const ListImg = styled('img')`
   width: 28px;
+  height: 28px;
   margin: 0 auto 5px auto;
   &.logo{
     border-radius: 50%;
     width: 80px;
+    height: 60px;
     margin: 0;
   }
   @media (max-width: 430px) {

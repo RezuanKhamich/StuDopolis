@@ -11,6 +11,7 @@ import logo from "../component/Header/Navbar/media/logo.png";
 import learn_newImg from "../component/Header/Navbar/media/learn_new.png";
 import freelanceImg from "../component/Header/Navbar/media/freelance_new.png";
 import ratingImg from "../component/Header/Navbar/media/rating_new.png";
+import campImg from "../component/Header/Navbar/media/camp_new.png";
 import companyImg from "../component/Header/Navbar/media/company_new.png";
 import html_bg from "../media/html_background.png";
 import messageImg from "../component/Header/Navbar/media/message_new.png";
@@ -21,6 +22,15 @@ import redux_bg from "../media/redux_background.png";
 import newsImg from "../component/Header/Navbar/media/news_new.png";
 import admin from "../component/Header/Navbar/media/admin_logo_important.png";
 import shop from "../component/Header/Navbar/media/bitcoin.png";
+import cSharp_unity from "../media/csharp_module.png";
+import unity_first_unity from "../media/unity_1_module.png";
+import unity_second_unity from "../media/unity_module.png";
+import {hoverColor, inWorkColor, secondColor, successColor} from "../constants/colors";
+
+const COURSE_AVAILABLE = { title: 'доступно', color: inWorkColor };
+const COURSE_DONE = { title: 'готово', color: successColor };
+const COURSE_ONLY_CAMP = { title: 'лагерь', color: secondColor };
+const COURSE_SOON = { title: 'скоро', color: hoverColor };;
 
 export const careersRang = [
   {vacancy: 'Стажер', requiredExp: '-', rewardGoldCoin: '-', rewardGreenCoin: '2000' },
@@ -31,58 +41,74 @@ export const careersRang = [
 ]
 
 export const coursesData = [
+  { name: 'Программирование на C#',
+    iconURL: cSharp_unity,
+    description: `Обучение основам языка программирования С#`,
+    passingTime: '3 недели',
+    status: COURSE_AVAILABLE,
+    disabled: false,
+  },
   { name: 'Разработка игр на Unity',
     iconURL: unity_icon,
-    description: `Обучение созданию собсвтенных игр на движке Unity`,
-    passingTime: '4,5',
+    description: `Обучение созданию собственных игр на движке Unity`,
+    passingTime: '3 недели',
+    status: COURSE_ONLY_CAMP,
     disabled: true,
   },
   { name: 'Разработка сайтов',
     iconURL: frontend_icon,
     description: `Разработка современных веб-сайтов на Javascript, React`,
-    passingTime: '4,5',
-    disabled: false,
+    passingTime: '4,5 месяца',
+    status: COURSE_SOON,
+    disabled: true,
   },
   { name: 'Программирование на Minecraft',
     iconURL: minecraft_icon,
     description: `Обучение программированию на базе Minecraft Education`,
-    passingTime: '3',
+    passingTime: '3 месяца',
+    status: COURSE_SOON,
     disabled: true,
   },
   { name: 'Программирование на Python',
     iconURL: python_icon,
     description: `Обучение программированию на языке Python`,
-    passingTime: '3',
+    passingTime: '3 месяца',
+    status: COURSE_SOON,
     disabled: true,
   },
   { name: 'Веб-дизайн',
     iconURL: figma_icon,
     description: `Обучение созданию красочных дизайнов сайтов`,
-    passingTime: '3,5',
+    passingTime: '3,5 месяца',
+    status: COURSE_SOON,
     disabled: true,
   },
   { name: 'Цифровой рисунок (Digital Art)',
     iconURL: adobe_illustrator_icon,
     description: `Обучение работы с adobe illustrator и анимации`,
-    passingTime: '4',
+    passingTime: '4 месяца',
+    status: COURSE_SOON,
     disabled: true,
   },
   { name: '3D моделирование',
     iconURL: blender_icon,
     description: `Создание собственных трехмерных объектов в Blender`,
-    passingTime: '3',
+    passingTime: '3 месяца',
+    status: COURSE_SOON,
     disabled: true,
   },
   { name: 'Разработка игр на Unreal Engine',
     iconURL: unreal_engine_icon,
     description: `Разработка игр на языке С++`,
-    passingTime: '3,5',
+    passingTime: '3,5 месяца',
+    status: COURSE_SOON,
     disabled: true,
   },
   { name: 'Космо-проектирование KSP',
     iconURL: ksp_icon,
     description: `Обучение конструированию ракет, запусков на дальние орбиты и построение траектории`,
-    passingTime: '2',
+    passingTime: '2 месяца',
+    status: COURSE_SOON,
     disabled: true,
   },
 ]
@@ -92,7 +118,8 @@ export const pageNavigationData = [
   {name: 'Обучение', img: learn_newImg, msg: 'learn', link: 'courses'},
   {name: 'Фриланс', img: freelanceImg, msg: 'freelance', link: 'freelance'},
   {name: 'Рейтинг', img: ratingImg, msg: false, link: 'rating'},
-  // {name: 'Модель', img: ratingImg, msg: false, link: 'model'},
+  {name: 'Лагерь', img: campImg, msg: false, link: 'rating'},
+  {name: 'Модель', img: ratingImg, msg: false, link: 'model'},
   // {name: 'Карьера', img: companyImg, msg: false, link: 'career'},
   {name: 'G-Pay', img: shop, msg: false, link: 'shop'},
   // {name: 'Кабинет', img: homeImg, msg: false, link: 'profile'},
@@ -102,10 +129,15 @@ export const pageNavigationData = [
   // {name: 'Выйти', img: exitImg, msg: false},
 ]
 
+// export const modulesData = [
+//   {name: 'Изучаем HTML5', disabled: false, image: html_bg},
+//   {name: 'Основы CSS/CSS3', disabled: false, image: css_bg},
+//   {name: 'JavaScript ES6+', disabled: true, image: js_bg},
+//   {name: 'JavaScript работа с DOM', disabled: true, image: js_bg},
+//   {name: 'Основы React.js', disabled: true, image: react_bg},
+// ]
 export const modulesData = [
-  {name: 'Изучаем HTML5', disabled: false, image: html_bg},
-  {name: 'Основы CSS/CSS3', disabled: false, image: css_bg},
-  {name: 'JavaScript ES6+', disabled: true, image: js_bg},
-  {name: 'JavaScript работа с DOM', disabled: true, image: js_bg},
-  {name: 'Основы React.js', disabled: true, image: react_bg},
+  {name: 'Основы C#', disabled: false, image: cSharp_unity},
+  {name: 'Продвинутая работа с методами', disabled: false, image: unity_first_unity},
+  {name: 'Основы ООП', disabled: true, image: unity_second_unity},
 ]

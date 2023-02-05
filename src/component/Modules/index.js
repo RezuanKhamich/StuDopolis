@@ -43,7 +43,6 @@ const CourseCard = styled(Card)`
 const InteractiveCard = styled(Card)`
   display: flex;
   opacity: ${props => props.disabled ? '0.5' : '1'};
-  margin-right: ${props => props.rightCard ? '0px' : '30px'};
   position: relative;
 
   &:hover {
@@ -52,17 +51,13 @@ const InteractiveCard = styled(Card)`
     cursor: pointer;
   }
 
-  &.completed {
-    &:after {
-      position: absolute;
-      content: '';
-      display: inline-block;
-      width: 100%;
-      height: 151px;
-      background: repeating-linear-gradient(45deg,rgb(255 218 19 / 50%),rgb(255 218 19 / 50%) 10px,transparent 10px,transparent 20px);
-      //background: #2e7d32;
-      //background: repeating-linear-gradient(45deg, rgba(255, 215, 0, 0.7), rgba(255, 215, 0, 0.7) 10px, transparent 10px, transparent 20px);
-    }
+  &:before {
+    position: absolute;
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 100%;
+    background: #2e7d32;
   }
   
   @media (max-width: 430px) {
@@ -144,53 +139,53 @@ const Modules = ({setCurrentModuleId}) => {
   const CardWrapper = ({ moduleName, index, disabled, rightCard }) => (
     <InteractiveCard
       disabled={disabled}
-      className={moduleCompletedLessons[index] === moduleCountLessons[index] ? 'completed' : null}
+      // className={moduleCompletedLessons[index] === moduleCountLessons[index] ? 'completed' : null}
       rightCard={rightCard}
     >
-      <CardMediaMobile
-        component="img"
-        sx={{ width: '206px', padding: '16px', borderRadius: '20px', height: '142px' }}
-        image={modulesData[index].image}
-      />
-      <CardContent sx={{ maxWidth: '280px', padding: '16px 16px 16px 0' }}>
+      {/*<CardMediaMobile*/}
+      {/*  component="img"*/}
+      {/*  sx={{ width: '206px', padding: '16px', borderRadius: '20px', height: '142px' }}*/}
+      {/*  image={modulesData[index].image}*/}
+      {/*/>*/}
+      <CardContent>
         <TypographyMobile gutterBottom variant="h6" component="div" fontSize="16px">
           {index + 1}. {moduleName}
         </TypographyMobile>
         <TypographyMobile variant="body2" color="text.secondary" fontSize="14px" height="42px">
           {coursesData[currentCourseId.get('courseId')].description}
         </TypographyMobile>
-        <CourseDetailsContainer>
-          <Tooltip TransitionComponent={Zoom} placement="top" arrow title="Количество домашних заданий и тестов">
-            <DetailsBox>
-              <ListAltIcon sx={{ marginRight: '4px', width: '20px' }} />{getModuleCountTask(index)}
-            </DetailsBox>
-          </Tooltip>
+        {/*<CourseDetailsContainer>*/}
+        {/*  <Tooltip TransitionComponent={Zoom} placement="top" arrow title="Количество домашних заданий и тестов">*/}
+        {/*    <DetailsBox>*/}
+        {/*      <ListAltIcon sx={{ marginRight: '4px', width: '20px' }} />{getModuleCountTask(index)}*/}
+        {/*    </DetailsBox>*/}
+        {/*  </Tooltip>*/}
 
-          <Tooltip TransitionComponent={Zoom} placement="top" arrow title="Прогресс по лекциям/Общее количество лекций">
-            <DetailsBox>
-              <BeenhereIcon sx={{ marginRight: '4px', width: '20px' }} />{moduleCompletedLessons[index]}/{moduleCountLessons[index]}
-            </DetailsBox>
-          </Tooltip>
-        </CourseDetailsContainer>
+        {/*  <Tooltip TransitionComponent={Zoom} placement="top" arrow title="Прогресс по лекциям/Общее количество лекций">*/}
+        {/*    <DetailsBox>*/}
+        {/*      <BeenhereIcon sx={{ marginRight: '4px', width: '20px' }} />{moduleCompletedLessons[index]}/{moduleCountLessons[index]}*/}
+        {/*    </DetailsBox>*/}
+        {/*  </Tooltip>*/}
+        {/*</CourseDetailsContainer>*/}
       </CardContent>
       <AwardStats>
-        <Tooltip TransitionComponent={Zoom} placement="top" arrow title="Награда в виде опыта">
-          <DetailsBox style={{ justifyContent: 'end', marginBottom: '10px' }}>
-            <GamePointsBadge
-              count={`+${getMaxModuleAward(courseData[`course_${currentCourseId.get('courseId')}`].info.lectureCountDB[index])[0]}`}
-              pointType="1" small
-            />
-          </DetailsBox>
-        </Tooltip>
+        {/*<Tooltip TransitionComponent={Zoom} placement="top" arrow title="Награда в виде опыта">*/}
+        {/*  <DetailsBox style={{ justifyContent: 'end', marginBottom: '10px' }}>*/}
+        {/*    <GamePointsBadge*/}
+        {/*      count={`+${getMaxModuleAward(courseData[`course_${currentCourseId.get('courseId')}`].info.lectureCountDB[index])[0]}`}*/}
+        {/*      pointType="1" small*/}
+        {/*    />*/}
+        {/*  </DetailsBox>*/}
+        {/*</Tooltip>*/}
 
-        <Tooltip TransitionComponent={Zoom} placement="top" arrow title="Награда в виде GreenCoin">
-          <DetailsBox style={{ justifyContent: 'end' }}>
-            <GamePointsBadge
-              count={`+${getMaxModuleAward(courseData[`course_${currentCourseId.get('courseId')}`].info.lectureCountDB[index])[1]}`}
-              pointType="0" small
-            />
-          </DetailsBox>
-        </Tooltip>
+        {/*<Tooltip TransitionComponent={Zoom} placement="top" arrow title="Награда в виде GreenCoin">*/}
+        {/*  <DetailsBox style={{ justifyContent: 'end' }}>*/}
+        {/*    <GamePointsBadge*/}
+        {/*      count={`+${getMaxModuleAward(courseData[`course_${currentCourseId.get('courseId')}`].info.lectureCountDB[index])[1]}`}*/}
+        {/*      pointType="0" small*/}
+        {/*    />*/}
+        {/*  </DetailsBox>*/}
+        {/*</Tooltip>*/}
       </AwardStats>
     </InteractiveCard>
   )
@@ -228,40 +223,41 @@ const Modules = ({setCurrentModuleId}) => {
 
               <Tooltip TransitionComponent={Zoom} placement="top" arrow title="Время прохождения курса">
                 <DetailsBox>
-                  <AccessTimeIcon sx={{ marginRight: '4px', width: '20px' }} />{coursesData[currentCourseId.get('courseId')].passingTime} месяца(ев)
+                  <AccessTimeIcon sx={{ marginRight: '4px', width: '20px' }} />{coursesData[currentCourseId.get('courseId')].passingTime} недели
                 </DetailsBox>
               </Tooltip>
             </CourseDetailsContainer>
           </CardContent>
           <AwardStats>
-            <Tooltip TransitionComponent={Zoom} placement="top" arrow title="Награда в виде опыта">
-              <DetailsBox style={{ justifyContent: 'end', marginBottom: '10px' }}>
-                <GamePointsBadge
-                  count={`+${getMaxCourseAward(getFullLessonCountInCourse(courseData[`course_${currentCourseId.get('courseId')}`]), getFullModuleCountInCourse(courseData[`course_${currentCourseId.get('courseId')}`]))[0]}`}
-                  pointType="1"
-                />
-              </DetailsBox>
-            </Tooltip>
+            {/*<Tooltip TransitionComponent={Zoom} placement="top" arrow title="Награда в виде опыта">*/}
+            {/*  <DetailsBox style={{ justifyContent: 'end', marginBottom: '10px' }}>*/}
+            {/*    <GamePointsBadge*/}
+            {/*      count={`+${getMaxCourseAward(getFullLessonCountInCourse(courseData[`course_${currentCourseId.get('courseId')}`]), getFullModuleCountInCourse(courseData[`course_${currentCourseId.get('courseId')}`]))[0]}`}*/}
+            {/*      pointType="1"*/}
+            {/*    />*/}
+            {/*  </DetailsBox>*/}
+            {/*</Tooltip>*/}
 
-            <Tooltip TransitionComponent={Zoom} placement="top" arrow title="Награда в виде GreenCoin" >
-              <DetailsBox style={{ justifyContent: 'end' }}>
-                <GamePointsBadge
-                  count={`+${getMaxCourseAward(getFullLessonCountInCourse(courseData[`course_${currentCourseId.get('courseId')}`]), getFullModuleCountInCourse(courseData[`course_${currentCourseId.get('courseId')}`]))[1]}`}
-                  pointType="0"
-                />
-              </DetailsBox>
-            </Tooltip>
+            {/*<Tooltip TransitionComponent={Zoom} placement="top" arrow title="Награда в виде GreenCoin" >*/}
+            {/*  <DetailsBox style={{ justifyContent: 'end' }}>*/}
+            {/*    <GamePointsBadge*/}
+            {/*      count={`+${getMaxCourseAward(getFullLessonCountInCourse(courseData[`course_${currentCourseId.get('courseId')}`]), getFullModuleCountInCourse(courseData[`course_${currentCourseId.get('courseId')}`]))[1]}`}*/}
+            {/*      pointType="0"*/}
+            {/*    />*/}
+            {/*  </DetailsBox>*/}
+            {/*</Tooltip>*/}
           </AwardStats>
         </CourseCard>
       </Grid>
       <Grid style={{maxWidth: 1190, margin: "auto"}} container rowSpacing={3}>
         {
           courseData[`course_${currentCourseId.get('courseId')}`] ?
-            courseData[`course_${currentCourseId.get('courseId')}`].info.modulesName.map((name, index) => {
+            // courseData[`course_${currentCourseId.get('courseId')}`].info.modulesName.map((name, index) => {
+            modulesData.map((name, index) => {
               return (
-                <Grid item xs={ width > 500 ? 6 : 12  } key={index}>
+                <Grid item xs={12} key={index}>
                   <Link to={`learn?courseId=${currentCourseId.get('courseId')}&moduleId=${index}`} key={index}>
-                    <CardWrapper moduleName={name} img="" index={index} rightCard={index % 2 !== 0} />
+                    <CardWrapper moduleName={name.name} img="" index={index} rightCard={index % 2 !== 0} />
                   </Link>
                 </Grid>
               )})

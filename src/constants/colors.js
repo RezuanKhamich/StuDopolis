@@ -8,6 +8,12 @@ export const secondColor = () => {
 export const hoverColor = () => {
     return '#4D5154'
 }
+export const successColor = () => {
+    return '#2e7d32'
+}
+export const inWorkColor = () => {
+    return '#1976d2'
+}
 export const backColor = () => {
     return '#373c412e'
 }
