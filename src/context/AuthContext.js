@@ -24,7 +24,7 @@ export const AuthProvider = ({children}) => {
     createUserWithEmailAndPassword(auth, userEnteredData.emailRef.current.value, userEnteredData.passwordRef.current.value)
       .then(async (userCredential) => {
         user = userCredential.user;
-        await setDoc(doc(db, "users", user.uid), {
+        setDoc(doc(db, "users", user.uid), {
           firstName: userEnteredData.firstNameRef.current.value,
           photoIdRef: userEnteredData.photoSelected,
           lastName: userEnteredData.lastNameRef.current.value,
@@ -40,9 +40,9 @@ export const AuthProvider = ({children}) => {
           careerAccumulatedAmount: 0,
         })
 
-        await setDoc(doc(db, "courses", user.uid), createDBArchitecture())
-        await setDoc(doc(db, "freelance", user.uid), createFreelanceDBArchitecture())
-        await setDoc(doc(db, "shop", user.uid), {
+        setDoc(doc(db, "courses", user.uid), createDBArchitecture())
+        setDoc(doc(db, "freelance", user.uid), createFreelanceDBArchitecture())
+        setDoc(doc(db, "shop", user.uid), {
           items: [
             {
               name: 'Игра: RocketC',
