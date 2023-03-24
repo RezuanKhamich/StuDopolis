@@ -1,3 +1,4 @@
+import CSharp_Data from '../../../externalData/CSharp/courseInfo.json'
 import FrontEnd_Data from '../../../externalData/FrontEnd/courseInfo.json'
 import DigitalArt_Data from '../../../externalData/DigitalArt/courseInfo.json'
 import KerbalSpace_Data from '../../../externalData/KerbalSpace/courseInfo.json'
@@ -12,6 +13,7 @@ import WebDesign_Data from '../../../externalData/WebDesign/courseInfo.json'
 export const createDBArchitecture = () => {
   let courseArchitecture = {}
   const coursesData = [
+    CSharp_Data,
     FrontEnd_Data,
     DigitalArt_Data,
     KerbalSpace_Data,

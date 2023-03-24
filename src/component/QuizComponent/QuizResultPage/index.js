@@ -71,7 +71,7 @@ const QuizResultPage = ({userAnswers, pageData, currentQuizAnswers, saveUserAwar
     <QuizPageWrapper>
       <div style={{ padding: '10px' }} >
         <Typography gutterBottom variant="h5" component="div" color="gray">
-          Тест
+          Квиз
         </Typography>
         <Typography gutterBottom variant="h3" component="div" textAlign="center">
           Результат: {Math.floor(getRightAnswerCount(userAnswers, currentQuizAnswers.split(''), pageData.pageTest))}/{pageData.pageTest.length}

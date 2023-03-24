@@ -3,6 +3,7 @@ import styled from "styled-components";
 import {Card, CardContent, Grid, Typography} from "@mui/material";
 import Timer from "../../Tools/Timer";
 import LinearWithValueLabel from "../../LinearProgressBar";
+import parse from "html-react-parser";
 
 const InteractiveCard = styled(Card)`
   opacity: ${props => props.disabled ? '0.5' : '1'};
@@ -37,14 +38,14 @@ const QuizQuestionsPage = ({ userAnswers, pageData, questionId, timerEndHandler,
   return (
     <QuizPageWrapper>
       <div style={{ padding: '10px' }} >
-        <Typography gutterBottom variant="h5" component="div" color="gray">
-          Тестирование
+        <Typography gutterBottom variant="h5" component="div" color="gray" fontSize="2vw">
+          Квиз
         </Typography>
 
         <Timer startValue={pageData.pageTest.length * 20} timeEndHandler={timerEndHandler} />
 
-        <Typography style={{ fontSize: '180%', overflowWrap: 'anywhere' }} gutterBottom variant="h3" component="div" height="150px" textAlign="center">
-          {pageData.pageTest[questionId].question}
+        <Typography style={{ fontSize: '3vw', overflowWrap: 'anywhere' }} gutterBottom variant="h3" component="div" height="150px" textAlign="center">
+          {parse(pageData.pageTest[questionId].question)}
         </Typography>
       </div>
       <Grid style={{margin: "auto", width: '100%'}} container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
@@ -53,8 +54,8 @@ const QuizQuestionsPage = ({ userAnswers, pageData, questionId, timerEndHandler,
             <Grid style={{ padding: '10px' }} item xs={ 6 } key={index}>
               <InteractiveCard style={{ display: 'flex' }} onClick={() => selectAnswerHandler(index, userAnswers)} >
                 <CardContent>
-                  <Typography gutterBottom variant="h5" component="div">
-                    {elem}
+                  <Typography gutterBottom variant="h5" component="div" fontSize="1.8vw">
+                    {parse(elem)}
                   </Typography>
                 </CardContent>
               </InteractiveCard>

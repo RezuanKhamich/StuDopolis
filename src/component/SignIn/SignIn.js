@@ -89,9 +89,9 @@ const SignIn = ({handleClick}) => {
           disabled={loading}
         >Войти</Button>
         <br/>
-        {
-          <Button style={{display: 'block', margin: 'auto'}} variant="outlined" onClick={handleClick}>Создать аккаунт</Button>
-        }
+        {/*{*/}
+        {/*  <Button style={{display: 'block', margin: 'auto'}} variant="outlined" onClick={handleClick}>Создать аккаунт</Button>*/}
+        {/*}*/}
       </Form>
     </div>
   )

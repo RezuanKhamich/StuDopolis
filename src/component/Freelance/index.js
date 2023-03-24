@@ -282,7 +282,7 @@ const Freelance = () => {
 
                       <CardContent sx={{padding: width >= 500 ? '6px 16px 0 16px' : '10px!important'}}>
                         <TypographyMobile gutterBottom variant="h6" component="div" fontSize="18px" mobileSize={0.7}>
-                          {externalData.mainTitle.slice(0, 48)}...
+                          {externalData.mainTitle.length > 48 ? `${externalData.mainTitle.slice(0, 48)}...` : externalData.mainTitle}
                         </TypographyMobile>
                         <CustomBadge sx={{marginRight: '8px'}} message="Сложность:" colorType={0} small/>
                         {

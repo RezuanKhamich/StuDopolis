@@ -27,6 +27,8 @@ import News from "./component/News";
 import teacherData from "./component/Header/Navbar/teacherData.json";
 import Student from "./component/Admin/Student";
 import LectureProgress from "./component/Admin/LectureProgress";
+import {SnackbarProvider, enqueueSnackbar, useSnackbar} from 'notistack';
+import {Button} from "@mui/material";
 
 const AppStyle = styled('div')`
   padding-left: 100px;
@@ -44,6 +46,7 @@ const App = () => {
   const userAuthData = JSON.parse(localStorage.getItem('st_user_authorized'))
   const dispatch = useDispatch();
   const [currentModuleId, setCurrentModuleId] = useState(0)
+
   useEffect(async () => {
     if (userAuthData) {
       const courseSnap = await getDoc(doc(db, "courses", userAuthData.uid))
@@ -76,9 +79,20 @@ const App = () => {
     }
   }, [userAuthData])
 
+  // function MyButton () {
+  //   const { enqueueSnackbar } = useSnackbar();
+  //   return (
+  //     <>
+  //       <SnackbarProvider />
+  //       <button onClick={() => enqueueSnackbar('That was easy!')}>Show snackbar</button>
+  //     </>
+  //     )
+  // };
+
   return (
     <AuthProvider>
       <Navbar />
+      {/*{!userAuthData?.uid ? (<MyButton />) : null}*/}
       <AppStyle>
         <Routes>
           {/*<Route path="/" element={<App />} />*/}

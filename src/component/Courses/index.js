@@ -49,6 +49,13 @@ const InteractiveCard = styled(Card)`
 
   @media (max-width: 430px) {
     margin: auto;
+
+    &:before {
+      width: 76px;
+      height: 18px;
+      font-size: 12px;
+      line-height: 18px;
+    }
   }
 `;
 
@@ -69,6 +76,7 @@ const DetailsBox = styled('span')`
 const TypographyMobile = styled(Typography)`
   @media (max-width: 430px) {
     ${props => props.mobileSize ? `font-size: ${props.mobileSize}rem!important;` : null}
+    margin-top: 12px!important;
   }
 `
 
@@ -89,6 +97,7 @@ const Courses = () => {
   const { innerWidth: width, innerHeight: height } = window;
   const courseData = useSelector(state => state.repos.courseData)
   const [completedLessons, totalCountLessons] = useAllCoursesProgress(courseData)
+  const userAuthData = JSON.parse(localStorage.getItem('st_user_authorized'))
 
   let getTotalCountTasks = (index) => courseData[`course_${index}`] ? (totalCountLessons[index] - Object.keys(courseData[`course_${index}`][`modules`]).length) * 3 : null
 

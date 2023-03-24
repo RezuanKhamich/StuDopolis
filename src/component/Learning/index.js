@@ -7,7 +7,7 @@ import {Button, CircularProgress} from "@mui/material";
 import {doc, getDoc, updateDoc} from "firebase/firestore";
 import { db } from '../../firebase'
 
-import courseInfo from "../../externalData/FrontEnd/courseInfo.json"
+import courseInfo from "../../externalData/CSharp/courseInfo.json"
 
 import MainPageTitle from "../../containers/MainPageTitle";
 import {

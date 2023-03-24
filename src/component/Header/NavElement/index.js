@@ -19,7 +19,7 @@ const ListRef = styled('button')`
   }
   
   @media (max-width: 430px) {
-    padding: 0 16px;
+    padding: 0 12px;
     height: 58px;
   }
 `
@@ -36,6 +36,7 @@ const ListImg = styled('img')`
   @media (max-width: 430px) {
     &.logo{
       width: 32px;
+      height: 32px;
     }
     margin: 0;
   }

@@ -15,9 +15,10 @@ const QuizPageWrapper = styled.div`
 const QuizDetails = styled.div`
   display: flex;
   justify-content: space-between;
-  width: 600px;
+  max-width: 600px;
   align-items: center;
   margin: 60px auto;
+  font-size: 2vw;
 `;
 
 const ButtonWrapper = styled.div`
@@ -25,29 +26,28 @@ const ButtonWrapper = styled.div`
 `;
 
 const QuizStartPage = ({ startQuizHandler, pageData, awardRatio = [300, 100], testBtnDisabled}) => {
-
   return(
     <>
       <QuizPageWrapper>
-        <Typography gutterBottom variant="h5" component="div" color="rgba(128, 128, 128, 0.5)" marginBottom="60px">
-          Тестирование
+        <Typography gutterBottom variant="h5" component="div" color="rgba(128, 128, 128, 0.5)" fontSize="2vw" marginBottom="60px">
+          Квиз
         </Typography>
-        <Typography gutterBottom variant="h3" component="div" textAlign="center">
-          Типы данных в Javascript
+        <Typography gutterBottom variant="h3" component="div" textAlign="center" fontSize="4vw">
+          Проверь свои способоности!
         </Typography>
-        <Typography gutterBottom variant="p" component="div" textAlign="center" color="rgba(128, 128, 128, 0.5)">
-          Ниже указана награда за прохождение теста на 100%. За каждый неправильный ответ можно получить только 50% от
+        <Typography gutterBottom variant="p" component="div" textAlign="center" color="rgba(128, 128, 128, 0.5)" fontSize="1.5vw">
+          Ниже указана награда за прохождение квиза на 100%. За каждый неправильный ответ можно получить только 50% от
           стоимости вопроса. Тест на время, помни об этом и удачи!
         </Typography>
 
         <QuizDetails>
-          <Typography gutterBottom variant="h5" component="div" textAlign="center" display="flex" alignItems="center">
+          <Typography gutterBottom variant="h5" component="div" textAlign="center" display="flex" alignItems="center" fontSize="inherit">
             <Icon color="warning">timer</Icon> {pageData * 20} c.
           </Typography>
-          <Typography gutterBottom variant="h5" component="div" textAlign="center" display="flex" alignItems="center">
+          <Typography gutterBottom variant="h5" component="div" textAlign="center" display="flex" alignItems="center" fontSize="inherit">
             +{awardRatio[1]}<GameIcon mobileWidth={35} width={50} icon="2" />
           </Typography>
-          <Typography gutterBottom variant="h5" component="div" textAlign="center" display="flex" alignItems="center">
+          <Typography gutterBottom variant="h5" component="div" textAlign="center" display="flex" alignItems="center" fontSize="inherit">
             +{awardRatio[0]}<GameIcon mobileWidth={35} width={50} icon="0" />
           </Typography>
         </QuizDetails>
@@ -59,7 +59,7 @@ const QuizStartPage = ({ startQuizHandler, pageData, awardRatio = [300, 100], te
             onClick={startQuizHandler}
             disabled={testBtnDisabled}
           >
-            Начать тест
+            Начать
           </Button>
         </ButtonWrapper>
       </QuizPageWrapper>

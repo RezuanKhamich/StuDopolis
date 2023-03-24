@@ -118,7 +118,7 @@ export const pageNavigationData = [
   {name: 'Обучение', img: learn_newImg, msg: 'learn', link: 'courses'},
   {name: 'Фриланс', img: freelanceImg, msg: 'freelance', link: 'freelance'},
   {name: 'Рейтинг', img: ratingImg, msg: false, link: 'rating'},
-  {name: 'Лагерь', img: campImg, msg: false, link: 'rating'},
+  // {name: 'Лагерь', img: campImg, msg: false, link: 'rating'},
   // {name: 'Модель', img: ratingImg, msg: false, link: 'model'},
   // {name: 'Карьера', img: companyImg, msg: false, link: 'career'},
   {name: 'G-Pay', img: shop, msg: false, link: 'shop'},
