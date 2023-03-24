@@ -51,6 +51,11 @@ const AppStyle = styled('div')`
 const SnackbarProviderContainer = styled(SnackbarProvider)`
   @media (max-width: 430px) {
     margin-bottom: 60px;
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    width: 100%;
+    transform: translate(-50%, 0) !important;
   }
 `;
 
