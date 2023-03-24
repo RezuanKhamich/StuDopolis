@@ -48,6 +48,12 @@ const AppStyle = styled('div')`
   }
 `
 
+const SnackbarProviderContainer = styled(SnackbarProvider)`
+  @media (max-width: 430px) {
+    margin-bottom: 60px;
+  }
+`;
+
 const App = () => {
   const userAuthData = useSelector(state => state.repos.userAuthData);
   const dispatch = useDispatch();
@@ -119,9 +125,9 @@ const App = () => {
         </Routes>
         {
           !userAuthData?.uid ? (
-            <SnackbarProvider persist>
+            <SnackbarProviderContainer persist>
               <UnAuthorizedSnackbarBox />
-            </SnackbarProvider>
+            </SnackbarProviderContainer>
           ) : null
         }
       </AppStyle>
