@@ -34,7 +34,7 @@ import SeniorIcon from "../../../media/gold_1.png";
 import {getMaxCourseAward} from "../../../utils/services/ServiceEconomics";
 import LinearWithValueLabel from "../../LinearProgressBar";
 import {saveUsersAwardDB, updateLectureProgress} from "../../../utils/services/learnPageService";
-import {setUserData} from "../../../utils/reducers/repoReducer";
+import {setUserData, setUsersAuthData} from "../../../utils/reducers/repoReducer";
 import {doc, getDoc, serverTimestamp, updateDoc} from 'firebase/firestore'
 import { Timestamp } from 'firebase/firestore'
 import {db} from "../../../firebase";
@@ -105,10 +105,10 @@ const GridUsefulMobile = styled(Grid)`
 `;
 
 const Profile = () => {
-  const userData = useSelector(state => state.repos.userData)
-  const courseData = useSelector(state => state.repos.courseData)
-  const [isUserAuthorized, setIsUserAuthorized] = useState(JSON.parse(localStorage.getItem('st_user_authorized')))
-  const [disableCareerAwardBtn, setDisableCareerAwardBtn] = useState()
+  const userData = useSelector(state => state.repos.userData);
+  const courseData = useSelector(state => state.repos.courseData);
+  const userAuthData = useSelector(state => state.repos.userAuthData);
+  const [disableCareerAwardBtn, setDisableCareerAwardBtn] = useState();
   const dispatch = useDispatch();
   const career = [
     { name: 'Junior', salary: 1000, img: JuniorIcon, isActive: true, requirements: null },
@@ -136,7 +136,7 @@ const Profile = () => {
       const currentDate = new Date(serverDate * 1000)
       const awardDate = new Date(userData.careerAwardDate)
       if (awardDate < currentDate) {
-        const userDocRef = doc(db, "users", isUserAuthorized.uid);
+        const userDocRef = doc(db, "users", userAuthData.uid);
         await updateDoc(userDocRef, {
           careerAccumulatedAmount: 0,
         });
@@ -180,7 +180,7 @@ const Profile = () => {
 
   const exitProfileHandler = () => {
     localStorage.removeItem('st_user_authorized');
-    setIsUserAuthorized(localStorage.getItem('st_user_authorized'))
+    dispatch(setUsersAuthData(JSON.parse(localStorage.getItem('st_user_authorized'))));
   }
 
   const interactiveCard = (el, index) =>
@@ -210,7 +210,7 @@ const Profile = () => {
   }
 
   const getDailySalary = async (salary) => {
-    const userDocRef = doc(db, "users", isUserAuthorized.uid);
+    const userDocRef = doc(db, "users", userAuthData.uid);
     const serverDate = Timestamp.fromDate(new Date())
     const nextDate = new Date(serverDate*1000 + 24 * 3600 * 1000);
     const nextAwardDate = new Date(

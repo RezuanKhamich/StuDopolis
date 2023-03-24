@@ -97,7 +97,7 @@ const Courses = () => {
   const { innerWidth: width, innerHeight: height } = window;
   const courseData = useSelector(state => state.repos.courseData)
   const [completedLessons, totalCountLessons] = useAllCoursesProgress(courseData)
-  const userAuthData = JSON.parse(localStorage.getItem('st_user_authorized'))
+  const userAuthData = useSelector(state => state.repos.userAuthData);
 
   let getTotalCountTasks = (index) => courseData[`course_${index}`] ? (totalCountLessons[index] - Object.keys(courseData[`course_${index}`][`modules`]).length) * 3 : null
 
@@ -109,7 +109,7 @@ const Courses = () => {
         {
           coursesData.map((elem, index) => (
             <Grid item xs={ width > 500 ? 6 : 12 } key={index}>
-              <Link to={`modules?courseId=${index}`} style={!elem.disabled ? {} : { pointerEvents: 'none' }}>
+              <Link to={userAuthData?.uid ? `modules?courseId=${index}` : '/'} style={!elem.disabled ? {} : { pointerEvents: 'none' }}>
                 <InteractiveCard sx={{ display: 'flex' }} disabled={elem.disabled} status={elem.status}>
                   <CardMediaMobile
                     component="img"

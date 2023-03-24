@@ -5,7 +5,7 @@ import { setDoc, doc, getDoc} from "firebase/firestore";
 import {useNavigate} from "react-router-dom";
 import {createDBArchitecture} from "../utils/services/createCourseDBArchitecture";
 import {useDispatch, useSelector} from "react-redux";
-import {setCourseData, setUserData} from "../utils/reducers/repoReducer";
+import {setCourseData, setUserData, setUsersAuthData} from "../utils/reducers/repoReducer";
 import {createFreelanceDBArchitecture} from "../utils/services/createFreelanceDBArchitecture";
 
 const AuthContext = React.createContext()
@@ -85,6 +85,7 @@ export const AuthProvider = ({children}) => {
       .then(async (userCredential) => {
         user = userCredential.user;
         localStorage.setItem('st_user_authorized', JSON.stringify(user));
+        dispatch(setUsersAuthData(JSON.parse(localStorage.getItem('st_user_authorized'))));
 
         const userDataSnap = await getDoc(doc(db, "users", user.uid));
         const courseSnap = await getDoc(doc(db, "courses", user.uid));

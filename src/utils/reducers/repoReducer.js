@@ -5,6 +5,7 @@ const SET_SHOP_DATA = "SET_SHOP_DATA"
 const SET_USERS_LIST = "SET_USERS_LIST"
 const SET_ADMIN_COURSE = "SET_ADMIN_COURSE"
 const SET_ADMIN_FREELANCE = "SET_ADMIN_FREELANCE"
+const SET_USER_AUTH_DATA = "SET_USER_AUTH_DATA"
 
 const defaultState = {
   items: [],
@@ -52,6 +53,11 @@ export default function reposReducer(state = defaultState, action) {
         ...state,
         adminFreelance: action.payload
       }
+    case SET_USER_AUTH_DATA:
+      return {
+        ...state,
+        userAuthData: action.payload
+      }
     default:
       return state
   }
@@ -62,6 +68,7 @@ export const setUserData = (data) => ({type: SET_USER_DATA, payload: data})
 export const setFreelanceData = (data) => ({type: SET_FREELANCE_DATA, payload: data})
 export const setShopData = (data) => ({type: SET_SHOP_DATA, payload: data})
 export const setUsersList = (data) => ({type: SET_USERS_LIST, payload: data})
+export const setUsersAuthData = (data) => ({type: SET_USER_AUTH_DATA, payload: data})
 
 export const setAdminCourse = (data) => ({type: SET_ADMIN_COURSE, payload: data})
 export const setAdminFreelance = (data) => ({type: SET_ADMIN_FREELANCE, payload: data})

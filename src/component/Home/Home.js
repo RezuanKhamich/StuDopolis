@@ -5,11 +5,12 @@ import SignIn from "../SignIn/SignIn";
 import Profile from "./Profile";
 import { isTeacherAccount } from "../../utils/services";
 import Training from "../Training";
+import {useSelector} from "react-redux";
 
 const Home = () => {
   const [createAccount, setCreateAccount] = useState(false)
+  const userAuthData = useSelector(state => state.repos.userAuthData);
   // const [showTrainingPopup, setShowTrainingPopup] = useState(true)
-  const [isUserAuthorized, setIsUserAuthorized] = useState(localStorage.getItem('st_user_authorized'))
 
   const handleClick = () => {
     // setCreateAccount(!createAccount);
@@ -24,8 +25,8 @@ const Home = () => {
     <>
 
       {
-        isUserAuthorized ?
-          <Profile isUserAuthorized={isUserAuthorized} setIsUserAuthorized={setIsUserAuthorized} />
+        userAuthData ?
+          <Profile />
           :
           createAccount ?
             <SignUp handleClick={handleClick} />

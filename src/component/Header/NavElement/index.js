@@ -6,6 +6,7 @@ import {coursesData} from "../../../externalData";
 
 const ListElem = styled('li')`
   position: relative;
+  ${props => props.disabled ? `opacity: 0.3;` : null };
 `
 const ListRef = styled('button')`
   display: block;
@@ -48,7 +49,7 @@ const ListText = styled('p')`
 `
 
 const NavElement = ({
-  titleName, titleImg, titleMsg, isLogo,
+  titleName, titleImg, titleMsg, isLogo, disabled,
 }) => {
   const { innerWidth: width, innerHeight: height } = window;
   const freelanceData = useSelector(state => state.repos.freelanceData)
@@ -109,7 +110,7 @@ const NavElement = ({
   }, [freelanceData, courseData])
 
   return(
-    <ListElem>
+    <ListElem disabled={disabled}>
       <ListRef>
         <Badge theme={theme} color="yellow" badgeContent={titleMsg ? availableTasksCount : null}>
           <ListImg className={isLogo ? "logo" : 'null'} src={titleImg} alt=""/>

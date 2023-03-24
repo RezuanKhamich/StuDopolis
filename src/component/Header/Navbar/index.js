@@ -6,6 +6,7 @@ import {Link} from "react-router-dom";
 import {pageNavigationData} from "../../../externalData";
 import admin from "./media/admin_logo_important.png";
 import teacherData from "./teacherData.json";
+import {useSelector} from "react-redux";
 
 const NavContainer = styled('nav')`
   background: ${mainColor};
@@ -36,20 +37,21 @@ const ListWrapper = styled('ul')`
 `
 
 const Navbar = () => {
-  const userAuthData = JSON.parse(localStorage.getItem('st_user_authorized'))
+  const userAuthData = useSelector(state => state.repos.userAuthData);
 
   return(
     <NavContainer>
       <ListWrapper>
         {
           pageNavigationData.map((list, index) => (
-            <Link to={`/${list.link}`} key={index}>
+            <Link to={ userAuthData?.uid || list.demoPage ? `/${list.link}` : '/'} key={index}>
               <NavElement
-                  key={index}
-                  titleName={list?.name}
-                  titleImg={list.img}
-                  titleMsg={list.msg}
-                  isLogo={list?.logo}
+                key={index}
+                titleName={list?.name}
+                titleImg={list.img}
+                titleMsg={list.msg}
+                isLogo={list?.logo}
+                disabled={!(userAuthData?.uid || list.demoPage)}
               />
             </Link>
           ))

@@ -114,19 +114,17 @@ export const coursesData = [
 ]
 
 export const pageNavigationData = [
-  {img: logo, msg: false, logo: true, link: ''},
-  {name: 'Обучение', img: learn_newImg, msg: 'learn', link: 'courses'},
-  {name: 'Фриланс', img: freelanceImg, msg: 'freelance', link: 'freelance'},
-  {name: 'Рейтинг', img: ratingImg, msg: false, link: 'rating'},
-  // {name: 'Лагерь', img: campImg, msg: false, link: 'rating'},
-  // {name: 'Модель', img: ratingImg, msg: false, link: 'model'},
-  // {name: 'Карьера', img: companyImg, msg: false, link: 'career'},
-  {name: 'G-Pay', img: shop, msg: false, link: 'shop'},
-  // {name: 'Кабинет', img: homeImg, msg: false, link: 'profile'},
-  {name: 'Новости', img: newsImg, msg: false, link: 'news'},
-  // {name: 'Почта', img: messageImg, msg: false, link: 'messages'},
-  // {name: 'Помощь', img: helpImg, msg: false},
-  // {name: 'Выйти', img: exitImg, msg: false},
+  {img: logo, msg: false, logo: true, link: '', demoPage: true},
+  {name: 'Обучение', img: learn_newImg, msg: 'learn', link: 'courses', demoPage: true},
+  {name: 'Фриланс', img: freelanceImg, msg: 'freelance', link: 'freelance', demoPage: false},
+  {name: 'Рейтинг', img: ratingImg, msg: false, link: 'rating', demoPage: false},
+  // {name: 'Лагерь', img: campImg, msg: false, link: 'rating', demoPage: false},
+  // {name: 'Модель', img: ratingImg, msg: false, link: 'model', demoPage: false},
+  // {name: 'Карьера', img: companyImg, msg: false, link: 'career', demoPage: false},
+  {name: 'G-Pay', img: shop, msg: false, link: 'shop', demoPage: false},
+  // {name: 'Кабинет', img: homeImg, msg: false, link: 'profile', demoPage: false},
+  {name: 'Новости', img: newsImg, msg: false, link: 'news', demoPage: false},
+  // {name: 'Почта', img: messageImg, msg: false, link: 'messages', demoPage: false},
 ]
 
 // export const modulesData = [
