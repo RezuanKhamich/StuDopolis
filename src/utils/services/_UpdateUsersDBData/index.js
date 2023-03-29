@@ -7,7 +7,7 @@ export const addFieldForAllUsers = async () => {
 
   onSnapshot(q, (snapshot => {
     snapshot.docs.forEach(doc => {
-      console.log(doc.data())
+      // console.log(doc.data())
     })
   }))
 

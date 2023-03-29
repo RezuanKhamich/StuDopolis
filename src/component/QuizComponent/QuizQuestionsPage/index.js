@@ -34,6 +34,24 @@ const QuizPageWrapper = styled.div`
   min-height: 400px;
 `;
 
+const CustomQuestionContent = styled(Typography)`
+  font-size: 2vw!important;
+  overflow-wrap: anywhere;
+  min-height: 150px;
+  text-align: center;
+  
+  & > div {
+    margin: 12px;
+  }
+  
+  & pre {
+    text-align: left;
+    margin: 10px;
+  }
+  
+  //style={{ fontSize: '2vw', overflowWrap: 'anywhere' }} gutterBottom variant="h3" component="div" minHeight="200px" textAlign="center"
+`;
+
 const QuizQuestionsPage = ({ userAnswers, pageData, questionId, timerEndHandler, selectAnswerHandler  }) => {
   return (
     <QuizPageWrapper>
@@ -44,9 +62,9 @@ const QuizQuestionsPage = ({ userAnswers, pageData, questionId, timerEndHandler,
 
         <Timer startValue={pageData.pageTest.length * 20} timeEndHandler={timerEndHandler} />
 
-        <Typography style={{ fontSize: '3vw', overflowWrap: 'anywhere' }} gutterBottom variant="h3" component="div" height="150px" textAlign="center">
+        <CustomQuestionContent gutterBottom variant="h3">
           {parse(pageData.pageTest[questionId].question)}
-        </Typography>
+        </CustomQuestionContent>
       </div>
       <Grid style={{margin: "auto", width: '100%'}} container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
         {

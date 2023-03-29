@@ -31,13 +31,14 @@ import TigerIcon from "../../../media/tiger_photo.png";
 import JuniorIcon from "../../../media/bronze_3.png";
 import MiddleIcon from "../../../media/silver_2.png";
 import SeniorIcon from "../../../media/gold_1.png";
-import {getMaxCourseAward} from "../../../utils/services/ServiceEconomics";
+import {getMaxCourseAward, serviceEconomics} from "../../../utils/services/ServiceEconomics";
 import LinearWithValueLabel from "../../LinearProgressBar";
 import {saveUsersAwardDB, updateLectureProgress} from "../../../utils/services/learnPageService";
 import {setUserData, setUsersAuthData} from "../../../utils/reducers/repoReducer";
 import {doc, getDoc, serverTimestamp, updateDoc} from 'firebase/firestore'
 import { Timestamp } from 'firebase/firestore'
 import {db} from "../../../firebase";
+import {secondColor} from "../../../constants/colors";
 
 const InteractiveCard = styled(Card)`
   opacity: ${props => props.disabled ? '0.5' : '1'};
@@ -96,10 +97,20 @@ const DetailsBox = styled('span')`
 `;
 
 const GridUsefulMobile = styled(Grid)`
+  justify-content: space-evenly;
+  text-align: center;
+  & img {
+    width: 60px;
+    margin: 0 auto 10px auto;
+  }
   @media (max-width: 430px) {
-    flex-direction: column-reverse !important;
+    flex-direction: column !important;
     & > div {
       max-width: 100% !important;
+    }
+    & img {
+      width: 30px;
+      margin: 0 auto 10px auto;
     }
   }
 `;
@@ -110,11 +121,6 @@ const Profile = () => {
   const userAuthData = useSelector(state => state.repos.userAuthData);
   const [disableCareerAwardBtn, setDisableCareerAwardBtn] = useState();
   const dispatch = useDispatch();
-  const career = [
-    { name: 'Junior', salary: 1000, img: JuniorIcon, isActive: true, requirements: null },
-    { name: 'Middle', salary: 1800, img: MiddleIcon, isActive: false, requirements: 20000 },
-    { name: 'Senior', salary: 2400, img: SeniorIcon, isActive: false, requirements: 50000 },
-  ]
 
   const studiosStats = [
     { name: 'GingerPack', gCoins: 23000 },
@@ -209,7 +215,13 @@ const Profile = () => {
     dispatch(setUserData(payload))
   }
 
-  const getDailySalary = async (salary) => {
+  const setNewCareerPos = () => {
+    const needExpForIncreasePosition = serviceEconomics().careerAward[userData?.careerPosition + 1].needExp - Math.floor(userData?.experienceAmount);
+    return needExpForIncreasePosition - serviceEconomics().careerAward[userData?.careerPosition].getExp <= 0 ?
+      userData?.careerPosition + 1 : userData?.careerPosition;
+  }
+
+  const getDailySalary = async () => {
     const userDocRef = doc(db, "users", userAuthData.uid);
     const serverDate = Timestamp.fromDate(new Date())
     const nextDate = new Date(serverDate*1000 + 24 * 3600 * 1000);
@@ -224,7 +236,9 @@ const Profile = () => {
 
     await updateDoc(userDocRef, {
       careerAccumulatedAmount: 1,
-      greenCoinAmount: +userData.greenCoinAmount + salary,
+      careerPosition: setNewCareerPos(),
+      experienceAmount: +userData.experienceAmount + serviceEconomics().careerAward[userData?.careerPosition]?.getExp,
+      greenCoinAmount: +userData.greenCoinAmount + serviceEconomics().careerAward[userData?.careerPosition]?.greenCoin,
       careerAwardDate: nextAwardDate.getTime(),
     });
 
@@ -235,6 +249,11 @@ const Profile = () => {
       console.log("No such document!");
     }
   }
+
+  const getExpNumNeededForCareerIncrease = () => (
+    userData?.careerPosition < serviceEconomics().careerAward.length ?
+      Math.abs(serviceEconomics().careerAward[userData?.careerPosition + 1].needExp - Math.floor(userData?.experienceAmount))
+      : ' - ');
 
   return(
     <>
@@ -248,9 +267,9 @@ const Profile = () => {
               <TypographyMobile mobileSize={1.5} gutterBottom variant="h3" component="div">{userData?.firstName} {userData?.lastName}</TypographyMobile>
               <Text sx={{display: 'flex', alignItems: 'center', marginBottom: 3}} color="text.secondary" variant="h5">
                 Должность:
-                <img style={{ margin: '0 10px', width: 20, height: 20 }} src={career[userData?.careerPosition]?.img} alt=""/>
+                <img style={{ margin: '0 10px', width: 20, height: 30 }} src={serviceEconomics().careerAward[userData?.careerPosition]?.img} alt=""/>
                 <Text color="black" variant="h5">
-                  {career[userData?.careerPosition]?.name}
+                  {serviceEconomics().careerAward[userData?.careerPosition]?.name}
                 </Text>
               </Text>
               <AwardStats>
@@ -294,6 +313,44 @@ const Profile = () => {
         {/*    </Box>*/}
         {/*  </CardContent>*/}
         {/*</Card>*/}
+        <TypographyMobile mobileSize={1} sx={{marginBottom: 4, textAlign: 'center'}} variant="h5" color="text.secondary">Полезное</TypographyMobile>
+        <TypographyMobile mobileSize={0.5} sx={{ margin: '20px auto', fontSize: '1rem', textAlign: 'center' }} variant="body2" color="text.secondary">
+          Для повышения необходимо &nbsp;
+          <GamePointsBadge
+            count={getExpNumNeededForCareerIncrease()}
+            pointType="1" small rectangular
+          />
+        </TypographyMobile>
+        <GridUsefulMobile container spacing={2} marginBottom={4}>
+          {
+              serviceEconomics().careerAward.map((el, index) => (
+                <Grid item xs={2} marginBottom={2}  key={index}>
+                  <Card style={{ padding: '10px', border: `${ userData?.careerPosition === index ? '2px solid #ffc107' : 'none'}`, }}>
+                    <img src={el.img} alt=""/>
+                    <div>
+                      <TypographyMobile variant="h3" fontSize="20px" component="div">{el.name}</TypographyMobile>
+                      <TypographyMobile variant="p" color="text.secondary" fontSize="14px">+{el.greenCoin} GCoin</TypographyMobile>
+                    </div>
+                  </Card>
+                </Grid>
+              ))
+            }
+
+        </GridUsefulMobile>
+        <div style={{ textAlign: 'center', marginBottom: '60px' }}>
+          <Button
+            variant="contained"
+            color='success'
+            size="large"
+            disabled={!(userData && userData.careerAccumulatedAmount === 0)}
+            onClick={() => userData && getDailySalary()}
+          >
+            Получить +{userData && serviceEconomics().careerAward[userData?.careerPosition]?.greenCoin} GCoin
+          </Button>
+          <TypographyMobile mobileSize={0.5} sx={{ marginTop: '6px', fontSize: '10px'}} variant="body2" color="text.secondary">
+            Получить следующую награду можно после 00:00
+          </TypographyMobile>
+        </div>
 
         <TypographyMobile mobileSize={1} sx={{marginBottom: 4, textAlign: 'center'}} variant="h5" color="text.secondary">Мои курсы</TypographyMobile>
         <Grid container spacing={2} marginBottom={10}>
@@ -369,59 +426,31 @@ const Profile = () => {
           }
         </Grid>
 
-        <TypographyMobile mobileSize={1} sx={{marginBottom: 4, textAlign: 'center'}} variant="h5" color="text.secondary">Полезное</TypographyMobile>
-        <GridUsefulMobile container spacing={2} marginBottom={4}>
-          <Grid item xs={8} key="0">
-            <Card style={{ padding: '10px', height: '100%' }}>
-              <TypographyMobile mobileSize={1} sx={{marginBottom: 4, textAlign: 'center'}} variant="h5" color="text.secondary">Результаты студий</TypographyMobile>
-              <div>
-                {
-                  studiosStats.map((el, index) => (
-                    <div style={{ marginBottom: '28px' }} key={index}>
-                      <TypographyMobile variant="h5" color="text.secondary" fontSize={18} marginBottom={1}>
-                        {index+1}. Студия: "{el.name}"
-                      </TypographyMobile>
-                      <Box sx={{width: '100%'}}>
-                        <LinearCommandsProgress
-                          value={el.gCoins / 1000}
-                          gCoins={el.gCoins}
-                          index={0}
-                        />
-                      </Box>
-                    </div>
-                  ))
-                }
-              </div>
-            </Card>
-          </Grid>
-          <Grid item xs={4} key="0" textAlign="center">
-            {
-              career.map((el, index) => (
-                <Grid item xs={12} marginBottom={2}  key={index}>
-                  <Card style={{ padding: '10px', display: 'flex', alignItems: 'center' }}>
-                    <img style={{ marginRight: 10 }} src={el.img} alt=""/>
-                    <div>
-                      <TypographyMobile variant="h3" fontSize="30px" component="div">{index+1}. {el.name}</TypographyMobile>
-                      <TypographyMobile variant="p" color="text.secondary" fontSize="14px">+{el.salary} GCoin</TypographyMobile>
-                    </div>
-                  </Card>
-                </Grid>
-              ))
-            }
-            <Button
-              variant="contained"
-              color='success'
-              size="large"
-              disabled={!(userData && userData.careerAccumulatedAmount === 0)}
-              onClick={() => userData && getDailySalary(career[userData?.careerPosition]?.salary)}
-            >
-              Получить +{userData && career[userData?.careerPosition]?.salary} GCoin
-            </Button>
-            <TypographyMobile mobileSize={0.5} sx={{ marginTop: '6px', fontSize: '10px'}} variant="body2" color="text.secondary">
-              Получить следующую награду можно после 00:00
-            </TypographyMobile>
-          </Grid>
-        </GridUsefulMobile>
+        {/*<GridUsefulMobile container spacing={2} marginBottom={4}>*/}
+        {/*  <Grid item xs={8} key="0">*/}
+        {/*    <Card style={{ padding: '10px', height: '100%' }}>*/}
+        {/*      <TypographyMobile mobileSize={1} sx={{marginBottom: 4, textAlign: 'center'}} variant="h5" color="text.secondary">Результаты студий</TypographyMobile>*/}
+        {/*      <div>*/}
+        {/*        {*/}
+        {/*          studiosStats.map((el, index) => (*/}
+        {/*            <div style={{ marginBottom: '28px' }} key={index}>*/}
+        {/*              <TypographyMobile variant="h5" color="text.secondary" fontSize={18} marginBottom={1}>*/}
+        {/*                {index+1}. Студия: "{el.name}"*/}
+        {/*              </TypographyMobile>*/}
+        {/*              <Box sx={{width: '100%'}}>*/}
+        {/*                <LinearCommandsProgress*/}
+        {/*                  value={el.gCoins / 1000}*/}
+        {/*                  gCoins={el.gCoins}*/}
+        {/*                  index={0}*/}
+        {/*                />*/}
+        {/*              </Box>*/}
+        {/*            </div>*/}
+        {/*          ))*/}
+        {/*        }*/}
+        {/*      </div>*/}
+        {/*    </Card>*/}
+        {/*  </Grid>*/}
+        {/*</GridUsefulMobile>*/}
       </PageWrapper>
     </>
   )

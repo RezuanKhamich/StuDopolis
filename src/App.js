@@ -17,7 +17,7 @@ import {app, db} from './firebase'
 import Courses from "./component/Courses";
 import Modules from "./component/Modules";
 import Freelance from "./component/Freelance";
-import {doc, getDoc} from "firebase/firestore";
+import {doc, getDoc, setDoc} from "firebase/firestore";
 import Messages from "./component/Messages";
 import FreelanceTask from "./component/FreelanceTask";
 import {useDispatch, useSelector} from "react-redux";
@@ -35,6 +35,8 @@ import Student from "./component/Admin/Student";
 import LectureProgress from "./component/Admin/LectureProgress";
 import {SnackbarProvider} from 'notistack';
 import {UnAuthorizedSnackbarBox} from "./utils/services";
+import {createDBArchitecture} from "./utils/services/createCourseDBArchitecture";
+import {createFreelanceDBArchitecture} from "./utils/services/createFreelanceDBArchitecture";
 
 const AppStyle = styled('div')`
   padding-left: 100px;
@@ -59,6 +61,68 @@ const SnackbarProviderContainer = styled(SnackbarProvider)`
   }
 `;
 
+const smartUpdateDBStructure = (userStructure, updatedStructure, structName, userAuthData, isMissingStructure, reduxAction, bannedFields, dispatch) => {
+  function copyValuesWithDifferences(obj1, obj2, bannedFields) {
+    // for (let key in obj1) {
+    //   if (typeof obj1[key] === 'object') {
+    //     if (!obj2[key]) {
+    //       obj2[key] = {};
+    //     }
+    //     copyValuesWithDifferences(obj1[key], obj2[key], differences ? differences[key] : null);
+    //   } else {
+    //     obj2[key] = differences && differences[key] !== undefined ? differences[key] : obj1[key];
+    //   }
+    // }
+    for (let key in obj1) {
+      if (typeof obj1[key] === 'object' && obj1[key] !== null) {
+        if (!obj2[key]) {
+          obj2[key] = {};
+        }
+        copyValuesWithDifferences(obj1[key], obj2[key], bannedFields);
+      } else {
+        if (!(bannedFields.length && bannedFields.includes(key))) obj2[key] = obj1[key];
+      }
+    }
+  }
+
+  function compareObjectsByKeys(obj1, obj2) {
+    const keys1 = Object.keys(obj1);
+    const keys2 = Object.keys(obj2);
+
+    if (keys1.length !== keys2.length) {
+      return true;
+    }
+
+    for (let key of keys1) {
+      if (!keys2.includes(key)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  const saveInDBNewStructure = async () => {
+    await setDoc(doc(db, structName, userAuthData.uid), updatedStructure);
+    dispatch(reduxAction(updatedStructure));
+  }
+  console.log(compareObjectsByKeys(userStructure, updatedStructure))
+
+  if (isMissingStructure) {
+    saveInDBNewStructure();
+    // console.log(`${structName} отсутстует: сохранение новой в бд`);
+  } else {
+    if (compareObjectsByKeys(userStructure, updatedStructure)) {
+      copyValuesWithDifferences(userStructure, updatedStructure, bannedFields)
+      saveInDBNewStructure();
+      // console.log(`${structName} обновлена: сохранение обновленной в бд`)
+    } else {
+      // console.log(`${structName} не изменена`)
+      dispatch(reduxAction(userStructure));
+    }
+  }
+};
+// ['courseName', 'modulesName']
 const App = () => {
   const userAuthData = useSelector(state => state.repos.userAuthData);
   const dispatch = useDispatch();
@@ -73,21 +137,28 @@ const App = () => {
       const courseSnap = await getDoc(doc(db, "courses", userAuthData.uid))
       if (courseSnap.exists()) {
         dispatch(setCourseData(courseSnap.data()));
+        // console.log('данные юзера', courseSnap.data())
+        // console.log('данные ожидаемой структуры', createDBArchitecture())
+        // smartUpdateDBStructure(courseSnap.data(), createDBArchitecture(), "courses", userAuthData, false, setCourseData, ['courseName', 'modulesName'], dispatch);
       } else {
+        smartUpdateDBStructure(courseSnap.data(), createDBArchitecture(), "courses", userAuthData, true, setCourseData, ['courseName', 'modulesName'], dispatch);
         console.log("Не найдено courseSnap!");
       }
 
       const userDataSnap = await getDoc(doc(db, "users", userAuthData.uid))
       if (userDataSnap.exists()) {
         dispatch(setUserData(userDataSnap.data()));
+
       } else {
         console.log("Не найдено userDataSnap!");
       }
 
       const freelanceDataSnap = await getDoc(doc(db, "freelance", userAuthData.uid))
       if (freelanceDataSnap.exists()) {
+        // smartUpdateDBStructure(freelanceDataSnap.data(), createFreelanceDBArchitecture(), "freelance", userAuthData, false, setFreelanceData, ['courseName', 'modulesName'], dispatch);
         dispatch(setFreelanceData(freelanceDataSnap.data()));
       } else {
+        smartUpdateDBStructure(freelanceDataSnap.data(), createFreelanceDBArchitecture(), "freelance", userAuthData, true, setFreelanceData, ['courseName', 'modulesName'], dispatch);
         console.log("Не найдено freelanceDataSnap!");
       }
 

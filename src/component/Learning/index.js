@@ -3,7 +3,7 @@ import styled from "styled-components";
 import PageContent from "../../containers/PageContent";
 import {backColor, hoverColor, mainColor, textColor2} from "../../constants/colors";
 import {secondColor} from "../../constants/colors";
-import {Button, CircularProgress} from "@mui/material";
+import {Button, CircularProgress, Typography} from "@mui/material";
 import {doc, getDoc, updateDoc} from "firebase/firestore";
 import { db } from '../../firebase'
 
@@ -27,6 +27,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {setCourseData, setFreelanceData, setUserData} from "../../utils/reducers/repoReducer";
 import {giveUserAwards} from "../../utils/services";
 import {serviceEconomics} from "../../utils/services/ServiceEconomics";
+import techWorkImg from "../../media/techWork.png";
 
 const SectionsWrapper = styled('div')`
   background: ${mainColor};
@@ -134,6 +135,10 @@ const PageButton = styled('button')`
     color: white;
   }
 `
+const TechWorkImg = styled('img')`
+  width: 170px;
+  margin: 100px auto 20px auto;
+`;
 
 const StudyPlatform = () => {
   const {innerWidth: width, innerHeight: height} = window;
@@ -151,21 +156,21 @@ const StudyPlatform = () => {
   const [currentPageId, setCurrentPageId] = useState(0)
   const [donePage, setDonePage] = useState(setEmptyPageCells(data))
   const [showSectionTab, setShowSectionTab] = useState(false)
-
-  const isDisabledEndButton = useMemo(() => lessonData.length && Number(lessonData[currentSectionId][currentPageId]), [currentPageId, currentSectionId, lessonData])
+  const isDisabledEndButton = useMemo(() => lessonData[currentSectionId]?.length && Number(lessonData[currentSectionId][currentPageId]), [currentPageId, currentSectionId, lessonData])
   const doneSections = useMemo(() => setDoneSectionCells(lessonData), [lessonData])
 
   const sectionJsonData = data[currentSectionId];
   const pageData = data[currentSectionId].pageFlow;
 
   let awardBtnDisabled = useMemo(() => courseData[`course_${urlParametersId.get('courseId')}`] ? courseData[`course_${urlParametersId.get('courseId')}`][`modules`][urlParametersId.get('moduleId')][`lectures`][currentSectionId].isAwardReceived : null, [courseData, currentPageId]);
+  let lectureIsAvailable = useMemo(() => courseData[`course_${urlParametersId.get('courseId')}`] ? courseData[`course_${urlParametersId.get('courseId')}`][`modules`][urlParametersId.get('moduleId')][`lectures`][currentSectionId].lectureAvailable : null, [courseData, currentPageId]);
 
   const getSectionBtnDisable = (index) => {
     if (courseData[`course_${urlParametersId.get('courseId')}`]) {
       if (index === 0) {
         return !courseData[`course_${urlParametersId.get('courseId')}`][`modules`][urlParametersId.get('moduleId')].info.moduleAvailable;
       }
-      return !courseData[`course_${urlParametersId.get('courseId')}`][`modules`][urlParametersId.get('moduleId')][`lectures`][index - 1].lectureAvailable
+      return !courseData[`course_${urlParametersId.get('courseId')}`][`modules`][urlParametersId.get('moduleId')][`lectures`][index - 1]?.lectureAvailable
     }
   }
 
@@ -178,7 +183,7 @@ const StudyPlatform = () => {
   }
 
   const getAwardRatio = () => {
-    return [serviceEconomics().lectureTestDone.exp, serviceEconomics().lectureTestDone.greenCoin]
+    return [serviceEconomics().moduleControlTestDone.exp, serviceEconomics().moduleControlTestDone.greenCoin]
   }
 
   const changeCurrentSection = (sectionId) => {
@@ -196,14 +201,13 @@ const StudyPlatform = () => {
     dispatch(setUserData(payload))
   }
 
-  const completedPageHandler = async (isGoNextPage) => {
+  const completedPageHandler = async (isGoNextPage, isLastButton) => {
     let newDonePage = donePage.slice();
     newDonePage[currentSectionId][currentPageId] = 1;
     setDonePage(newDonePage)
 
-    if(lessonData[currentSectionId].filter(el => el === '0').length === 1){
-      await saveUsersAwardDB(isUserAuthorized, userData, setUserDataHandler, 450, 850)
-    }
+    if (isLastButton) saveUserAwardHandler();
+    await updateLectureProgress(isUserAuthorized, urlParametersId.get('courseId'), urlParametersId.get('moduleId'), currentSectionId, currentPageId, courseData, setCourseDataHandler);
 
     if(isGoNextPage) {
       if(currentPageId !== (data[currentSectionId].pageCount-1)){
@@ -215,8 +219,6 @@ const StudyPlatform = () => {
         }
       }
     }
-
-    await updateLectureProgress(isUserAuthorized, urlParametersId.get('courseId'), urlParametersId.get('moduleId'), currentSectionId, currentPageId, courseData, setCourseDataHandler)
   }
 
   const updateTestProgressHandler = async (userAnswers) => await updateQuizProgress(isUserAuthorized, userAnswers, urlParametersId.get('courseId'), urlParametersId.get('moduleId'), currentSectionId, currentPageId, courseData, setCourseDataHandler)
@@ -227,7 +229,7 @@ const StudyPlatform = () => {
 
   const setCompletedStateForPageButton = (index) => {
     let state = 'null'
-    if(lessonData[currentSectionId][index] === '1'){
+    if(lessonData[currentSectionId]?.[index] === '1'){
       state = 'done'
     }
     return state
@@ -286,6 +288,7 @@ const StudyPlatform = () => {
                         className={setCompletedStateForPageButton(index)}
                         key={index}
                         onClick={pageBtnHandler.bind(this, index)}
+                        disabled={!lectureIsAvailable}
                       >
                         {btnType}
                       </PageButton>
@@ -298,12 +301,12 @@ const StudyPlatform = () => {
                     <QuizComponent
                       pageData={pageData[`page${currentPageId+1}`][0]}
                       doneBtnHandler={completedPageHandler}
-                      currentPageIsDone={-lessonData[currentSectionId][currentPageId]}
+                      currentPageIsDone={-lessonData[currentSectionId]?.[currentPageId]}
                       updateTestProgressHandler={updateTestProgressHandler}
                       currentQuizAnswers={courseData[`course_${urlParametersId.get('courseId')}`][`modules`][urlParametersId.get('moduleId')][`lectures`][currentSectionId].quizProgress}
                       saveUserAwardHandler={saveUserAwardHandler}
                       awardBtnDisabled={awardBtnDisabled}
-                      testBtnDisabled={!courseData[`course_${urlParametersId.get('courseId')}`][`modules`][urlParametersId.get('moduleId')][`lectures`][currentSectionId].lectureAvailable}
+                      testBtnDisabled={!lectureIsAvailable}
                       awardRatio={getAwardRatio()}
                     />
                     :
@@ -311,23 +314,43 @@ const StudyPlatform = () => {
                       {
                         Object.keys(pageData).length > 1 ?
                           <ContentTextWrapper>
-                            <PageContent pageData={pageData} currentPageId={currentPageId} currentSectionId={currentSectionId} />
+                            {
+                              lectureIsAvailable ?
+                                <PageContent pageData={pageData} currentPageId={currentPageId} currentSectionId={currentSectionId} /> :
+                                <div>
+                                  <TechWorkImg src={techWorkImg} alt=""/>
+                                  <Typography variant="h5" textAlign="center">
+                                    Раздел временно недоступен. <br/> Ведутся напряженные технические работы.
+                                  </Typography>
+                                </div>
+                            }
                           </ContentTextWrapper>
                           : null
                       }
 
                       {
-                        courseData[`course_${urlParametersId.get('courseId')}`][`modules`][urlParametersId.get('moduleId')][`lectures`][currentSectionId].lectureAvailable ?
-                          <ButtonWrapper>
-                            <Button
-                              variant="contained"
-                              color='success'
-                              disabled={isDisabledEndButton}
-                              onClick={completedPageHandler}
-                            >
-                              Завершить
-                            </Button>
-                          </ButtonWrapper>
+                        lectureIsAvailable ?
+                          <>
+                            {
+                              lessonData[currentSectionId].filter(el => el === '0').length === 1 ?
+                                  giveUserAwards(
+                                    isDisabledEndButton,
+                                    completedPageHandler,
+                                    serviceEconomics().lectureDone.greenCoin,
+                                    serviceEconomics().lectureDone.exp,
+                              ) :
+                                <ButtonWrapper>
+                                  <Button
+                                    variant="contained"
+                                    color='success'
+                                    disabled={isDisabledEndButton}
+                                    onClick={completedPageHandler}
+                                  >
+                                    Завершить
+                                  </Button>
+                                </ButtonWrapper>
+                            }
+                          </>
                           : null
                       }
                     </>

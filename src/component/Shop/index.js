@@ -121,7 +121,7 @@ const Shop = () => {
   const dispatch = useDispatch();
   const shopData = useSelector(state => state.repos.shopData);
   const userData = useSelector(state => state.repos.userData)
-  const [isUserAuthorized, setIsUserAuthorized] = useState(JSON.parse(localStorage.getItem('st_user_authorized')))
+  const userAuthData = useSelector(state => state.repos.userAuthData);
 
   const tableHeaders = [
     {title: 'Заказы', isDoneTask: false},
@@ -152,8 +152,8 @@ const Shop = () => {
   };
 
   const buyItem = async (index) => {
-    const shopDocRef = doc(db, "shop", isUserAuthorized.uid);
-    const userDocRef = doc(db, "users", isUserAuthorized.uid);
+    const shopDocRef = doc(db, "shop", userAuthData.uid);
+    const userDocRef = doc(db, "users", userAuthData.uid);
 
     let currentGreenCoinCount = userData.greenCoinAmount - shopData.items[index].price;
 
@@ -257,16 +257,11 @@ const Shop = () => {
                           variant="contained"
                           color='success'
                           size="large"
-                          onClick={() => buyItem(index)}
+                          onClick={() => shopData.items[index].isSold ? window.open('https://drive.google.com/file/d/1zze3OO4UKy6x7wgol3OU8_lCTqEDeey-/view?usp=sharing', '_blank') : buyItem(index)}
                           disabled={!shopData.items[index].isAvailable || userData.greenCoinAmount < shopData.items[index].price}
                         >
-                          { shopData.items[index].isSold ? 'Куплено' : `${el.price} GCoin` }
-
+                          { shopData.items[index].isSold ? 'Получить' : `${el.price} GCoin` }
                         </Button>
-                        {
-                          shopData.items[index].isSold ?
-                            <a style={{ display: 'block', marginTop: '20px' }} href="https://drive.google.com/file/d/1zze3OO4UKy6x7wgol3OU8_lCTqEDeey-/view?usp=sharing">Скачать игру</a> : null
-                        }
                       </CardContent>
                     </div>
                   </Card>

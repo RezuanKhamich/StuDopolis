@@ -104,7 +104,7 @@ const FreelanceTask = () => {
   return (
     <>
       <ContentWrapper>
-        <MainPageTitle>FrontEnd - разработчик</MainPageTitle>
+        <MainPageTitle>Фриланс</MainPageTitle>
 
         <Card>
           <CardContent>

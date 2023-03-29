@@ -50,14 +50,14 @@ export const createDBArchitecture = () => {
           courseArchitecture[`course_${i}`][`modules`][j][`lectures`][k] = {
             lectureAvailable: false,
             quizProgress: '0000000000',
-            pageProgress: '0',
+            pageProgress: '0000000000',
             isAwardReceived: false,
           }
         }else{
           courseArchitecture[`course_${i}`][`modules`][j][`lectures`][k] = {
             lectureAvailable: false,
             quizProgress: '0000000000',
-            pageProgress: '000',
+            pageProgress: '0000000000',
             isAwardReceived: false,
           }
         }

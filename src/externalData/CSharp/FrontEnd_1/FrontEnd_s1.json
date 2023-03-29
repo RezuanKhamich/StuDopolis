@@ -28,7 +28,7 @@
                     ]
                 },
                 {
-                    "question": "Что будет в этом случае?<pre>\nconst int age = 20;\nage = 10;\n<pre>",
+                    "question": "Что будет в этом случае?<div style=\"background: #f0f3f3; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;\"><pre style=\"margin: 0; line-height: 125%\"><span style=\"color: #006699; font-weight: bold\">const</span> <span style=\"color: #007788; font-weight: bold\">int</span> age = <span style=\"color: #FF6600\">20</span>;\nage = <span style=\"color: #FF6600\">10</span>;\n</pre></div>\n",
                     "rightAnswerId": 3,
                     "answers": [
                         "переменной будет присвоено значение 20",

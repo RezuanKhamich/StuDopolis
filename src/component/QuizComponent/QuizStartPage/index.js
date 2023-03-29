@@ -32,10 +32,10 @@ const QuizStartPage = ({ startQuizHandler, pageData, awardRatio = [300, 100], te
         <Typography gutterBottom variant="h5" component="div" color="rgba(128, 128, 128, 0.5)" fontSize="2vw" marginBottom="60px">
           Квиз
         </Typography>
-        <Typography gutterBottom variant="h3" component="div" textAlign="center" fontSize="4vw">
-          Проверь свои способоности!
+        <Typography gutterBottom variant="h3" component="div" textAlign="center" fontSize="3vw">
+          Проверь свои способности!
         </Typography>
-        <Typography gutterBottom variant="p" component="div" textAlign="center" color="rgba(128, 128, 128, 0.5)" fontSize="1.5vw">
+        <Typography gutterBottom variant="p" component="div" textAlign="center" color="rgba(128, 128, 128, 0.5)" fontSize="1.3vw">
           Ниже указана награда за прохождение квиза на 100%. За каждый неправильный ответ можно получить только 50% от
           стоимости вопроса. Тест на время, помни об этом и удачи!
         </Typography>

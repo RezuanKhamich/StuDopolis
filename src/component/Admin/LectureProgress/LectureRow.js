@@ -25,7 +25,6 @@ const LectureRow = ({
     } else {
       console.log("No such document!");
     }
-    console.log(adminCourse)
   }
 
   return (

@@ -15,11 +15,11 @@ const QuizComponent = ({
 
   const timerEndHandler = () => {
     let pendingQuestions = []
-    for(let i = questionId; i < pageData.pageTest.length; i++){
-      pendingQuestions.push(0)
-    }
-    setUserAnswers(prevState => [...prevState, [...pendingQuestions]])
-    setTimeIsLeft(true)
+    // for(let i = questionId; i < pageData.pageTest.length; i++){
+    //   pendingQuestions.push(0)
+    // }
+    // setUserAnswers(prevState => [...prevState, [...pendingQuestions]])
+    // setTimeIsLeft(true)
   }
 
   const startQuizHandler = () => {
